@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { dashboardApi } from '@/lib/api';
-import { useToast } from '@/contexts/ToastContext';
+import { dashboardApi } from '../../lib/api';
+import { useToast } from '../../contexts/ToastContext';
 import {
   ClockIcon,
   CheckCircleIcon,

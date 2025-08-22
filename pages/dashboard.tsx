@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { useAuth } from '@/contexts/AuthContext';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { DashboardStats } from '@/types';
-import { dashboardApi } from '@/lib/api';
-import { useToast } from '@/contexts/ToastContext';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import StatsCard from '@/components/dashboard/StatsCard';
-import AttendanceChart from '@/components/dashboard/AttendanceChart';
-import RecentActivities from '@/components/dashboard/RecentActivities';
+import { DashboardStats } from '../types';
+import { dashboardApi } from '../lib/api';
+import { useToast } from '../contexts/ToastContext';
+import ProtectedRoute from '../components/auth/ProtectedRoute';
+import DashboardLayout from '../components/layouts/DashboardLayout';
+import StatsCard from '../components/dashboard/StatsCard';
+import AttendanceChart from '../components/dashboard/AttendanceChart';
+import RecentActivities from '../components/dashboard/RecentActivities';
 import {
   UsersIcon,
   BuildingOfficeIcon,
@@ -18,24 +19,18 @@ import {
   ChartBarIcon,
 } from '@heroicons/react/24/outline';
 
-const DashboardPage: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+const DashboardContent: React.FC = () => {
+  const { data: session } = useSession();
   const router = useRouter();
   const { addToast } = useToast();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push('/login');
-    }
-  }, [isAuthenticated, isLoading, router]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
+    if (session) {
       fetchStats();
     }
-  }, [isAuthenticated]);
+  }, [session]);
 
   const fetchStats = async () => {
     try {
@@ -57,13 +52,7 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  if (isLoading || !isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="loading-spinner w-8 h-8"></div>
-      </div>
-    );
-  }
+
 
   return (
     <>
@@ -79,10 +68,10 @@ const DashboardPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Selamat datang, {user?.name}!
+                  Selamat datang, {session?.user?.name}!
                 </h1>
                 <p className="text-gray-600 mt-1">
-                  {user?.role === 'admin' ? 'Administrator' : user?.jabatan?.nama_jabatan} - {user?.cabang?.nama_cabang}
+                  {session?.user?.role === 'admin' ? 'Administrator' : session?.user?.jabatan?.nama_jabatan} - {session?.user?.cabang?.nama_cabang}
                 </p>
               </div>
               <div className="text-right">
@@ -137,7 +126,7 @@ const DashboardPage: React.FC = () => {
           </div>
 
           {/* Additional Stats for Admin */}
-          {user?.role === 'admin' && (
+          {session?.user?.role === 'admin' && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <StatsCard
                 title="Alpha Hari Ini"
@@ -189,6 +178,14 @@ const DashboardPage: React.FC = () => {
         </div>
       </DashboardLayout>
     </>
+  );
+};
+
+const DashboardPage: React.FC = () => {
+  return (
+    <ProtectedRoute>
+      <DashboardContent />
+    </ProtectedRoute>
   );
 };
 

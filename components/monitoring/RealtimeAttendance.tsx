@@ -7,7 +7,7 @@ import {
   ExclamationTriangleIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline';
-import { cn } from '@/utils/cn';
+import { cn } from '../../utils/cn';
 
 interface AttendanceRecord {
   id: number;

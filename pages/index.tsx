@@ -4,10 +4,10 @@ import { useAuth } from '../contexts/AuthContext';
 
 const HomePage = () => {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
-    if (!loading) {
+    if (!isLoading) {
       if (user) {
         // Redirect authenticated users to dashboard
         router.replace('/dashboard');
@@ -16,10 +16,10 @@ const HomePage = () => {
         router.replace('/login');
       }
     }
-  }, [user, loading, router]);
+  }, [user, isLoading, router]);
 
   // Show loading spinner while checking authentication
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>

@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { ApiResponse, PaginatedResponse, LoginCredentials, AuthUser, User, Cabang, Jabatan, Karyawan, Absensi, MonitoringFingerprint, DashboardStats, FilterOptions } from '@/types';
+import { ApiResponse, PaginatedResponse, LoginCredentials, AuthUser, User, Cabang, Jabatan, Karyawan, Absensi, MonitoringFingerprint, DashboardStats, FilterOptions } from '../types';
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
@@ -210,6 +210,31 @@ export const absensiApi = {
 
   syncFingerprint: async (): Promise<ApiResponse> => {
     const response = await api.post('/absensi/sync-fingerprint');
+    return handleResponse(response);
+  },
+
+  getByDate: async (date: string): Promise<ApiResponse<Absensi>> => {
+    const response = await api.get(`/absensi/date/${date}`);
+    return handleResponse(response);
+  },
+
+  getMyAttendance: async (filters?: FilterOptions): Promise<ApiResponse<PaginatedResponse<Absensi>>> => {
+    const response = await api.get('/absensi/my-attendance', { params: filters });
+    return handleResponse(response);
+  },
+
+  clockIn: async (data: { latitude: number; longitude: number }): Promise<ApiResponse<Absensi>> => {
+    const response = await api.post('/absensi/clock-in', data);
+    return handleResponse(response);
+  },
+
+  clockOut: async (data: { latitude: number; longitude: number }): Promise<ApiResponse<Absensi>> => {
+    const response = await api.post('/absensi/clock-out', data);
+    return handleResponse(response);
+  },
+
+  export: async (filters?: any): Promise<ApiResponse<Blob>> => {
+    const response = await api.get('/absensi/export', { params: filters, responseType: 'blob' });
     return handleResponse(response);
   },
 };

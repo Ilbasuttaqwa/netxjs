@@ -1,5 +1,5 @@
 import React, { useState, ReactNode } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
 import {
   Bars3Icon,
@@ -15,7 +15,7 @@ import {
   UserCircleIcon,
   CurrencyDollarIcon,
 } from '@heroicons/react/24/outline';
-import { Button } from '@/components/ui/Button';
+import { Button } from '../ui/Button';
 
 interface DashboardLayoutProps {
   children: ReactNode;

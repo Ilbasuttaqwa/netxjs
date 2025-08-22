@@ -1,0 +1,14 @@
+version: "2"
+authtoken: "31cKxpDHTxSNlwcGkm0i9ryRFox_4Taec5DFN4WQEWrtABrGa"
+tunnels:
+  afms-app:
+    addr: 3000
+    proto: http
+    domain: arguably-loved-zebra.ngrok-free.app
+    inspect: true
+  afms-app-dev:
+    addr: 3000
+    proto: http
+    inspect: true
+    # For development without custom domain
+    # ngrok will assign a random subdomain

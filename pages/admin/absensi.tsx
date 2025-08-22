@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { Absensi, Karyawan, Cabang } from '@/types';
-import { absensiApi, karyawanApi, cabangApi } from '@/lib/api';
-import { useToast } from '@/contexts/ToastContext';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { Absensi, Karyawan, Cabang } from '../../types';
+import { absensiApi, karyawanApi, cabangApi } from '../../lib/api';
+import { useToast } from '../../contexts/ToastContext';
+import DashboardLayout from '../../components/layouts/DashboardLayout';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
 import {
   CalendarDaysIcon,
   ClockIcon,
@@ -19,7 +19,7 @@ import {
   XCircleIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
-import { cn } from '@/utils/cn';
+import { cn } from '../../utils/cn';
 
 interface FilterData {
   tanggal_mulai: string;
@@ -68,7 +68,12 @@ const AbsensiPage: React.FC = () => {
     try {
       setLoading(true);
       const [absensiRes, karyawanRes, cabangRes] = await Promise.all([
-        absensiApi.getAbsensi({ page: currentPage, ...filterData }),
+        absensiApi.getAbsensi({ 
+          page: currentPage, 
+          ...filterData,
+          cabang_id: filterData.cabang_id ? parseInt(filterData.cabang_id) : undefined,
+          karyawan_id: filterData.karyawan_id ? parseInt(filterData.karyawan_id) : undefined
+        }),
         karyawanApi.getKaryawan(),
           cabangApi.getCabang(),
       ]);
@@ -93,16 +98,18 @@ const AbsensiPage: React.FC = () => {
               id: 1,
               nama: 'John Doe',
               email: 'john@example.com',
-              no_hp: '081234567890',
+              telepon: '081234567890',
               alamat: 'Jl. Sudirman No. 123',
+              jenis_kelamin: 'L',
+              tanggal_masuk: '2024-01-01',
               cabang_id: 1,
               jabatan_id: 1,
-              finger_id: 'FP001',
+              fingerprint_id: 'FP001',
               status: 'aktif',
               created_at: '2024-01-01 00:00:00',
               updated_at: '2024-01-01 00:00:00',
-              cabang: { id: 1, nama: 'Kantor Pusat', alamat: 'Jakarta', created_at: '', updated_at: '' },
-            },
+              cabang: { id: 1, nama_cabang: 'Kantor Pusat', alamat: 'Jakarta', telepon: '', status: 'aktif', created_at: '', updated_at: '' },
+            }
           },
           {
             id: 2,
@@ -118,16 +125,18 @@ const AbsensiPage: React.FC = () => {
               id: 2,
               nama: 'Jane Smith',
               email: 'jane@example.com',
-              no_hp: '081234567891',
+              telepon: '081234567891',
               alamat: 'Jl. Thamrin No. 456',
+              jenis_kelamin: 'P',
+              tanggal_masuk: '2024-01-01',
               cabang_id: 2,
               jabatan_id: 2,
-              finger_id: 'FP002',
+              fingerprint_id: 'FP002',
               status: 'aktif',
               created_at: '2024-01-01 00:00:00',
               updated_at: '2024-01-01 00:00:00',
-              cabang: { id: 2, nama: 'Cabang Jakarta', alamat: 'Jakarta Selatan', created_at: '', updated_at: '' },
-            },
+              cabang: { id: 2, nama_cabang: 'Cabang Jakarta', alamat: 'Jakarta Selatan', telepon: '', status: 'aktif', created_at: '', updated_at: '' },
+            }
           },
           {
             id: 3,
@@ -143,33 +152,37 @@ const AbsensiPage: React.FC = () => {
               id: 1,
               nama: 'John Doe',
               email: 'john@example.com',
-              no_hp: '081234567890',
+              telepon: '081234567890',
               alamat: 'Jl. Sudirman No. 123',
+              jenis_kelamin: 'L',
+              tanggal_masuk: '2024-01-01',
               cabang_id: 1,
               jabatan_id: 1,
-              finger_id: 'FP001',
+              fingerprint_id: 'FP001',
               status: 'aktif',
               created_at: '2024-01-01 00:00:00',
               updated_at: '2024-01-01 00:00:00',
-              cabang: { id: 1, nama: 'Kantor Pusat', alamat: 'Jakarta', created_at: '', updated_at: '' },
+              cabang: { id: 1, nama_cabang: 'Kantor Pusat', alamat: 'Jakarta', telepon: '', status: 'aktif', created_at: '', updated_at: '' }
             },
           },
         ]);
       }
 
       if (karyawanRes.success && karyawanRes.data) {
-        setKaryawan(karyawanRes.data.data || karyawanRes.data);
+        setKaryawan(Array.isArray(karyawanRes.data) ? karyawanRes.data : (karyawanRes.data.data || []));
       } else {
         setKaryawan([
           {
             id: 1,
             nama: 'John Doe',
             email: 'john@example.com',
-            no_hp: '081234567890',
+            telepon: '081234567890',
             alamat: 'Jl. Sudirman No. 123',
+            jenis_kelamin: 'L',
+            tanggal_masuk: '2024-01-01',
             cabang_id: 1,
             jabatan_id: 1,
-            finger_id: 'FP001',
+            fingerprint_id: 'FP001',
             status: 'aktif',
             created_at: '2024-01-01 00:00:00',
             updated_at: '2024-01-01 00:00:00',
@@ -178,11 +191,13 @@ const AbsensiPage: React.FC = () => {
             id: 2,
             nama: 'Jane Smith',
             email: 'jane@example.com',
-            no_hp: '081234567891',
+            telepon: '081234567891',
             alamat: 'Jl. Thamrin No. 456',
+            jenis_kelamin: 'P',
+            tanggal_masuk: '2024-01-01',
             cabang_id: 2,
             jabatan_id: 2,
-            finger_id: 'FP002',
+            fingerprint_id: 'FP002',
             status: 'aktif',
             created_at: '2024-01-01 00:00:00',
             updated_at: '2024-01-01 00:00:00',
@@ -191,11 +206,11 @@ const AbsensiPage: React.FC = () => {
       }
 
       if (cabangRes.success && cabangRes.data) {
-        setCabang(cabangRes.data);
+        setCabang(Array.isArray(cabangRes.data) ? cabangRes.data : (cabangRes.data.data || []));
       } else {
         setCabang([
-          { id: 1, nama: 'Kantor Pusat', alamat: 'Jakarta', created_at: '', updated_at: '' },
-          { id: 2, nama: 'Cabang Jakarta', alamat: 'Jakarta Selatan', created_at: '', updated_at: '' },
+          { id: 1, nama_cabang: 'Kantor Pusat', alamat: 'Jakarta', telepon: '', status: 'aktif', created_at: '', updated_at: '' },
+          { id: 2, nama_cabang: 'Cabang Jakarta', alamat: 'Jakarta Selatan', telepon: '', status: 'aktif', created_at: '', updated_at: '' },
         ]);
       }
     } catch (error: any) {
@@ -398,7 +413,7 @@ const AbsensiPage: React.FC = () => {
                     <option value="">Semua Cabang</option>
                     {cabang.map((item) => (
                       <option key={item.id} value={item.id}>
-                        {item.nama}
+                        {item.nama_cabang}
                       </option>
                     ))}
                   </select>
@@ -533,7 +548,7 @@ const AbsensiPage: React.FC = () => {
                               </div>
                               <div className="text-sm text-gray-500 flex items-center">
                                 <BuildingOfficeIcon className="h-3 w-3 mr-1" />
-                                {item.karyawan?.cabang?.nama || 'Tidak Diketahui'}
+                                {item.karyawan?.cabang?.nama_cabang || 'Tidak Diketahui'}
                               </div>
                             </div>
                           </div>

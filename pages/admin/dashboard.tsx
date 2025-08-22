@@ -17,7 +17,7 @@ interface DashboardStats {
 }
 
 export default function AdminDashboard() {
-  const { user, loading } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
   const [stats, setStats] = useState<DashboardStats>({
     totalEmployees: 0,
@@ -27,10 +27,10 @@ export default function AdminDashboard() {
     absentToday: 0,
     attendancePercentage: 0
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
-    if (!loading && (!user || !['admin', 'manager'].includes(user.role))) {
+    if (!isLoading && (!user || !['admin', 'manager'].includes(user.role))) {
       router.push('/login');
       return;
     }
@@ -38,7 +38,7 @@ export default function AdminDashboard() {
     if (user) {
       fetchDashboardData();
     }
-  }, [user, loading, router]);
+  }, [user, isLoading, router]);
 
   const fetchDashboardData = async () => {
     try {
@@ -59,11 +59,11 @@ export default function AdminDashboard() {
         attendancePercentage: 94.7
       });
     } finally {
-      setIsLoading(false);
+      setLoadingStats(false);
     }
   };
 
-  if (loading || isLoading) {
+  if (isLoading || loadingStats) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-64">
@@ -101,7 +101,7 @@ export default function AdminDashboard() {
                 Selamat datang, {user.name} ({user.role})
               </p>
               <p className="text-sm text-gray-500 mt-1">
-                {user.position} - {user.branch}
+                {user.jabatan?.nama_jabatan} - {user.cabang?.nama_cabang}
               </p>
             </div>
             <div className="text-right">
@@ -116,26 +116,26 @@ export default function AdminDashboard() {
           <StatsCard
             title="Total Karyawan"
             value={stats.totalEmployees.toString()}
-            icon={UserGroupIcon}
-            color="blue"
+            icon={<UserGroupIcon className="h-6 w-6" />}
+            color="info"
           />
           <StatsCard
             title="Total Cabang"
             value={stats.totalBranches.toString()}
-            icon={BuildingOfficeIcon}
-            color="green"
+            icon={<BuildingOfficeIcon className="h-6 w-6" />}
+            color="success"
           />
           <StatsCard
             title="Hadir Hari Ini"
             value={stats.todayAttendance.toString()}
-            icon={ClockIcon}
-            color="purple"
+            icon={<ClockIcon className="h-6 w-6" />}
+            color="primary"
           />
           <StatsCard
             title="Terlambat Hari Ini"
             value={stats.lateToday.toString()}
-            icon={ExclamationTriangleIcon}
-            color="yellow"
+            icon={<ExclamationTriangleIcon className="h-6 w-6" />}
+            color="warning"
           />
         </div>
 
@@ -144,14 +144,14 @@ export default function AdminDashboard() {
           <StatsCard
             title="Alpha Hari Ini"
             value={stats.absentToday.toString()}
-            icon={ExclamationTriangleIcon}
-            color="red"
+            icon={<ExclamationTriangleIcon className="h-6 w-6" />}
+            color="danger"
           />
           <StatsCard
             title="Persentase Kehadiran"
             value={`${stats.attendancePercentage}%`}
-            icon={ClockIcon}
-            color="green"
+            icon={<ClockIcon className="h-6 w-6" />}
+            color="success"
           />
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Aksi Cepat</h3>

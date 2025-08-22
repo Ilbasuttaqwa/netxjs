@@ -7,13 +7,13 @@ import {
   PlusIcon,
   EyeIcon,
 } from '@heroicons/react/24/outline';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import DataTable from '@/components/ui/DataTable';
-import useDataTable from '@/hooks/useDataTable';
-import { Button } from '@/components/ui/Button';
-import Modal from '@/components/ui/Modal';
-import { cn } from '@/utils/cn';
-import { useToast } from '@/contexts/ToastContext';
+import DashboardLayout from '../components/layouts/DashboardLayout';
+import DataTable from '../components/ui/DataTable';
+import useDataTable from '../hooks/useDataTable';
+import { Button } from '../components/ui/Button';
+import Modal from '../components/ui/Modal';
+import { cn } from '../utils/cn';
+import { useToast } from '../contexts/ToastContext';
 
 interface User {
   id: string;
@@ -362,7 +362,7 @@ const UsersPage = () => {
               Batal
             </Button>
             <Button
-              variant="danger"
+              variant="destructive"
               onClick={confirmDelete}
             >
               Hapus

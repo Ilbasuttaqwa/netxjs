@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { withAuth } from '@/middleware/auth';
-import { ApiResponse } from '@/types';
+import { requireRole } from '../../../middleware/auth';
+import { ApiResponse } from '../../../types';
 
 interface AttendanceRule {
   id: number;
@@ -123,6 +123,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse<any
         
         return res.status(200).json({
           success: true,
+          message: 'Data pemotongan karyawan berhasil diambil',
           data: employeeDeductions,
         });
       } else {
@@ -131,6 +132,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse<any
         
         return res.status(200).json({
           success: true,
+          message: 'Data pemotongan semua karyawan berhasil diambil',
           data: allDeductions,
         });
       }
@@ -391,4 +393,4 @@ async function processPayrollDeductions(period: string) {
   };
 }
 
-export default withAuth(handler, ['admin', 'manager']);
+export default requireRole(['admin', 'manager'])(handler);

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { Karyawan, Cabang, Jabatan, PaginatedResponse } from '@/types';
-import { karyawanApi, cabangApi, jabatanApi } from '@/lib/api';
-import { useToast } from '@/contexts/ToastContext';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { Karyawan, Cabang, Jabatan, PaginatedResponse } from '../../types';
+import { karyawanApi, cabangApi, jabatanApi } from '../../lib/api';
+import { useToast } from '../../contexts/ToastContext';
+import DashboardLayout from '../../components/layouts/DashboardLayout';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
 import {
   PlusIcon,
   PencilIcon,
@@ -18,17 +18,17 @@ import {
   BriefcaseIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { cn } from '@/utils/cn';
+import { cn } from '../../utils/cn';
 
 interface KaryawanFormData {
   nama: string;
   email: string;
-  no_hp: string;
+  telepon: string;
   alamat: string;
   cabang_id: string;
   jabatan_id: string;
   finger_id?: string;
-  status: 'aktif' | 'nonaktif';
+  status: 'aktif' | 'tidak_aktif';
 }
 
 const KaryawanPage: React.FC = () => {
@@ -48,7 +48,7 @@ const KaryawanPage: React.FC = () => {
   const [formData, setFormData] = useState<KaryawanFormData>({
     nama: '',
     email: '',
-    no_hp: '',
+    telepon: '',
     alamat: '',
     cabang_id: '',
     jabatan_id: '',
@@ -91,50 +91,56 @@ const KaryawanPage: React.FC = () => {
             id: 1,
             nama: 'John Doe',
             email: 'john@example.com',
-            no_hp: '081234567890',
+            telepon: '081234567890',
             alamat: 'Jl. Sudirman No. 123',
+            jenis_kelamin: 'L',
             cabang_id: 1,
             jabatan_id: 1,
-            finger_id: 'FP001',
+            tanggal_masuk: '2024-01-01',
+            fingerprint_id: 'FP001',
             status: 'aktif',
             created_at: '2024-01-01 00:00:00',
             updated_at: '2024-01-01 00:00:00',
-            cabang: { id: 1, nama: 'Kantor Pusat', alamat: 'Jakarta', created_at: '', updated_at: '' },
-            jabatan: { id: 1, nama: 'Manager', deskripsi: 'Manager', created_at: '', updated_at: '' },
+            cabang: { id: 1, nama_cabang: 'Kantor Pusat', alamat: 'Jakarta', status: 'aktif', created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
+            jabatan: { id: 1, nama_jabatan: 'Manager', gaji_pokok: 5000000, created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
           },
           {
             id: 2,
             nama: 'Jane Smith',
             email: 'jane@example.com',
-            no_hp: '081234567891',
+            telepon: '081234567891',
             alamat: 'Jl. Thamrin No. 456',
+            jenis_kelamin: 'P',
             cabang_id: 2,
             jabatan_id: 2,
-            finger_id: 'FP002',
+            tanggal_masuk: '2024-01-01',
+            fingerprint_id: 'FP002',
             status: 'aktif',
             created_at: '2024-01-01 00:00:00',
             updated_at: '2024-01-01 00:00:00',
-            cabang: { id: 2, nama: 'Cabang Jakarta', alamat: 'Jakarta Selatan', created_at: '', updated_at: '' },
-            jabatan: { id: 2, nama: 'Staff', deskripsi: 'Staff', created_at: '', updated_at: '' },
+            cabang: { id: 2, nama_cabang: 'Cabang Jakarta', alamat: 'Jakarta Selatan', status: 'aktif', created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
+            jabatan: { id: 2, nama_jabatan: 'Staff', gaji_pokok: 3000000, created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
           },
         ]);
       }
 
       if (cabangRes.success && cabangRes.data) {
-        setCabang(cabangRes.data);
+        const cabangData = Array.isArray(cabangRes.data) ? cabangRes.data : cabangRes.data.data;
+        setCabang(cabangData);
       } else {
         setCabang([
-          { id: 1, nama: 'Kantor Pusat', alamat: 'Jakarta', created_at: '', updated_at: '' },
-          { id: 2, nama: 'Cabang Jakarta', alamat: 'Jakarta Selatan', created_at: '', updated_at: '' },
+          { id: 1, nama_cabang: 'Kantor Pusat', alamat: 'Jakarta', status: 'aktif', created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
+          { id: 2, nama_cabang: 'Cabang Jakarta', alamat: 'Jakarta Selatan', status: 'aktif', created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
         ]);
       }
 
       if (jabatanRes.success && jabatanRes.data) {
-        setJabatan(jabatanRes.data);
+        const jabatanData = Array.isArray(jabatanRes.data) ? jabatanRes.data : jabatanRes.data.data;
+        setJabatan(jabatanData);
       } else {
         setJabatan([
-          { id: 1, nama: 'Manager', deskripsi: 'Manager', created_at: '', updated_at: '' },
-          { id: 2, nama: 'Staff', deskripsi: 'Staff', created_at: '', updated_at: '' },
+          { id: 1, nama_jabatan: 'Manager', gaji_pokok: 5000000, created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
+          { id: 2, nama_jabatan: 'Staff', gaji_pokok: 3000000, created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
         ]);
       }
     } catch (error: any) {
@@ -154,9 +160,15 @@ const KaryawanPage: React.FC = () => {
     setSubmitting(true);
 
     try {
+      const apiData = {
+        ...formData,
+        cabang_id: parseInt(formData.cabang_id),
+        jabatan_id: parseInt(formData.jabatan_id),
+      };
+      
       const response = editingId
-        ? await karyawanApi.update(editingId, formData)
-        : await karyawanApi.create(formData);
+        ? await karyawanApi.updateKaryawan(editingId, apiData)
+        : await karyawanApi.createKaryawan(apiData);
 
       if (response.success) {
         addToast({
@@ -190,11 +202,11 @@ const KaryawanPage: React.FC = () => {
     setFormData({
       nama: item.nama,
       email: item.email,
-      no_hp: item.no_hp,
-      alamat: item.alamat,
+      telepon: item.telepon || '',
+      alamat: item.alamat || '',
       cabang_id: item.cabang_id.toString(),
       jabatan_id: item.jabatan_id.toString(),
-      finger_id: item.finger_id || '',
+      finger_id: item.fingerprint_id || '',
       status: item.status,
     });
     setShowModal(true);
@@ -204,7 +216,7 @@ const KaryawanPage: React.FC = () => {
     if (!confirm('Apakah Anda yakin ingin menghapus karyawan ini?')) return;
 
     try {
-      const response = await karyawanApi.delete(id);
+      const response = await karyawanApi.deleteKaryawan(id);
       if (response.success) {
         addToast({
           type: 'success',
@@ -228,7 +240,7 @@ const KaryawanPage: React.FC = () => {
     setFormData({
       nama: '',
       email: '',
-      no_hp: '',
+      telepon: '',
       alamat: '',
       cabang_id: '',
       jabatan_id: '',
@@ -254,7 +266,7 @@ const KaryawanPage: React.FC = () => {
     } else {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-danger-100 text-danger-800">
-          Nonaktif
+          Tidak Aktif
         </span>
       );
     }
@@ -391,20 +403,20 @@ const KaryawanPage: React.FC = () => {
                                 {item.nama}
                               </div>
                               <div className="text-sm text-gray-500">
-                                ID: {item.finger_id || '-'}
+                                ID: {item.fingerprint_id || '-'}
                               </div>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">{item.email}</div>
-                          <div className="text-sm text-gray-500">{item.no_hp}</div>
+                          <div className="text-sm text-gray-500">{item.telepon}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <BuildingOfficeIcon className="h-4 w-4 text-gray-400 mr-2" />
                             <span className="text-sm text-gray-900">
-                              {item.cabang?.nama || '-'}
+                              {item.cabang?.nama_cabang || '-'}
                             </span>
                           </div>
                         </td>
@@ -412,7 +424,7 @@ const KaryawanPage: React.FC = () => {
                           <div className="flex items-center">
                             <BriefcaseIcon className="h-4 w-4 text-gray-400 mr-2" />
                             <span className="text-sm text-gray-900">
-                              {item.jabatan?.nama || '-'}
+                              {item.jabatan?.nama_jabatan || '-'}
                             </span>
                           </div>
                         </td>
@@ -534,9 +546,9 @@ const KaryawanPage: React.FC = () => {
                 <Input
                   label="No. HP"
                   type="text"
-                  value={formData.no_hp}
-                  onChange={(e) => setFormData({ ...formData, no_hp: e.target.value })}
-                  error={formErrors.no_hp}
+                  value={formData.telepon}
+                  onChange={(e) => setFormData({ ...formData, telepon: e.target.value })}
+                  error={formErrors.telepon}
                   required
                 />
                 
@@ -562,7 +574,7 @@ const KaryawanPage: React.FC = () => {
                     <option value="">Pilih Cabang</option>
                     {cabang.map((item) => (
                       <option key={item.id} value={item.id}>
-                        {item.nama}
+                        {item.nama_cabang}
                       </option>
                     ))}
                   </select>
@@ -584,7 +596,7 @@ const KaryawanPage: React.FC = () => {
                     <option value="">Pilih Jabatan</option>
                     {jabatan.map((item) => (
                       <option key={item.id} value={item.id}>
-                        {item.nama}
+                        {item.nama_jabatan}
                       </option>
                     ))}
                   </select>
@@ -607,11 +619,11 @@ const KaryawanPage: React.FC = () => {
                   </label>
                   <select
                     value={formData.status}
-                    onChange={(e) => setFormData({ ...formData, status: e.target.value as 'aktif' | 'nonaktif' })}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value as 'aktif' | 'tidak_aktif' })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   >
                     <option value="aktif">Aktif</option>
-                    <option value="nonaktif">Nonaktif</option>
+                    <option value="tidak_aktif">Tidak Aktif</option>
                   </select>
                 </div>
                 

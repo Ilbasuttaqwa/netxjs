@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { withAuth } from '../../../middleware/auth';
+import { requireRole } from '../../../middleware/auth';
 import { ApiResponse } from '../../../types';
 
 interface FingerprintRealtimeData {
@@ -218,4 +218,4 @@ setInterval(() => {
   }
 }, 10000); // Send mock data every 10 seconds
 
-export default withAuth(handler, ['admin']);
+export default requireRole(['admin'])(handler);

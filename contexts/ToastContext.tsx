@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Toast, ToastContextType } from '@/types';
-import { ToastContainer } from '@/components/ui/Toast';
+import { Toast, ToastContextType } from '../types';
+import { ToastContainer } from '../components/ui/Toast';
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
@@ -18,7 +18,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToasts((prev) => [...prev, newToast]);
 
     // Auto remove toast after duration
-    if (newToast.duration > 0) {
+    if (newToast.duration && newToast.duration > 0) {
       setTimeout(() => {
         removeToast(id);
       }, newToast.duration);

@@ -133,3 +133,100 @@ model FingerprintAttendance {
   @@index([user_id], map: "fingerprint_attendances_user_id_index")
   @@map("fingerprint_attendances")
 }
+
+model Event {
+  id            String   @id @default(cuid())
+  eventType     String   @db.VarChar(255)
+  aggregateId   String   @db.VarChar(255)
+  aggregateType String   @db.VarChar(255)
+  eventData     Json
+  metadata      Json?
+  version       Int
+  timestamp     DateTime @default(now())
+  userId        String?  @db.VarChar(255)
+  
+  @@index([aggregateId, version], map: "events_aggregate_id_version_index")
+  @@index([eventType], map: "events_event_type_index")
+  @@index([timestamp], map: "events_timestamp_index")
+  @@map("events")
+}
+
+model ReadModel {
+  id          String   @id @default(cuid())
+  type        String   @db.VarChar(255)
+  data        Json
+  version     Int      @default(1)
+  lastUpdated DateTime @default(now()) @updatedAt
+  
+  @@unique([type, id], map: "read_models_type_id_unique")
+  @@index([type], map: "read_models_type_index")
+  @@map("read_models")
+}
+
+model IdempotencyKey {
+  key         String   @id @db.VarChar(255)
+  requestHash String   @db.VarChar(255)
+  response    Json?
+  status      String   @default("processing") @db.VarChar(50)
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
+  
+  @@index([status], map: "idempotency_keys_status_index")
+  @@index([expiresAt], map: "idempotency_keys_expires_at_index")
+  @@map("idempotency_keys")
+}
+
+model AttendanceDeduplication {
+  id              String   @id @default(cuid())
+  deviceId        String   @db.VarChar(255)
+  employeeId      String   @db.VarChar(255)
+  fingerprintHash String   @db.VarChar(255)
+  timestamp       DateTime
+  createdAt       DateTime @default(now())
+  
+  @@unique([deviceId, employeeId, fingerprintHash, timestamp], map: "attendance_dedup_unique")
+  @@index([deviceId, employeeId], map: "attendance_dedup_device_employee_index")
+  @@index([timestamp], map: "attendance_dedup_timestamp_index")
+  @@map("attendance_deduplication")
+}
+
+model BusinessRules {
+  id          String   @id @default(cuid())
+  name        String   @db.VarChar(255)
+  description String   @db.Text
+  category    String   @db.VarChar(100)
+  conditions  Json
+  actions     Json
+  priority    Int      @default(0)
+  isActive    Boolean  @default(true)
+  validFrom   DateTime @default(now())
+  validTo     DateTime?
+  createdBy   String   @db.VarChar(255)
+  updatedBy   String   @db.VarChar(255)
+  version     Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([category, isActive], map: "business_rules_category_active_index")
+  @@index([validFrom, validTo], map: "business_rules_validity_index")
+  @@index([priority], map: "business_rules_priority_index")
+  @@map("business_rules")
+}
+
+model PayrollDeductions {
+  id          String   @id @default(cuid())
+  employeeId  String   @db.VarChar(255)
+  amount      Decimal  @db.Decimal(10, 2)
+  reason      String   @db.VarChar(255)
+  type        String   @db.VarChar(100)
+  ruleId      String?  @db.VarChar(255)
+  appliedDate DateTime @default(now())
+  payrollId   String?  @db.VarChar(255)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([employeeId], map: "payroll_deductions_employee_index")
+  @@index([appliedDate], map: "payroll_deductions_date_index")
+  @@index([ruleId], map: "payroll_deductions_rule_index")
+  @@map("payroll_deductions")
+}

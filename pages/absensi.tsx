@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { Absensi } from '@/types';
-import { absensiApi } from '@/lib/api';
-import { useToast } from '@/contexts/ToastContext';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Button } from '@/components/ui/Button';
+import { Absensi } from '../types';
+import { absensiApi } from '../lib/api';
+import { useToast } from '../contexts/ToastContext';
+import DashboardLayout from '../components/layouts/DashboardLayout';
+import { Button } from '../components/ui/Button';
 import {
   CalendarDaysIcon,
   ClockIcon,
@@ -18,7 +18,7 @@ import {
   ArrowRightOnRectangleIcon,
   ArrowLeftOnRectangleIcon,
 } from '@heroicons/react/24/outline';
-import { cn } from '@/utils/cn';
+import { cn } from '../utils/cn';
 
 const AbsensiUserPage: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -110,7 +110,7 @@ const AbsensiUserPage: React.FC = () => {
       setLoading(true);
       const response = await absensiApi.getMyAttendance({ limit: 7 });
       if (response.success && response.data) {
-        setRecentAttendance(response.data.data || response.data);
+        setRecentAttendance(response.data.data || []);
       } else {
         // Use dummy data if API fails
         setRecentAttendance([
@@ -336,7 +336,7 @@ const AbsensiUserPage: React.FC = () => {
           <div className="bg-white shadow-sm rounded-lg p-6">
             <div className="text-center">
               <h1 className="text-2xl font-bold text-gray-900">
-                Selamat Datang, {user?.nama}
+                Selamat Datang, {user?.name}
               </h1>
               <p className="text-gray-600 mt-1">
                 {formatCurrentDate()}

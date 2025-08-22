@@ -11,8 +11,8 @@ import {
   Legend,
   ChartOptions,
 } from 'chart.js';
-import { dashboardApi } from '@/lib/api';
-import { useToast } from '@/contexts/ToastContext';
+import { dashboardApi } from '../../lib/api';
+import { useToast } from '../../contexts/ToastContext';
 
 ChartJS.register(
   CategoryScale,

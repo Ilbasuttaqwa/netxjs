@@ -1,7 +1,7 @@
 import React from 'react';
-import { cn } from '@/utils/cn';
-import Card from '@/components/ui/Card';
-import Loading from '@/components/ui/Loading';
+import { cn } from '../../utils/cn';
+import Card from '../ui/Card';
+import Loading from '../ui/Loading';
 
 interface StatsCardProps {
   title: string;

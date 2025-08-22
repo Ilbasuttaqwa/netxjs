@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { MonitoringFingerprint } from '@/types';
-import { monitoringApi } from '@/lib/api';
-import { useToast } from '@/contexts/ToastContext';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Button } from '@/components/ui/Button';
-import RealtimeAttendance from '@/components/monitoring/RealtimeAttendance';
+import { MonitoringFingerprint } from '../../types';
+import { monitoringApi } from '../../lib/api';
+import { useToast } from '../../contexts/ToastContext';
+import DashboardLayout from '../../components/layouts/DashboardLayout';
+import { Button } from '../../components/ui/Button';
+import RealtimeAttendance from '../../components/monitoring/RealtimeAttendance';
 import {
   ComputerDesktopIcon,
   SignalIcon,
@@ -17,7 +17,7 @@ import {
   UsersIcon,
   ClipboardDocumentListIcon,
 } from '@heroicons/react/24/outline';
-import { cn } from '@/utils/cn';
+import { cn } from '../../utils/cn';
 
 const MonitoringPage: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -332,7 +332,7 @@ const MonitoringPage: React.FC = () => {
                           Tes
                         </Button>
                         <Button
-                          variant="primary"
+                          variant="default"
                           size="sm"
                           onClick={() => handleSync(device.device_id)}
                           loading={syncing === device.device_id}

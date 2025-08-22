@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { useToast } from '@/contexts/ToastContext';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Button } from '@/components/ui/Button';
+import { useToast } from '../../contexts/ToastContext';
+import DashboardLayout from '../../components/layouts/DashboardLayout';
+import { Button } from '../../components/ui/Button';
 import {
   CurrencyDollarIcon,
   ClockIcon,
@@ -14,8 +14,8 @@ import {
   DocumentTextIcon,
   ChartBarIcon,
 } from '@heroicons/react/24/outline';
-import { cn } from '@/utils/cn';
-import { payrollApi } from '@/lib/api';
+import { cn } from '../../utils/cn';
+import { payrollApi } from '../../lib/api';
 
 interface EmployeeAttendance {
   karyawan_id: number;

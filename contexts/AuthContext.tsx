@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { AuthState, AuthUser, LoginCredentials } from '@/types';
-import { authApi } from '@/lib/api';
+import { AuthState, AuthUser, LoginCredentials } from '../types';
+import { authApi } from '../lib/api';
 import { useToast } from './ToastContext';
 import { useRouter } from 'next/router';
 

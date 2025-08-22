@@ -205,10 +205,14 @@ export interface FilterOptions {
   status?: string;
   cabang_id?: number;
   jabatan_id?: number;
+  karyawan_id?: number;
   tanggal_dari?: string;
   tanggal_sampai?: string;
+  tanggal_mulai?: string;
+  tanggal_selesai?: string;
   page?: number;
   per_page?: number;
+  limit?: number;
   sort_by?: string;
   sort_direction?: 'asc' | 'desc';
 }

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { useToast } from '@/contexts/ToastContext';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { useToast } from '../../contexts/ToastContext';
+import DashboardLayout from '../../components/layouts/DashboardLayout';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
 import {
   CogIcon,
   ClockIcon,
@@ -78,7 +78,7 @@ const SettingsPage: React.FC = () => {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching settings:', error);
-      addToast('Gagal memuat pengaturan', 'error');
+      addToast({ type: 'error', title: 'Gagal memuat pengaturan' });
       setLoading(false);
     }
   };
@@ -90,10 +90,10 @@ const SettingsPage: React.FC = () => {
       // TODO: Implement API call to save settings
       // await settingsApi.update(settings);
       
-      addToast('Pengaturan berhasil disimpan', 'success');
+      addToast({ type: 'success', title: 'Pengaturan berhasil disimpan' });
     } catch (error) {
       console.error('Error saving settings:', error);
-      addToast('Gagal menyimpan pengaturan', 'error');
+      addToast({ type: 'error', title: 'Gagal menyimpan pengaturan' });
     } finally {
       setSaving(false);
     }
@@ -115,14 +115,14 @@ const SettingsPage: React.FC = () => {
 
   const testFingerprintConnection = async () => {
     try {
-      addToast('Menguji koneksi fingerprint...', 'info');
+      addToast({ type: 'info', title: 'Menguji koneksi fingerprint...' });
       // TODO: Implement fingerprint connection test
       // await fingerprintApi.testConnection(settings.fingerprint_device_ip, settings.fingerprint_device_port);
       
-      addToast('Koneksi fingerprint berhasil!', 'success');
+      addToast({ type: 'success', title: 'Koneksi fingerprint berhasil!' });
     } catch (error) {
       console.error('Error testing fingerprint connection:', error);
-      addToast('Gagal terhubung ke perangkat fingerprint', 'error');
+      addToast({ type: 'error', title: 'Gagal terhubung ke perangkat fingerprint' });
     }
   };
 

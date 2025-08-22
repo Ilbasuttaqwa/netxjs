@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { useToast } from '@/contexts/ToastContext';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Button } from '@/components/ui/Button';
-import Modal from '@/components/ui/Modal';
-import { Input } from '@/components/ui/Input';
+import { useToast } from '../../contexts/ToastContext';
+import DashboardLayout from '../../components/layouts/DashboardLayout';
+import { Button } from '../../components/ui/Button';
+import Modal from '../../components/ui/Modal';
+import { Input } from '../../components/ui/Input';
 import {
   CogIcon,
   PlusIcon,
@@ -17,7 +17,7 @@ import {
   ExclamationTriangleIcon,
   CheckCircleIcon,
 } from '@heroicons/react/24/outline';
-import { cn } from '@/utils/cn';
+import { cn } from '../../utils/cn';
 
 interface PayrollRule {
   id: number;

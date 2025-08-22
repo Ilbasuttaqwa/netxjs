@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { Jabatan, PaginatedResponse } from '@/types';
-import { jabatanApi } from '@/lib/api';
-import { useToast } from '@/contexts/ToastContext';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { Jabatan, PaginatedResponse } from '../../types';
+import { jabatanApi } from '../../lib/api';
+import { useToast } from '../../contexts/ToastContext';
+import DashboardLayout from '../../components/layouts/DashboardLayout';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
 import {
   PlusIcon,
   PencilIcon,
@@ -16,13 +16,12 @@ import {
   BriefcaseIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { cn } from '@/utils/cn';
+import { cn } from '../../utils/cn';
 
 interface JabatanFormData {
   nama: string;
   deskripsi: string;
   gaji_pokok: number;
-  tunjangan: number;
 }
 
 const JabatanPage: React.FC = () => {
@@ -41,7 +40,6 @@ const JabatanPage: React.FC = () => {
     nama: '',
     deskripsi: '',
     gaji_pokok: 0,
-    tunjangan: 0,
   });
 
   useEffect(() => {
@@ -63,16 +61,21 @@ const JabatanPage: React.FC = () => {
   const fetchJabatan = async () => {
     try {
       setLoading(true);
-      const response = await jabatanApi.getJabatan({
+      const response = await jabatanApi.getJabatan({ 
         page: currentPage,
-        pageSize: 15,
+        per_page: 15,
         search: searchTerm,
       });
-      setJabatan(response.data);
-      setTotalPages(Math.ceil(response.total / 15));
+      const jabatanData = Array.isArray(response.data) ? response.data : response.data.data || [];
+      setJabatan(jabatanData);
+      setTotalPages(Math.ceil((response.data.total || 0) / 15));
     } catch (error) {
       console.error('Error fetching jabatan:', error);
-      addToast('Gagal memuat data jabatan', 'error');
+      addToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Gagal memuat data jabatan',
+      });
     } finally {
       setLoading(false);
     }
@@ -89,10 +92,18 @@ const JabatanPage: React.FC = () => {
     try {
       if (editingId) {
         await jabatanApi.updateJabatan(editingId, formData);
-        addToast('Jabatan berhasil diperbarui', 'success');
+        addToast({
+          type: 'success',
+          title: 'Berhasil',
+          message: 'Jabatan berhasil diperbarui',
+        });
       } else {
         await jabatanApi.createJabatan(formData);
-        addToast('Jabatan berhasil ditambahkan', 'success');
+        addToast({
+          type: 'success',
+          title: 'Berhasil',
+          message: 'Jabatan berhasil ditambahkan',
+        });
       }
       setShowModal(false);
       setEditingId(null);
@@ -100,17 +111,21 @@ const JabatanPage: React.FC = () => {
       fetchJabatan();
     } catch (error) {
       console.error('Error saving jabatan:', error);
-      addToast('Gagal menyimpan jabatan', 'error');
+      addToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Gagal menyimpan jabatan',
+      });
     }
   };
 
   const handleEdit = (item: Jabatan) => {
     setEditingId(item.id);
     setFormData({
-      nama: item.nama,
+      nama: item.nama_jabatan,
       deskripsi: item.deskripsi || '',
       gaji_pokok: item.gaji_pokok || 0,
-      tunjangan: item.tunjangan || 0,
+
     });
     setShowModal(true);
   };
@@ -119,11 +134,19 @@ const JabatanPage: React.FC = () => {
     if (confirm('Apakah Anda yakin ingin menghapus jabatan ini?')) {
       try {
         await jabatanApi.deleteJabatan(id);
-        addToast('Jabatan berhasil dihapus', 'success');
+        addToast({
+          type: 'success',
+          title: 'Berhasil',
+          message: 'Jabatan berhasil dihapus',
+        });
         fetchJabatan();
       } catch (error) {
         console.error('Error deleting jabatan:', error);
-        addToast('Gagal menghapus jabatan', 'error');
+        addToast({
+          type: 'error',
+          title: 'Error',
+          message: 'Gagal menghapus jabatan',
+        });
       }
     }
   };
@@ -133,7 +156,6 @@ const JabatanPage: React.FC = () => {
       nama: '',
       deskripsi: '',
       gaji_pokok: 0,
-      tunjangan: 0,
     });
   };
 
@@ -214,9 +236,6 @@ const JabatanPage: React.FC = () => {
                     Gaji Pokok
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tunjangan
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Aksi
                   </th>
                 </tr>
@@ -224,7 +243,7 @@ const JabatanPage: React.FC = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-4 text-center">
+                    <td colSpan={4} className="px-6 py-4 text-center">
                       <div className="flex justify-center">
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                       </div>
@@ -232,7 +251,7 @@ const JabatanPage: React.FC = () => {
                   </tr>
                 ) : jabatan.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
                       Tidak ada data jabatan
                     </td>
                   </tr>
@@ -241,7 +260,7 @@ const JabatanPage: React.FC = () => {
                     <tr key={item.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          {item.nama}
+                          {item.nama_jabatan}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -252,11 +271,6 @@ const JabatanPage: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
                           Rp {(item.gaji_pokok || 0).toLocaleString('id-ID')}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          Rp {(item.tunjangan || 0).toLocaleString('id-ID')}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -389,19 +403,6 @@ const JabatanPage: React.FC = () => {
                   value={formData.gaji_pokok}
                   onChange={(e) => setFormData({ ...formData, gaji_pokok: Number(e.target.value) })}
                   placeholder="Masukkan gaji pokok"
-                  min="0"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tunjangan
-                </label>
-                <Input
-                  type="number"
-                  value={formData.tunjangan}
-                  onChange={(e) => setFormData({ ...formData, tunjangan: Number(e.target.value) })}
-                  placeholder="Masukkan tunjangan"
                   min="0"
                 />
               </div>

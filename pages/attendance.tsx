@@ -8,13 +8,13 @@ import {
   FunnelIcon,
   ArrowDownTrayIcon,
 } from '@heroicons/react/24/outline';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import DataTable from '@/components/ui/DataTable';
-import useDataTable from '@/hooks/useDataTable';
-import { Button } from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
-import { Select } from '@/components/ui/Dropdown';
-import { cn } from '@/utils/cn';
+import DashboardLayout from '../components/layouts/DashboardLayout';
+import DataTable from '../components/ui/DataTable';
+import useDataTable from '../hooks/useDataTable';
+import { Button } from '../components/ui/Button';
+import Card from '../components/ui/Card';
+import { Select } from '../components/ui/Dropdown';
+import { cn } from '../utils/cn';
 
 interface AttendanceRecord {
   id: string;
