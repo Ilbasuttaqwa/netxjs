@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 export interface AuthenticatedRequest extends NextApiRequest {
   user?: {
     id: string;
+    userId: number;
     email: string;
     name: string;
     role: string;
@@ -38,6 +39,7 @@ export function withAuth(
       // Add user info to request
       req.user = {
         id: decoded.id,
+        userId: parseInt(decoded.id) || 1,
         email: decoded.email || '',
         name: decoded.name || '',
         role: decoded.role || 'admin'

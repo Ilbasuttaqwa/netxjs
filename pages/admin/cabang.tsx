@@ -23,7 +23,7 @@ interface Cabang {
 
 const CabangPage: React.FC = () => {
   const { user } = useAuth();
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const router = useRouter();
   
   const [cabangList, setCabangList] = useState<Cabang[]>([]);
@@ -79,7 +79,7 @@ const CabangPage: React.FC = () => {
       }, 1000);
     } catch (error) {
       console.error('Error fetching cabang:', error);
-      showToast('Gagal memuat data cabang', 'error');
+      addToast({ type: 'error', title: 'Gagal memuat data cabang' });
       setLoading(false);
     }
   };
@@ -95,7 +95,7 @@ const CabangPage: React.FC = () => {
           updated_at: new Date().toISOString()
         };
         setCabangList(prev => prev.map(c => c.id === editingCabang.id ? updatedCabang : c));
-        showToast('Cabang berhasil diperbarui', 'success');
+        addToast({ type: 'success', title: 'Cabang berhasil diperbarui' });
       } else {
         // Create new cabang
         const newCabang: Cabang = {
@@ -105,7 +105,7 @@ const CabangPage: React.FC = () => {
           updated_at: new Date().toISOString()
         };
         setCabangList(prev => [...prev, newCabang]);
-        showToast('Cabang berhasil ditambahkan', 'success');
+        addToast({ type: 'success', title: 'Cabang berhasil ditambahkan' });
       }
       
       setShowModal(false);
@@ -120,7 +120,7 @@ const CabangPage: React.FC = () => {
       });
     } catch (error) {
       console.error('Error saving cabang:', error);
-      showToast('Gagal menyimpan data cabang', 'error');
+      addToast({ type: 'error', title: 'Gagal menyimpan data cabang' });
     }
   };
 
@@ -141,10 +141,10 @@ const CabangPage: React.FC = () => {
     if (confirm('Apakah Anda yakin ingin menghapus cabang ini?')) {
       try {
         setCabangList(prev => prev.filter(c => c.id !== id));
-        showToast('Cabang berhasil dihapus', 'success');
+        addToast({ type: 'success', title: 'Cabang berhasil dihapus' });
       } catch (error) {
         console.error('Error deleting cabang:', error);
-        showToast('Gagal menghapus cabang', 'error');
+        addToast({ type: 'error', title: 'Gagal menghapus cabang' });
       }
     }
   };
@@ -152,32 +152,32 @@ const CabangPage: React.FC = () => {
   const columns = [
     {
       key: 'kode',
-      label: 'Kode',
+      title: 'Kode',
       sortable: true
     },
     {
       key: 'nama',
-      label: 'Nama Cabang',
+      title: 'Nama Cabang',
       sortable: true
     },
     {
       key: 'alamat',
-      label: 'Alamat',
+      title: 'Alamat',
       sortable: false
     },
     {
       key: 'telepon',
-      label: 'Telepon',
+      title: 'Telepon',
       sortable: false
     },
     {
       key: 'email',
-      label: 'Email',
+      title: 'Email',
       sortable: false
     },
     {
       key: 'status',
-      label: 'Status',
+      title: 'Status',
       sortable: true,
       render: (value: string) => (
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -191,7 +191,7 @@ const CabangPage: React.FC = () => {
     },
     {
       key: 'actions',
-      label: 'Aksi',
+      title: 'Aksi',
       sortable: false,
       render: (_: any, row: Cabang) => (
         <div className="flex space-x-2">

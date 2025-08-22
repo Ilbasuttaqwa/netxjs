@@ -5,7 +5,16 @@ import { useAuth } from '../../contexts/AuthContext';
 import StatsCard from '../../components/dashboard/StatsCard';
 import RecentActivities from '../../components/dashboard/RecentActivities';
 import AttendanceChart from '../../components/dashboard/AttendanceChart';
-import { UserGroupIcon, BuildingOfficeIcon, ClockIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { 
+  UsersIcon, 
+  BuildingOfficeIcon, 
+  CheckCircleIcon, 
+  ExclamationTriangleIcon,
+  XCircleIcon,
+  ChartBarIcon,
+  ComputerDesktopIcon,
+  CalendarDaysIcon
+} from '@heroicons/react/24/outline';
 
 interface DashboardStats {
   totalEmployees: number;
@@ -116,7 +125,7 @@ export default function AdminDashboard() {
           <StatsCard
             title="Total Karyawan"
             value={stats.totalEmployees.toString()}
-            icon={<UserGroupIcon className="h-6 w-6" />}
+            icon={<UsersIcon className="h-6 w-6" />}
             color="info"
           />
           <StatsCard
@@ -128,7 +137,7 @@ export default function AdminDashboard() {
           <StatsCard
             title="Hadir Hari Ini"
             value={stats.todayAttendance.toString()}
-            icon={<ClockIcon className="h-6 w-6" />}
+            icon={<CheckCircleIcon className="h-6 w-6" />}
             color="primary"
           />
           <StatsCard
@@ -144,13 +153,13 @@ export default function AdminDashboard() {
           <StatsCard
             title="Alpha Hari Ini"
             value={stats.absentToday.toString()}
-            icon={<ExclamationTriangleIcon className="h-6 w-6" />}
+            icon={<XCircleIcon className="h-6 w-6" />}
             color="danger"
           />
           <StatsCard
             title="Persentase Kehadiran"
             value={`${stats.attendancePercentage}%`}
-            icon={<ClockIcon className="h-6 w-6" />}
+            icon={<ChartBarIcon className="h-6 w-6" />}
             color="success"
           />
           <div className="bg-white rounded-lg shadow p-6">
@@ -158,20 +167,23 @@ export default function AdminDashboard() {
             <div className="space-y-3">
               <button
                 onClick={() => router.push('/admin/monitoring')}
-                className="w-full text-left px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+                className="w-full text-left px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center gap-3"
               >
+                <ComputerDesktopIcon className="h-5 w-5 text-blue-600" />
                 <span className="text-blue-700 font-medium">Monitoring Fingerprint</span>
               </button>
               <button
                 onClick={() => router.push('/admin/karyawan')}
-                className="w-full text-left px-4 py-2 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
+                className="w-full text-left px-4 py-2 bg-green-50 hover:bg-green-100 rounded-lg transition-colors flex items-center gap-3"
               >
+                <UsersIcon className="h-5 w-5 text-green-600" />
                 <span className="text-green-700 font-medium">Kelola Karyawan</span>
               </button>
               <button
                 onClick={() => router.push('/admin/absensi')}
-                className="w-full text-left px-4 py-2 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors"
+                className="w-full text-left px-4 py-2 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors flex items-center gap-3"
               >
+                <CalendarDaysIcon className="h-5 w-5 text-purple-600" />
                 <span className="text-purple-700 font-medium">Laporan Absensi</span>
               </button>
             </div>

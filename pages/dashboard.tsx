@@ -14,9 +14,11 @@ import {
   UsersIcon,
   BuildingOfficeIcon,
   CheckCircleIcon,
-  ClockIcon,
+  ExclamationTriangleIcon,
   XCircleIcon,
   ChartBarIcon,
+  ComputerDesktopIcon,
+  CalendarDaysIcon,
 } from '@heroicons/react/24/outline';
 
 const DashboardContent: React.FC = () => {
@@ -119,7 +121,7 @@ const DashboardContent: React.FC = () => {
             <StatsCard
               title="Terlambat Hari Ini"
               value={stats?.total_terlambat_hari_ini || 0}
-              icon={<ClockIcon className="h-6 w-6" />}
+              icon={<ExclamationTriangleIcon className="h-6 w-6" />}
               color="warning"
               loading={loadingStats}
             />
@@ -149,20 +151,23 @@ const DashboardContent: React.FC = () => {
                 <div className="space-y-2">
                   <button
                     onClick={() => router.push('/admin/monitoring')}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors flex items-center gap-2"
                   >
+                    <ComputerDesktopIcon className="h-4 w-4 text-gray-600" />
                     Monitoring Fingerprint
                   </button>
                   <button
                     onClick={() => router.push('/admin/karyawan')}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors flex items-center gap-2"
                   >
+                    <UsersIcon className="h-4 w-4 text-gray-600" />
                     Kelola Karyawan
                   </button>
                   <button
                     onClick={() => router.push('/admin/absensi')}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors flex items-center gap-2"
                   >
+                    <CalendarDaysIcon className="h-4 w-4 text-gray-600" />
                     Laporan Absensi
                   </button>
                 </div>

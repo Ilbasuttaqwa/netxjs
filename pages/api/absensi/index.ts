@@ -102,12 +102,12 @@ async function handler(
         
         return res.status(200).json({
           success: true,
-          data: paginatedAbsensi,
-          pagination: {
+          data: {
+            data: paginatedAbsensi,
             current_page: pageNum,
             per_page: limitNum,
             total: filteredAbsensi.length,
-            total_pages: Math.ceil(filteredAbsensi.length / limitNum)
+            last_page: Math.ceil(filteredAbsensi.length / limitNum)
           }
         });
 
@@ -116,6 +116,7 @@ async function handler(
         
         if (!type || !['masuk', 'keluar'].includes(type)) {
           return res.status(400).json({
+            success: false,
             message: 'Type must be either "masuk" or "keluar"'
           });
         }
@@ -132,6 +133,7 @@ async function handler(
           
           if (existingAbsensi) {
             return res.status(400).json({
+              success: false,
               message: 'Already clocked in today'
             });
           }
@@ -172,12 +174,14 @@ async function handler(
           
           if (absensiIndex === -1) {
             return res.status(400).json({
+              success: false,
               message: 'No clock in record found for today'
             });
           }
           
           if (mockAbsensi[absensiIndex].jam_keluar) {
             return res.status(400).json({
+              success: false,
               message: 'Already clocked out today'
             });
           }
@@ -198,13 +202,18 @@ async function handler(
         }
 
       default:
-        return res.status(405).json({ message: 'Method not allowed' });
+        return res.status(405).json({ 
+          success: false,
+          message: 'Method not allowed' 
+        });
     }
 
   } catch (error) {
     console.error('Absensi API error:', error);
     return res.status(500).json({
-      message: 'Internal server error'
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? (error as Error).message : undefined
     });
   }
 }

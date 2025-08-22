@@ -11,9 +11,10 @@ const mockKaryawan = [
     jabatan: { nama: 'Manager' },
     cabang_id: 1,
     cabang: { nama: 'Cabang Utama' },
-    no_telp: '081234567890',
+    telepon: '081234567890',
     alamat: 'Jl. Contoh No. 123',
     tanggal_masuk: '2023-01-15',
+    fingerprint_id: 'FP001',
     status: 'aktif',
     created_at: '2023-01-15T00:00:00.000Z',
     updated_at: '2023-01-15T00:00:00.000Z'
@@ -26,9 +27,10 @@ const mockKaryawan = [
     jabatan: { nama: 'Staff' },
     cabang_id: 1,
     cabang: { nama: 'Cabang Utama' },
-    no_telp: '081234567891',
+    telepon: '081234567891',
     alamat: 'Jl. Contoh No. 124',
     tanggal_masuk: '2023-02-01',
+    fingerprint_id: 'FP002',
     status: 'aktif',
     created_at: '2023-02-01T00:00:00.000Z',
     updated_at: '2023-02-01T00:00:00.000Z'
@@ -67,7 +69,7 @@ async function handler(
           });
         }
         
-        const { nama, email, jabatan_id, cabang_id, no_telp, alamat, tanggal_masuk, status } = req.body;
+        const { nama, email, jabatan_id, cabang_id, telepon, alamat, tanggal_masuk, finger_id, status } = req.body;
         
         // Check if email already exists (excluding current karyawan)
         if (email) {
@@ -86,9 +88,10 @@ async function handler(
           email: email || mockKaryawan[karyawanIndex].email,
           jabatan_id: jabatan_id ? parseInt(jabatan_id) : mockKaryawan[karyawanIndex].jabatan_id,
           cabang_id: cabang_id ? parseInt(cabang_id) : mockKaryawan[karyawanIndex].cabang_id,
-          no_telp: no_telp !== undefined ? no_telp : mockKaryawan[karyawanIndex].no_telp,
+          telepon: telepon !== undefined ? telepon : mockKaryawan[karyawanIndex].telepon,
           alamat: alamat !== undefined ? alamat : mockKaryawan[karyawanIndex].alamat,
           tanggal_masuk: tanggal_masuk || mockKaryawan[karyawanIndex].tanggal_masuk,
+          fingerprint_id: finger_id !== undefined ? finger_id : mockKaryawan[karyawanIndex].fingerprint_id,
           status: status || mockKaryawan[karyawanIndex].status,
           updated_at: new Date().toISOString()
         };

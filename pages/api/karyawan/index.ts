@@ -11,9 +11,10 @@ const mockKaryawan = [
     jabatan: { nama: 'Manager' },
     cabang_id: 1,
     cabang: { nama: 'Cabang Utama' },
-    no_telp: '081234567890',
+    telepon: '081234567890',
     alamat: 'Jl. Contoh No. 123',
     tanggal_masuk: '2023-01-15',
+    fingerprint_id: 'FP001',
     status: 'aktif',
     created_at: '2023-01-15T00:00:00.000Z',
     updated_at: '2023-01-15T00:00:00.000Z'
@@ -26,9 +27,10 @@ const mockKaryawan = [
     jabatan: { nama: 'Staff' },
     cabang_id: 1,
     cabang: { nama: 'Cabang Utama' },
-    no_telp: '081234567891',
+    telepon: '081234567891',
     alamat: 'Jl. Contoh No. 124',
     tanggal_masuk: '2023-02-01',
+    fingerprint_id: 'FP002',
     status: 'aktif',
     created_at: '2023-02-01T00:00:00.000Z',
     updated_at: '2023-02-01T00:00:00.000Z'
@@ -88,7 +90,7 @@ async function handler(
         });
 
       case 'POST':
-        const { nama, email, jabatan_id: jId, cabang_id: cId, no_telp, alamat, tanggal_masuk } = req.body;
+        const { nama, email, jabatan_id: jId, cabang_id: cId, telepon, alamat, tanggal_masuk, finger_id, status } = req.body;
         
         if (!nama || !email || !jId || !cId) {
           return res.status(400).json({
@@ -112,10 +114,11 @@ async function handler(
           jabatan: { nama: 'Staff' }, // Mock jabatan
           cabang_id: parseInt(cId),
           cabang: { nama: 'Cabang Utama' }, // Mock cabang
-          no_telp: no_telp || '',
+          telepon: telepon || '',
           alamat: alamat || '',
           tanggal_masuk: tanggal_masuk || new Date().toISOString().split('T')[0],
-          status: 'aktif',
+          fingerprint_id: finger_id || null,
+          status: status || 'aktif',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         };

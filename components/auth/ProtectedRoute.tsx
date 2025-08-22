@@ -58,7 +58,7 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
     return null
   }
 
-  if (requireAdmin && session.user?.email !== 'admin@afms.com') {
+  if (requireAdmin && user.email !== 'admin@afms.com') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

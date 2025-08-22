@@ -216,3 +216,47 @@ export interface FilterOptions {
   sort_by?: string;
   sort_direction?: 'asc' | 'desc';
 }
+
+// Bon/Advance types
+export interface Bon {
+  id: number;
+  karyawan_id: number;
+  jumlah_bon: number;
+  sisa_bon: number;
+  cicilan_per_bulan: number;
+  tanggal_pengajuan: string;
+  tanggal_persetujuan?: string;
+  status: 'pending' | 'approved' | 'rejected' | 'completed' | 'cancelled';
+  keterangan?: string;
+  approved_by?: number;
+  created_at: string;
+  updated_at: string;
+  karyawan?: Karyawan;
+  approver?: User;
+}
+
+export interface BonCicilan {
+  id: number;
+  bon_id: number;
+  periode: string; // YYYY-MM format
+  jumlah_cicilan: number;
+  tanggal_potong: string;
+  status: 'pending' | 'processed' | 'cancelled';
+  created_at: string;
+  updated_at: string;
+  bon?: Bon;
+}
+
+export interface BonFormData {
+  karyawan_id: number;
+  jumlah_bon: number;
+  cicilan_per_bulan: number;
+  keterangan?: string;
+}
+
+export interface BonStats {
+  total_bon_aktif: number;
+  total_nilai_bon: number;
+  total_cicilan_bulan_ini: number;
+  total_karyawan_bon: number;
+}

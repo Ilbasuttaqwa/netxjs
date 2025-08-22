@@ -41,6 +41,7 @@ interface EmployeeAttendance {
     total_early_leave_minutes: number;
   };
   deductions: PayrollDeduction[];
+  bon_deduction: number;
   total_deduction: number;
   net_salary: number;
 }
@@ -309,6 +310,23 @@ async function calculateEmployeeDeductions(
     }
   }
 
+  // Calculate bon deductions
+  const bonDeduction = await calculateBonDeduction(karyawanId, period);
+  if (bonDeduction > 0) {
+    deductions.push({
+      id: Date.now() + 4,
+      karyawan_id: karyawanId,
+      period,
+      rule_id: 999, // Special rule ID for bon
+      rule_name: 'Cicilan Bon Karyawan',
+      violation_count: 1,
+      deduction_amount: bonDeduction,
+      description: `Cicilan bon bulan ${period}`,
+      created_at: new Date().toISOString(),
+    });
+    totalDeduction += bonDeduction;
+  }
+
   return {
     karyawan_id: karyawanId,
     name: employee.name,
@@ -316,6 +334,7 @@ async function calculateEmployeeDeductions(
     basic_salary: employee.basic_salary,
     attendance_summary: attendanceSummary,
     deductions,
+    bon_deduction: bonDeduction,
     total_deduction: totalDeduction,
     net_salary: employee.basic_salary - totalDeduction,
   };
@@ -373,8 +392,39 @@ function calculateLateDeduction(
   };
 }
 
+async function calculateBonDeduction(karyawanId: number, period: string): Promise<number> {
+  try {
+    // In real implementation, this would fetch from database
+    // For now, we'll use mock data that simulates approved bon with active installments
+    const mockActiveBon = [
+      { karyawan_id: 1, cicilan_per_bulan: 500000, status: 'approved' },
+      { karyawan_id: 2, cicilan_per_bulan: 300000, status: 'approved' },
+    ];
+    
+    const employeeBon = mockActiveBon.find(bon => 
+      bon.karyawan_id === karyawanId && bon.status === 'approved'
+    );
+    
+    return employeeBon ? employeeBon.cicilan_per_bulan : 0;
+  } catch (error) {
+    console.error('Error calculating bon deduction:', error);
+    return 0;
+  }
+}
+
 async function processPayrollDeductions(period: string) {
   const allEmployees = await calculateAllEmployeesDeductions(period);
+  
+  // Process bon installments (mock)
+  for (const employee of allEmployees) {
+    if (employee.bon_deduction > 0) {
+      // In real implementation, this would:
+      // 1. Create bon_cicilan record
+      // 2. Update bon sisa_bon amount
+      // 3. Mark bon as completed if fully paid
+      console.log(`Processing bon installment for employee ${employee.karyawan_id}: ${employee.bon_deduction}`);
+    }
+  }
   
   // In real implementation, save to database
   console.log(`Processing payroll deductions for period ${period}:`);

@@ -39,7 +39,11 @@ api.interceptors.response.use(
       if (typeof window !== 'undefined') {
         localStorage.removeItem('auth_token');
         localStorage.removeItem('auth_user');
-        window.location.href = '/login';
+        // Use Next.js router for navigation instead of window.location
+        const { pathname } = window.location;
+        if (pathname !== '/login') {
+          window.location.replace('/login');
+        }
       }
     }
     return Promise.reject(error);
