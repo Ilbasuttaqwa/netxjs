@@ -30,10 +30,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             type={type}
             id={inputId}
             className={cn(
-              'form-input',
-              leftIcon && 'pl-10',
-              rightIcon && 'pr-10',
-              error && 'border-danger-300 focus:border-danger-500 focus:ring-danger-500',
+              'form-input-modern',
+              leftIcon && 'pl-12',
+              rightIcon && 'pr-12',
+              error && 'border-red-400 focus:border-red-500 focus:ring-red-500 shadow-glow-rose',
+              'focus:shadow-glow transition-all duration-300',
               className
             )}
             ref={ref}

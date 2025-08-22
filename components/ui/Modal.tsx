@@ -81,23 +81,23 @@ const Modal: React.FC<ModalProps> = ({
         <div
           ref={modalRef}
           className={cn(
-            'relative w-full transform overflow-hidden rounded-lg bg-white shadow-xl transition-all animate-scale-in',
+            'relative w-full transform overflow-hidden rounded-2xl bg-white border-2 border-slate-200 shadow-4xl transition-all animate-scale-in backdrop-blur-sm',
             getSizeClasses(),
             className
           )}
         >
           {/* Header */}
           {(title || showCloseButton) && (
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between px-8 py-6 border-b-2 border-slate-200 bg-gradient-to-r from-violet-50 to-indigo-50">
               {title && (
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-xl font-bold text-slate-800 tracking-tight">
                   {title}
                 </h3>
               )}
               {showCloseButton && (
                 <button
                   type="button"
-                  className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                  className="rounded-xl bg-white/80 p-2 text-slate-400 hover:text-slate-600 hover:bg-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all duration-200 shadow-medium"
                   onClick={onClose}
                 >
                   <span className="sr-only">Close</span>
@@ -108,7 +108,7 @@ const Modal: React.FC<ModalProps> = ({
           )}
           
           {/* Content */}
-          <div className="px-6 py-4">
+          <div className="px-8 py-6 bg-gradient-to-br from-white to-slate-50">
             {children}
           </div>
         </div>

@@ -610,7 +610,7 @@ const RuleModal: React.FC<{
             <select
               value={formData.type}
               onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
+              className="form-select-modern"
               required
             >
               <option value="deduction">Potongan</option>
@@ -686,7 +686,7 @@ const RuleModal: React.FC<{
           <textarea
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full border border-gray-300 rounded-md px-3 py-2"
+            className="form-textarea-modern"
             rows={3}
           />
         </div>

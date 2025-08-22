@@ -158,11 +158,11 @@ export const Select: React.FC<SelectProps> = ({
   const trigger = (
     <div
       className={cn(
-        'flex items-center justify-between w-full px-3 py-2 text-left bg-white border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
+        'flex items-center justify-between w-full px-4 py-3 text-left bg-white border-2 rounded-xl shadow-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 transition-all duration-300',
         error
-          ? 'border-red-300 focus:border-red-500'
-          : 'border-gray-300 focus:border-primary-500',
-        disabled && 'bg-gray-50 cursor-not-allowed',
+          ? 'border-red-400 focus:border-red-500 shadow-glow-rose'
+          : 'border-slate-300 focus:border-violet-500 hover:border-violet-400 focus:shadow-glow',
+        disabled && 'bg-gray-50 cursor-not-allowed opacity-60',
         className
       )}
     >
