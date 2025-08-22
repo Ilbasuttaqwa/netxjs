@@ -75,10 +75,10 @@ export default async function handler(
     }
 
     // Get total count
-    const total = await prisma.Absensi.count({ where: whereClause });
+    const total = await prisma.absensi.count({ where: whereClause });
 
     // Get paginated data
-    const attendance = await prisma.Absensi.findMany({
+    const attendance = await prisma.absensi.findMany({
       where: whereClause,
       include: {
         user: {

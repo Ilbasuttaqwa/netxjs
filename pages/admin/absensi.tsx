@@ -142,8 +142,8 @@ const AbsensiPage: React.FC = () => {
             id: 3,
             karyawan_id: 1,
             tanggal: '2024-01-14',
-            jam_masuk: null,
-            jam_keluar: null,
+            jam_masuk: undefined,
+            jam_keluar: undefined,
             status: 'alpha',
             keterangan: 'Tidak hadir tanpa keterangan',
             created_at: '2024-01-14 00:00:00',
@@ -246,7 +246,7 @@ const AbsensiPage: React.FC = () => {
     try {
       setExporting(true);
       const response = await absensiApi.export(filterData);
-      if (response.success) {
+      if (response.success && response.data) {
         // Create download link
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
@@ -330,7 +330,7 @@ const AbsensiPage: React.FC = () => {
     });
   };
 
-  const formatTime = (timeString: string | null) => {
+  const formatTime = (timeString: string | null | undefined) => {
     if (!timeString) return '-';
     return timeString.substring(0, 5); // HH:MM
   };

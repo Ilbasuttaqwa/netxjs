@@ -1,6 +1,5 @@
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Loading from '../ui/Loading'
 
 interface ProtectedRouteProps {
@@ -9,25 +8,45 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children, requireAdmin = false }: ProtectedRouteProps) {
-  const { data: session, status } = useSession()
+  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<any>(null)
   const router = useRouter()
 
   useEffect(() => {
-    if (status === 'loading') return // Still loading
+    // Add a small delay to prevent hydration issues
+    const checkAuth = () => {
+      const token = localStorage.getItem('auth_token')
+      const userData = localStorage.getItem('auth_user')
+      
+      if (!token || !userData) {
+        router.replace('/login')
+        return
+      }
+
+      try {
+        const parsedUser = JSON.parse(userData)
+        setUser(parsedUser)
+        
+        // Check admin requirement
+        if (requireAdmin && parsedUser.role !== 'admin') {
+          router.replace('/dashboard')
+          return
+        }
+        
+        setLoading(false)
+      } catch (error) {
+        localStorage.removeItem('auth_token')
+        localStorage.removeItem('auth_user')
+        router.replace('/login')
+      }
+    }
     
-    if (!session) {
-      router.push('/login')
-      return
-    }
+    // Use setTimeout to avoid hydration issues
+    const timer = setTimeout(checkAuth, 100)
+    return () => clearTimeout(timer)
+  }, [router, requireAdmin])
 
-    // Check admin requirement
-    if (requireAdmin && session.user?.email !== 'admin@afms.com') {
-      router.push('/dashboard')
-      return
-    }
-  }, [session, status, router, requireAdmin])
-
-  if (status === 'loading') {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loading />
@@ -35,7 +54,7 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
     )
   }
 
-  if (!session) {
+  if (!user) {
     return null
   }
 

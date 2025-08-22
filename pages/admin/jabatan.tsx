@@ -66,9 +66,9 @@ const JabatanPage: React.FC = () => {
         per_page: 15,
         search: searchTerm,
       });
-      const jabatanData = Array.isArray(response.data) ? response.data : response.data.data || [];
+      const jabatanData = Array.isArray(response.data) ? response.data : response.data?.data || [];
       setJabatan(jabatanData);
-      setTotalPages(Math.ceil((response.data.total || 0) / 15));
+      setTotalPages(Math.ceil((response.data?.total || 0) / 15));
     } catch (error) {
       console.error('Error fetching jabatan:', error);
       addToast({

@@ -47,7 +47,10 @@ const RealtimeAttendance: React.FC = () => {
     try {
       setConnectionStatus('connecting');
       
-      const eventSource = new EventSource('/api/fingerprint/realtime');
+      // Get token from localStorage
+      const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+      const url = token ? `/api/fingerprint/realtime?token=${encodeURIComponent(token)}` : '/api/fingerprint/realtime';
+      const eventSource = new EventSource(url);
       eventSourceRef.current = eventSource;
 
       eventSource.onopen = () => {

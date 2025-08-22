@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { dashboardApi } from '../../lib/api';
 import { useToast } from '../../contexts/ToastContext';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   ClockIcon,
   CheckCircleIcon,
@@ -20,10 +21,17 @@ const RecentActivities: React.FC = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const { addToast } = useToast();
+  const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    fetchActivities();
-  }, []);
+    if (isAuthenticated && user) {
+      // Add small delay to ensure token is properly set
+      const timer = setTimeout(() => {
+        fetchActivities();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated, user]);
 
   const fetchActivities = async () => {
     try {
@@ -131,7 +139,7 @@ const RecentActivities: React.FC = () => {
         </button>
       </div>
       
-      {loading ? (
+      {loading || !isAuthenticated ? (
         <div className="space-y-4">
           {[...Array(5)].map((_, index) => (
             <div key={index} className="flex items-center space-x-3 animate-pulse">

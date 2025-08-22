@@ -349,29 +349,28 @@ export class RulesEngine implements EventHandler {
         type,
         reason,
         appliedDate: new Date(),
-        status: 'applied',
       },
     });
 
-    return { deductionId: deduction.id, amount: deduction.amount };
+    return { deductionId: deduction.id, amount: Number(deduction.amount) };
   }
 
-  // Apply bonus
+  // Apply bonus (using negative deduction to represent bonus)
   private async applyBonus(parameters: any, context: RuleExecutionContext): Promise<any> {
     const { amount, type, reason } = parameters;
     
-    const bonus = await this.prisma.payrollBonuses.create({
+    // Create a negative deduction to represent a bonus
+    const bonus = await this.prisma.payrollDeductions.create({
       data: {
         employeeId: context.employeeId,
-        amount: parseFloat(amount),
-        type,
-        reason,
+        amount: -Math.abs(parseFloat(amount)), // Negative amount for bonus
+        type: `bonus_${type}`,
+        reason: `Bonus: ${reason}`,
         appliedDate: new Date(),
-        status: 'applied',
       },
     });
 
-    return { bonusId: bonus.id, amount: bonus.amount };
+    return { bonusId: bonus.id, amount: Math.abs(Number(bonus.amount)) };
   }
 
   // Send notification
@@ -401,14 +400,23 @@ export class RulesEngine implements EventHandler {
   private async requireApproval(parameters: any, context: RuleExecutionContext): Promise<any> {
     const { approverRole, reason, data } = parameters;
     
-    const approval = await this.prisma.approvalRequests.create({
+    // Create an approval request event
+    const approval = await this.prisma.event.create({
       data: {
-        employeeId: context.employeeId,
-        approverRole,
-        reason,
-        requestData: JSON.stringify(data),
-        status: 'pending',
-        createdAt: new Date(),
+        eventType: 'approval_required',
+        aggregateId: context.employeeId,
+        aggregateType: 'employee',
+        eventData: {
+          approverRole,
+          reason,
+          requestData: data,
+          status: 'pending'
+        },
+        metadata: {
+            ruleContext: JSON.parse(JSON.stringify(context))
+          },
+        version: 1,
+        userId: context.employeeId,
       },
     });
 
@@ -475,18 +483,28 @@ export class RulesEngine implements EventHandler {
     success: boolean
   ): Promise<void> {
     try {
-      await this.prisma.ruleExecutionLogs.create({
+      await this.prisma.event.create({
         data: {
-          ruleId,
-          employeeId: context.employeeId,
-          executionContext: JSON.stringify(context),
-          executedActions: JSON.stringify(actions),
-          success,
-          executedAt: new Date(),
+          eventType: 'rule_execution',
+          aggregateId: ruleId,
+          aggregateType: 'rule',
+          eventData: {
+            ruleId,
+            employeeId: context.employeeId,
+            executionContext: JSON.parse(JSON.stringify(context)),
+            executedActions: JSON.parse(JSON.stringify(actions)),
+            success,
+            executedAt: new Date().toISOString(),
+          },
+          metadata: {
+            category: 'rules_engine'
+          },
+          version: 1,
+          userId: context.employeeId,
         },
       });
     } catch (error) {
-      this.logger.error('Failed to log rule execution', error, { ruleId });
+      this.logger.error('Failed to log rule execution', error as Error, { ruleId });
     }
   }
 
@@ -516,14 +534,31 @@ export class RulesEngine implements EventHandler {
 
     try {
       const [totalExecutions, successfulExecutions, failedExecutions] = await Promise.all([
-        this.prisma.ruleExecutionLogs.count({
-          where: { executedAt: { gte: startDate } }
+        this.prisma.event.count({
+          where: { 
+            eventType: 'rule_execution',
+            timestamp: { gte: startDate } 
+          }
         }),
-        this.prisma.ruleExecutionLogs.count({
-          where: { executedAt: { gte: startDate }, success: true }
+        this.prisma.event.count({
+          where: { 
+            eventType: 'rule_execution',
+            timestamp: { gte: startDate },
+            eventData: {
+              path: ['success'],
+              equals: true
+            }
+          }
         }),
-        this.prisma.ruleExecutionLogs.count({
-          where: { executedAt: { gte: startDate }, success: false }
+        this.prisma.event.count({
+          where: { 
+            eventType: 'rule_execution',
+            timestamp: { gte: startDate },
+            eventData: {
+              path: ['success'],
+              equals: false
+            }
+          }
         }),
       ]);
 
@@ -535,7 +570,7 @@ export class RulesEngine implements EventHandler {
         successRate: totalExecutions > 0 ? (successfulExecutions / totalExecutions) * 100 : 0,
       };
     } catch (error) {
-      this.logger.error('Failed to get rule execution statistics', error);
+      this.logger.error('Failed to get rule execution statistics', error as Error);
       return null;
     }
   }

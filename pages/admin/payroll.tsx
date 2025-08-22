@@ -83,7 +83,7 @@ const PayrollPage: React.FC = () => {
       const response = await payrollApi.getDeductions(selectedPeriod);
       
       if (response.success) {
-        setEmployees(response.data);
+        setEmployees(response.data || []);
       } else {
         throw new Error(response.message);
       }

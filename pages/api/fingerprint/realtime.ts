@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { requireRole } from '../../../middleware/auth';
+import { withAuth, AuthenticatedRequest } from '../../../lib/auth-middleware';
 import { ApiResponse } from '../../../types';
 
 interface FingerprintRealtimeData {
@@ -26,7 +26,7 @@ interface AttendanceRecord {
 let realtimeRecords: AttendanceRecord[] = [];
 let connectedClients: any[] = [];
 
-const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse<any>>) => {
+const handler = async (req: AuthenticatedRequest, res: NextApiResponse<ApiResponse<any>>) => {
   if (req.method === 'GET') {
     // SSE endpoint untuk realtime monitoring
     res.writeHead(200, {
@@ -218,4 +218,15 @@ setInterval(() => {
   }
 }, 10000); // Send mock data every 10 seconds
 
-export default requireRole(['admin'])(handler);
+// Wrapper to handle token from query parameter for SSE
+const wrappedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+  // For SSE, check token from query parameter if not in header
+  if (!req.headers.authorization && req.query.token) {
+    req.headers.authorization = `Bearer ${req.query.token}`;
+  }
+  
+  // Call the authenticated handler
+  return withAuth(handler)(req, res);
+};
+
+export default wrappedHandler;

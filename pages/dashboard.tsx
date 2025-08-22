@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { DashboardStats } from '../types';
 import { dashboardApi } from '../lib/api';
 import { useToast } from '../contexts/ToastContext';
+import { useAuth } from '../contexts/AuthContext';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import DashboardLayout from '../components/layouts/DashboardLayout';
 import StatsCard from '../components/dashboard/StatsCard';
@@ -20,17 +20,17 @@ import {
 } from '@heroicons/react/24/outline';
 
 const DashboardContent: React.FC = () => {
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const router = useRouter();
   const { addToast } = useToast();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
-    if (session) {
+    if (user) {
       fetchStats();
     }
-  }, [session]);
+  }, [user]);
 
   const fetchStats = async () => {
     try {
@@ -68,10 +68,10 @@ const DashboardContent: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Selamat datang, {session?.user?.name}!
+                  Selamat datang, {user?.name}!
                 </h1>
                 <p className="text-gray-600 mt-1">
-                  {session?.user?.role === 'admin' ? 'Administrator' : session?.user?.jabatan?.nama_jabatan} - {session?.user?.cabang?.nama_cabang}
+                  {user?.role === 'admin' ? 'Administrator' : user?.jabatan?.nama_jabatan} - {user?.cabang?.nama_cabang}
                 </p>
               </div>
               <div className="text-right">
@@ -126,7 +126,7 @@ const DashboardContent: React.FC = () => {
           </div>
 
           {/* Additional Stats for Admin */}
-          {session?.user?.role === 'admin' && (
+          {user?.role === 'admin' && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <StatsCard
                 title="Alpha Hari Ini"

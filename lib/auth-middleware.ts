@@ -3,10 +3,10 @@ import jwt from 'jsonwebtoken';
 
 export interface AuthenticatedRequest extends NextApiRequest {
   user?: {
-    userId: number;
+    id: string;
     email: string;
+    name: string;
     role: string;
-    cabang_id: number;
   };
 }
 
@@ -16,27 +16,31 @@ export function withAuth(
 ) {
   return async (req: AuthenticatedRequest, res: NextApiResponse) => {
     try {
-      // Get token from cookie or Authorization header
-      const token = req.cookies['auth-token'] || 
-                   (req.headers.authorization?.startsWith('Bearer ') 
-                     ? req.headers.authorization.slice(7) 
-                     : null);
-
-      if (!token) {
+      // Get token from Authorization header
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({
           message: 'No token provided'
         });
       }
 
+      const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+      
       // Verify JWT token
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any;
       
+      if (!decoded || !decoded.id) {
+        return res.status(401).json({
+          message: 'Invalid token'
+        });
+      }
+
       // Add user info to request
       req.user = {
-        userId: decoded.userId,
-        email: decoded.email,
-        role: decoded.role,
-        cabang_id: decoded.cabang_id
+        id: decoded.id,
+        email: decoded.email || '',
+        name: decoded.name || '',
+        role: decoded.role || 'admin'
       };
 
       // Check role if required

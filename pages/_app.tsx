@@ -1,6 +1,5 @@
 import type { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { SessionProvider } from 'next-auth/react';
 import { AuthProvider } from '../contexts/AuthContext';
 import { ToastProvider } from '../contexts/ToastContext';
 import '../styles/globals.css';
@@ -20,7 +19,7 @@ const queryClient = new QueryClient({
 
 export default function App({ 
   Component, 
-  pageProps: { session, ...pageProps } 
+  pageProps 
 }: AppProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -47,15 +46,13 @@ export default function App({
         />
       </Head>
       <QueryClientProvider client={queryClient}>
-        <SessionProvider session={session}>
-          <ToastProvider>
-            <AuthProvider>
-              <div className="min-h-screen bg-gray-50">
-                <Component {...pageProps} />
-              </div>
-            </AuthProvider>
-          </ToastProvider>
-        </SessionProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <div className="min-h-screen bg-gray-50">
+              <Component {...pageProps} />
+            </div>
+          </AuthProvider>
+        </ToastProvider>
       </QueryClientProvider>
     </>
   );

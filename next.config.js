@@ -3,11 +3,17 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   output: 'standalone',
+  experimental: {
+    outputFileTracingRoot: __dirname,
+  },
   typescript: {
     ignoreBuildErrors: process.env.SKIP_TYPE_CHECK === 'true',
   },
   eslint: {
     ignoreDuringBuilds: process.env.SKIP_TYPE_CHECK === 'true',
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
   },
 
   env: {

@@ -13,6 +13,7 @@ import {
 } from 'chart.js';
 import { dashboardApi } from '../../lib/api';
 import { useToast } from '../../contexts/ToastContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 ChartJS.register(
   CategoryScale,
@@ -40,10 +41,17 @@ const AttendanceChart: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState('7days');
   const { addToast } = useToast();
+  const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    fetchChartData();
-  }, [period]);
+    if (isAuthenticated && user) {
+      // Add small delay to ensure token is properly set
+      const timer = setTimeout(() => {
+        fetchChartData();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [period, isAuthenticated, user]);
 
   const fetchChartData = async () => {
     try {
@@ -163,7 +171,7 @@ const AttendanceChart: React.FC = () => {
       </div>
       
       <div className="h-80">
-        {loading ? (
+        {loading || !isAuthenticated ? (
           <div className="flex items-center justify-center h-full">
             <div className="loading-spinner w-8 h-8"></div>
           </div>

@@ -59,17 +59,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Load user from localStorage on mount
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    const user = localStorage.getItem('auth_user');
+    // Check if we're in browser environment
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('auth_token');
+      const user = localStorage.getItem('auth_user');
 
-    if (token && user) {
-      try {
-        const parsedUser = JSON.parse(user);
-        dispatch({ type: 'SET_USER', payload: { user: parsedUser, token } });
-      } catch (error) {
-        console.error('Error parsing stored user:', error);
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('auth_user');
+      if (token && user) {
+        try {
+          const parsedUser = JSON.parse(user);
+          dispatch({ type: 'SET_USER', payload: { user: parsedUser, token } });
+        } catch (error) {
+          console.error('Error parsing stored user:', error);
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('auth_user');
+          dispatch({ type: 'SET_LOADING', payload: false });
+        }
+      } else {
         dispatch({ type: 'SET_LOADING', payload: false });
       }
     } else {
@@ -87,8 +92,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { user, token } = response.data;
         
         // Store in localStorage
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('auth_user', JSON.stringify(user));
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('auth_token', token);
+          localStorage.setItem('auth_user', JSON.stringify(user));
+        }
         
         dispatch({ type: 'SET_USER', payload: { user, token } });
         
@@ -120,8 +127,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     // Clear localStorage
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+    }
     
     dispatch({ type: 'CLEAR_USER' });
     
@@ -142,7 +151,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       if (response.success && response.data) {
         const user = response.data;
-        localStorage.setItem('auth_user', JSON.stringify(user));
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('auth_user', JSON.stringify(user));
+        }
         dispatch({ type: 'SET_USER', payload: { user, token: state.token } });
       }
     } catch (error) {

@@ -93,7 +93,7 @@ const AbsensiUserPage: React.FC = () => {
           karyawan_id: user?.id || 1,
           tanggal: today,
           jam_masuk: '08:00:00',
-          jam_keluar: null,
+          jam_keluar: undefined,
           status: 'hadir',
           keterangan: '',
           created_at: '2024-01-15 08:00:00',
@@ -140,8 +140,8 @@ const AbsensiUserPage: React.FC = () => {
             id: 3,
             karyawan_id: user?.id || 1,
             tanggal: '2024-01-13',
-            jam_masuk: null,
-            jam_keluar: null,
+            jam_masuk: undefined,
+            jam_keluar: undefined,
             status: 'alpha',
             keterangan: 'Tidak hadir tanpa keterangan',
             created_at: '2024-01-13 00:00:00',
@@ -293,7 +293,7 @@ const AbsensiUserPage: React.FC = () => {
     });
   };
 
-  const formatTime = (timeString: string | null) => {
+  const formatTime = (timeString: string | null | undefined) => {
     if (!timeString) return '-';
     return timeString.substring(0, 5); // HH:MM
   };

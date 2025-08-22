@@ -65,7 +65,7 @@ export class WebSocketServer implements EventHandler {
     try {
       await this.broadcastEvent(event);
     } catch (error) {
-      this.logger.error('Failed to broadcast event via WebSocket', error, {
+      this.logger.error('Failed to broadcast event via WebSocket', error as Error, {
         eventId: event.id,
         eventType: event.eventType,
       });
