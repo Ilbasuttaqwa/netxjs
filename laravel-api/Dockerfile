@@ -10,22 +10,23 @@ RUN apk add --no-cache \
     curl \
     libpng-dev \
     libxml2-dev \
+    libpq-dev \
     zip \
     unzip \
-    mysql-client \
+    postgresql-client \
     nginx \
     supervisor
 
 # Install PHP extensions
 RUN docker-php-ext-install \
-    pdo_mysql \
+    pdo_pgsql \
+    pgsql \
     mbstring \
     exif \
     pcntl \
     bcmath \
     gd \
-    soap \
-    curl
+    soap
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
