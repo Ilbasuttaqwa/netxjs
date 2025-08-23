@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth, AuthenticatedRequest } from '../../../lib/auth-middleware';
 import { ApiResponse } from '../../../types';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 interface FingerprintRealtimeData {
   device_id: string;
@@ -22,8 +25,7 @@ interface AttendanceRecord {
   created_at: string;
 }
 
-// Mock data untuk simulasi
-let realtimeRecords: AttendanceRecord[] = [];
+// Real-time connections
 let connectedClients: any[] = [];
 
 const handler = async (req: AuthenticatedRequest, res: NextApiResponse<ApiResponse<any>>) => {
@@ -88,18 +90,37 @@ const handler = async (req: AuthenticatedRequest, res: NextApiResponse<ApiRespon
         created_at: new Date().toISOString(),
       };
 
-      // Store record (in real implementation, save to database)
-      realtimeRecords.push(attendanceRecord);
-      
-      // Keep only last 100 records in memory
-      if (realtimeRecords.length > 100) {
-        realtimeRecords = realtimeRecords.slice(-100);
-      }
+      // Save to database
+      const savedRecord = await prisma.attendance.create({
+        data: {
+          karyawan_id: attendanceRecord.karyawan_id,
+          device_id: attendanceRecord.device_id,
+          timestamp: new Date(attendanceRecord.timestamp),
+          type: attendanceRecord.type,
+          verify_method: attendanceRecord.verify_method,
+          status: attendanceRecord.status,
+        },
+        include: {
+          karyawan: {
+            select: {
+              id: true,
+              nama: true,
+              nip: true,
+              cabang: {
+                select: {
+                  id: true,
+                  nama: true,
+                }
+              }
+            }
+          }
+        }
+      });
 
       // Broadcast to all connected clients
       broadcastToClients({
         type: 'attendance_record',
-        data: attendanceRecord,
+        data: savedRecord,
       });
 
       console.log('New attendance record:', attendanceRecord);
@@ -115,12 +136,14 @@ const handler = async (req: AuthenticatedRequest, res: NextApiResponse<ApiRespon
         success: false,
         message: 'Gagal memproses data fingerprint',
       });
+    } finally {
+      await prisma.$disconnect();
     }
   }
 
   if (req.method === 'DELETE') {
-    // Clear all records (for testing)
-    realtimeRecords = [];
+    // Clear all records (for testing - use with caution in production)
+    await prisma.attendance.deleteMany({});
     broadcastToClients({
       type: 'records_cleared',
       data: null,
@@ -185,38 +208,8 @@ function broadcastToClients(message: any) {
   });
 }
 
-// Simulate fingerprint data for testing
-setInterval(() => {
-  if (connectedClients.length > 0) {
-    const mockData: FingerprintRealtimeData = {
-      device_id: 'FP001',
-      user_id: Math.floor(Math.random() * 10 + 1).toString(),
-      timestamp: new Date().toISOString(),
-      verify_type: Math.random() > 0.5 ? 1 : 15,
-      in_out_mode: Math.random() > 0.5 ? 0 : 1,
-      work_code: 0,
-    };
-    
-    // Process mock data
-    const attendanceRecord: AttendanceRecord = {
-      id: Date.now(),
-      karyawan_id: parseInt(mockData.user_id),
-      device_id: mockData.device_id,
-      timestamp: mockData.timestamp,
-      type: mockData.in_out_mode === 0 ? 'masuk' : 'keluar',
-      verify_method: getVerifyMethod(mockData.verify_type),
-      status: calculateAttendanceStatus(mockData),
-      created_at: new Date().toISOString(),
-    };
-    
-    realtimeRecords.push(attendanceRecord);
-    
-    broadcastToClients({
-      type: 'attendance_record',
-      data: attendanceRecord,
-    });
-  }
-}, 10000); // Send mock data every 10 seconds
+// Note: Mock data generator removed for production
+// Real fingerprint devices will send data to this endpoint
 
 // Wrapper to handle token from query parameter for SSE
 const wrappedHandler = async (req: NextApiRequest, res: NextApiResponse) => {

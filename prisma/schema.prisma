@@ -77,6 +77,7 @@ model Cabang {
   users             User[]
   absensi           Absensi[]
   fingerprintAttendances FingerprintAttendance[]
+  devices           Device[]
   
   @@map("cabang")
 }
@@ -110,6 +111,7 @@ model FingerprintAttendance {
   user_id               BigInt?
   device_user_id        String?   @db.VarChar(50)
   cabang_id             BigInt?
+  device_id             String?   @db.VarChar(100)
   attendance_time       DateTime  @db.Timestamp(6)
   attendance_type       Int       @default(1)
   verification_type     String?   @db.VarChar(50)
@@ -126,11 +128,13 @@ model FingerprintAttendance {
   // Relations
   user                  User?     @relation(fields: [user_id], references: [id], onDelete: SetNull)
   cabang                Cabang?   @relation(fields: [cabang_id], references: [id], onDelete: SetNull)
+  device                Device?   @relation("DeviceAttendance", fields: [device_id], references: [device_id], onDelete: SetNull)
   
   @@index([device_user_id, device_ip], map: "fingerprint_attendances_device_user_id_device_ip_index")
   @@index([attendance_time], map: "fingerprint_attendances_attendance_time_index")
   @@index([is_processed], map: "fingerprint_attendances_is_processed_index")
   @@index([user_id], map: "fingerprint_attendances_user_id_index")
+  @@index([device_id], map: "fingerprint_attendances_device_id_index")
   @@map("fingerprint_attendances")
 }
 
@@ -229,4 +233,51 @@ model PayrollDeductions {
   @@index([appliedDate], map: "payroll_deductions_date_index")
   @@index([ruleId], map: "payroll_deductions_rule_index")
   @@map("payroll_deductions")
+}
+
+model Device {
+  id                BigInt    @id @default(autoincrement())
+  device_id         String    @unique @db.VarChar(100)
+  nama              String    @db.VarChar(255)
+  tipe              String    @db.VarChar(50) // fingerprint, face, card
+  cabang_id         BigInt
+  ip_address        String?   @db.VarChar(45)
+  port              Int?
+  status            String    @default("aktif") @db.VarChar(50) // aktif, nonaktif, maintenance
+  lokasi            String?   @db.VarChar(255)
+  keterangan        String?   @db.Text
+  last_sync         DateTime?
+  firmware_version  String?   @db.VarChar(100)
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  
+  // Relations
+  cabang            Cabang    @relation(fields: [cabang_id], references: [id], onDelete: Cascade)
+  statusLogs        DeviceStatusLog[]
+  attendance        FingerprintAttendance[] @relation("DeviceAttendance")
+  
+  @@index([device_id], map: "devices_device_id_index")
+  @@index([cabang_id], map: "devices_cabang_id_index")
+  @@index([status], map: "devices_status_index")
+  @@index([tipe], map: "devices_tipe_index")
+  @@map("devices")
+}
+
+model DeviceStatusLog {
+  id                BigInt    @id @default(autoincrement())
+  device_id         BigInt
+  status            String    @db.VarChar(50) // online, offline, error
+  firmware_version  String?   @db.VarChar(100)
+  error_message     String?   @db.Text
+  employee_count    Int       @default(0)
+  storage_usage     Int       @default(0) // percentage
+  timestamp         DateTime  @default(now())
+  
+  // Relations
+  device            Device    @relation(fields: [device_id], references: [id], onDelete: Cascade)
+  
+  @@index([device_id, timestamp], map: "device_status_logs_device_timestamp_index")
+  @@index([status], map: "device_status_logs_status_index")
+  @@index([timestamp], map: "device_status_logs_timestamp_index")
+  @@map("device_status_logs")
 }

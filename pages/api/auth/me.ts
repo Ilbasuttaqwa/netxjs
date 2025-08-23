@@ -1,23 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
+import { PrismaClient } from '@prisma/client';
 
-// Mock users data (same as in login.ts)
-const mockUsers = [
-  {
-    id: 1,
-    email: 'admin@afms.com',
-    name: 'Administrator',
-    role: 'admin',
-    cabang_id: 1
-  },
-  {
-    id: 2,
-    email: 'user@afms.com',
-    name: 'Regular User',
-    role: 'user',
-    cabang_id: 1
-  }
-];
+const prisma = new PrismaClient();
 
 export default async function handler(
   req: NextApiRequest,
@@ -43,8 +28,25 @@ export default async function handler(
     // Verify JWT token
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any;
     
-    // Find user by ID from token
-    const user = mockUsers.find(u => u.id === decoded.userId);
+    // Find user by ID from token in database
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+      include: {
+        cabang: true
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        cabang_id: true,
+        cabang: true,
+        status: true,
+        created_at: true,
+        updated_at: true
+      }
+    });
+    
     if (!user) {
       return res.status(401).json({
         message: 'User not found'
@@ -60,5 +62,7 @@ export default async function handler(
     return res.status(401).json({
       message: 'Invalid token'
     });
+  } finally {
+    await prisma.$disconnect();
   }
 }

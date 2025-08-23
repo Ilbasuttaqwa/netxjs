@@ -2,27 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
+import { PrismaClient } from '@prisma/client';
 
-// This would typically connect to your database
-// For now, using a mock user for demonstration
-const mockUsers = [
-  {
-    id: 1,
-    email: 'admin@afms.com',
-    password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-    name: 'Administrator',
-    role: 'admin',
-    cabang_id: 1
-  },
-  {
-    id: 2,
-    email: 'user@afms.com',
-    password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-    name: 'Regular User',
-    role: 'user',
-    cabang_id: 1
-  }
-];
+const prisma = new PrismaClient();
 
 export default async function handler(
   req: NextApiRequest,
@@ -42,8 +24,14 @@ export default async function handler(
       });
     }
 
-    // Find user by email
-    const user = mockUsers.find(u => u.email === email);
+    // Find user by email in database
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: {
+        cabang: true
+      }
+    });
+    
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -104,5 +92,7 @@ export default async function handler(
       success: false,
       message: 'Internal server error'
     });
+  } finally {
+    await prisma.$disconnect();
   }
 }

@@ -21,9 +21,13 @@ import {
   DocumentChartBarIcon,
   Cog6ToothIcon,
   ClockIcon,
+  WifiIcon,
+  SignalIcon,
+  CloudIcon,
 } from '@heroicons/react/24/outline';
 import { Button } from '../ui/Button';
 import DarkModeToggle from '../DarkModeToggle';
+import UserRoleBadge from '../ui/UserRoleBadge';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -36,29 +40,45 @@ interface NavItem {
   roles?: string[];
 }
 
-const navigation: NavItem[] = [
-  { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
-  { name: 'Monitoring', href: '/admin/monitoring', icon: ComputerDesktopIcon, roles: ['admin'] },
-  { name: 'Pengguna', href: '/users', icon: UserCircleIcon, roles: ['admin', 'manager'] },
-  { name: 'Kehadiran', href: '/attendance', icon: ClockIcon, roles: ['admin', 'manager'] },
-  { name: 'Karyawan', href: '/admin/karyawan', icon: UsersIcon, roles: ['admin', 'manager'] },
-  { name: 'Cabang', href: '/admin/cabang', icon: BuildingOfficeIcon, roles: ['admin'] },
-  { name: 'Jabatan', href: '/admin/jabatan', icon: BriefcaseIcon, roles: ['admin'] },
-  { name: 'Absensi', href: '/admin/absensi', icon: CalendarDaysIcon, roles: ['admin', 'manager'] },
-  { name: 'Bon Karyawan', href: '/admin/bon', icon: CurrencyDollarIcon, roles: ['admin', 'manager'] },
-  { name: 'Payroll', href: '/admin/payroll', icon: DocumentChartBarIcon, roles: ['admin', 'manager'] },
-  { name: 'Aturan Payroll', href: '/admin/payroll-rules', icon: Cog6ToothIcon, roles: ['admin'] },
-  { name: 'Pengaturan', href: '/admin/settings', icon: CogIcon, roles: ['admin'] },
-];
+const getNavigationForRole = (role: string): NavItem[] => {
+  const baseNavigation: NavItem[] = [
+    // Dashboard berdasarkan role
+    ...(role === 'admin' ? [{ name: 'Dashboard', href: '/admin/dashboard', icon: HomeIcon }] : []),
+    ...(role === 'manager' ? [{ name: 'Dashboard', href: '/manager/dashboard', icon: HomeIcon }] : []),
+    ...(role === 'user' ? [{ name: 'Dashboard', href: '/dashboard', icon: HomeIcon }] : []),
+    
+    // Menu untuk Admin
+    { name: 'Monitoring', href: '/admin/monitoring', icon: ComputerDesktopIcon, roles: ['admin'] },
+    { name: 'Device Management', href: '/admin/devices', icon: WifiIcon, roles: ['admin'] },
+    { name: 'Device Config', href: '/admin/device-config', icon: CogIcon, roles: ['admin'] },
+    { name: 'Device Monitoring', href: '/admin/device-monitoring', icon: SignalIcon, roles: ['admin'] },
+    { name: 'Device Analytics', href: '/admin/device-analytics', icon: ChartBarIcon, roles: ['admin'] },
+    { name: 'Cloud Config', href: '/admin/cloud-config', icon: CloudIcon, roles: ['admin'] },
+    { name: 'Cabang', href: '/admin/cabang', icon: BuildingOfficeIcon, roles: ['admin'] },
+    { name: 'Jabatan', href: '/admin/jabatan', icon: BriefcaseIcon, roles: ['admin'] },
+    { name: 'Aturan Payroll', href: '/admin/payroll-rules', icon: Cog6ToothIcon, roles: ['admin'] },
+    { name: 'Pengaturan', href: '/admin/settings', icon: CogIcon, roles: ['admin'] },
+    
+    // Menu untuk Admin dan Manager
+    { name: 'Pengguna', href: '/users', icon: UserCircleIcon, roles: ['admin', 'manager'] },
+    { name: 'Karyawan', href: '/admin/karyawan', icon: UsersIcon, roles: ['admin', 'manager'] },
+    { name: 'Absensi', href: '/admin/absensi', icon: CalendarDaysIcon, roles: ['admin', 'manager'] },
+    { name: 'Bon Karyawan', href: '/admin/bon', icon: CurrencyDollarIcon, roles: ['admin', 'manager'] },
+    { name: 'Payroll', href: '/admin/payroll', icon: DocumentChartBarIcon, roles: ['admin', 'manager'] },
+    
+    // Menu untuk semua role
+    { name: 'Kehadiran', href: '/attendance', icon: ClockIcon, roles: ['admin', 'manager', 'user'] },
+  ];
+  
+  return baseNavigation.filter(item => !item.roles || item.roles.includes(role));
+};
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuth();
   const router = useRouter();
 
-  const filteredNavigation = navigation.filter(
-    (item) => !item.roles || item.roles.includes(user?.role || '')
-  );
+  const filteredNavigation = getNavigationForRole(user?.role || 'user');
 
   const handleLogout = () => {
     logout();
@@ -176,7 +196,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               </div>
               <div className="ml-3 flex-1">
                 <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{user?.name}</p>
-                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{user?.role}</p>
+                <UserRoleBadge size="sm" className="mt-1" />
               </div>
               <Button
                 variant="ghost"
@@ -210,7 +230,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center">
                 <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {navigation.find((item) => item.href === router.pathname)?.name || 'Dashboard'}
+                  {filteredNavigation.find((item) => item.href === router.pathname)?.name || 'Dashboard'}
                 </h1>
               </div>
               <div className="flex items-center space-x-4">
@@ -218,11 +238,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 <button className="text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200">
                   <BellIcon className="h-6 w-6" />
                 </button>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-3">
                   <div className="h-8 w-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
                     <UserCircleIcon className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                   </div>
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{user?.name}</span>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{user?.name}</span>
+                    <UserRoleBadge size="sm" />
+                  </div>
                 </div>
               </div>
             </div>

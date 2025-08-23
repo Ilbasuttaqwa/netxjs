@@ -29,10 +29,19 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   };
 
+  const showToast = (title: string, type: 'success' | 'error' | 'warning' | 'info', message?: string) => {
+    addToast({
+      title,
+      message,
+      type,
+    });
+  };
+
   const value: ToastContextType = {
     toasts,
     addToast,
     removeToast,
+    showToast,
   };
 
   return (

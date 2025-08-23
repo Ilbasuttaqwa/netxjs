@@ -1,0 +1,185 @@
+import { NextApiResponse } from 'next';
+import { withAdminAuth, AuthenticatedRequest } from '../../../lib/auth-middleware';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+async function handler(
+  req: AuthenticatedRequest,
+  res: NextApiResponse
+) {
+  const { id } = req.query;
+  
+  if (!id || isNaN(parseInt(id.toString()))) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid device ID'
+    });
+  }
+  
+  const deviceId = parseInt(id.toString());
+  
+  try {
+    switch (req.method) {
+      case 'GET':
+        const device = await prisma.device.findUnique({
+          where: { id: deviceId },
+          include: {
+            cabang: {
+              select: {
+                id: true,
+                nama: true,
+                alamat: true,
+                no_telp: true
+              }
+            },
+            attendance: {
+              select: {
+                id: true,
+                timestamp: true,
+                type: true,
+                karyawan: {
+                  select: {
+                    id: true,
+                    nama: true,
+                    nip: true
+                  }
+                }
+              },
+              orderBy: { timestamp: 'desc' },
+              take: 10 // Last 10 attendance records
+            }
+          }
+        });
+        
+        if (!device) {
+          return res.status(404).json({
+            success: false,
+            message: 'Device not found'
+          });
+        }
+        
+        return res.status(200).json({
+          success: true,
+          data: device
+        });
+
+      case 'PUT':
+        const { nama, tipe, cabang_id, ip_address, port, status, lokasi, keterangan, firmware_version } = req.body;
+        
+        // Check if device exists
+        const existingDevice = await prisma.device.findUnique({
+          where: { id: deviceId }
+        });
+        
+        if (!existingDevice) {
+          return res.status(404).json({
+            success: false,
+            message: 'Device not found'
+          });
+        }
+        
+        // Verify cabang exists if cabang_id is provided
+        if (cabang_id) {
+          const cabang = await prisma.cabang.findUnique({
+            where: { id: parseInt(cabang_id) }
+          });
+          
+          if (!cabang) {
+            return res.status(400).json({
+              success: false,
+              message: 'Invalid cabang_id'
+            });
+          }
+        }
+        
+        const updatedDevice = await prisma.device.update({
+          where: { id: deviceId },
+          data: {
+            ...(nama && { nama }),
+            ...(tipe && { tipe }),
+            ...(cabang_id && { cabang_id: parseInt(cabang_id) }),
+            ...(ip_address !== undefined && { ip_address }),
+            ...(port !== undefined && { port: port ? parseInt(port) : null }),
+            ...(status && { status }),
+            ...(lokasi !== undefined && { lokasi }),
+            ...(keterangan !== undefined && { keterangan }),
+            ...(firmware_version !== undefined && { firmware_version })
+          },
+          include: {
+            cabang: {
+              select: {
+                id: true,
+                nama: true,
+                alamat: true
+              }
+            }
+          }
+        });
+        
+        return res.status(200).json({
+          success: true,
+          message: 'Device updated successfully',
+          data: updatedDevice
+        });
+
+      case 'DELETE':
+        // Check if device exists
+        const deviceToDelete = await prisma.device.findUnique({
+          where: { id: deviceId }
+        });
+        
+        if (!deviceToDelete) {
+          return res.status(404).json({
+            success: false,
+            message: 'Device not found'
+          });
+        }
+        
+        // Check if device has attendance records
+        const attendanceCount = await prisma.attendance.count({
+          where: { device_id: deviceToDelete.device_id }
+        });
+        
+        if (attendanceCount > 0) {
+          // Soft delete - just mark as inactive
+          await prisma.device.update({
+            where: { id: deviceId },
+            data: { status: 'nonaktif' }
+          });
+          
+          return res.status(200).json({
+            success: true,
+            message: 'Device deactivated successfully (has attendance records)'
+          });
+        } else {
+          // Hard delete if no attendance records
+          await prisma.device.delete({
+            where: { id: deviceId }
+          });
+          
+          return res.status(200).json({
+            success: true,
+            message: 'Device deleted successfully'
+          });
+        }
+
+      default:
+        return res.status(405).json({ 
+          success: false,
+          message: 'Method not allowed' 
+        });
+    }
+
+  } catch (error) {
+    console.error('Device API error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+export default withAdminAuth(handler);

@@ -75,12 +75,56 @@ export interface MonitoringFingerprint {
   device_name: string;
   ip_address: string;
   port: number;
-  status: 'online' | 'offline';
+  status: 'online' | 'offline' | 'error' | 'maintenance';
   last_sync?: string;
   total_users: number;
   total_records: number;
   created_at: string;
   updated_at: string;
+  // Enhanced monitoring fields
+  cabang_id?: number;
+  cabang?: Cabang;
+  lokasi?: string;
+  firmware_version?: string;
+  battery_level?: number;
+  temperature?: number;
+  memory_usage?: number;
+  storage_usage?: number;
+  last_heartbeat?: string;
+  error_message?: string;
+  sync_status?: 'idle' | 'syncing' | 'error';
+  offline_records?: number;
+  connection_quality?: 'excellent' | 'good' | 'poor' | 'critical';
+}
+
+// Device Status Log types
+export interface DeviceStatusLog {
+  id: number;
+  device_id: string;
+  status: 'online' | 'offline' | 'error' | 'maintenance';
+  firmware_version?: string;
+  battery_level?: number;
+  temperature?: number;
+  memory_usage?: number;
+  storage_usage?: number;
+  error_message?: string;
+  sync_records_count?: number;
+  created_at: string;
+  device?: MonitoringFingerprint;
+}
+
+// Device Sync History types
+export interface DeviceSyncHistory {
+  id: number;
+  device_id: string;
+  sync_type: 'manual' | 'auto' | 'scheduled';
+  records_synced: number;
+  status: 'success' | 'failed' | 'partial';
+  error_message?: string;
+  duration_seconds?: number;
+  started_at: string;
+  completed_at?: string;
+  device?: MonitoringFingerprint;
 }
 
 // API Response types
@@ -197,6 +241,7 @@ export interface ToastContextType {
   toasts: Toast[];
   addToast: (toast: Omit<Toast, 'id'>) => void;
   removeToast: (id: string) => void;
+  showToast: (title: string, type: 'success' | 'error' | 'warning' | 'info', message?: string) => void;
 }
 
 // Filter types

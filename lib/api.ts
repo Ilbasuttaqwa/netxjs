@@ -271,6 +271,148 @@ export const monitoringApi = {
   },
 };
 
+// Device Management API
+export const deviceApi = {
+  // Basic CRUD operations
+  getDevices: async (filters?: FilterOptions): Promise<ApiResponse<PaginatedResponse<any>>> => {
+    const response = await api.get('/devices', { params: filters });
+    return handleResponse(response);
+  },
+
+  getDevice: async (id: string): Promise<ApiResponse<any>> => {
+    const response = await api.get(`/devices/${id}`);
+    return handleResponse(response);
+  },
+
+  createDevice: async (data: any): Promise<ApiResponse<any>> => {
+    const response = await api.post('/devices', data);
+    return handleResponse(response);
+  },
+
+  updateDevice: async (id: string, data: any): Promise<ApiResponse<any>> => {
+    const response = await api.put(`/devices/${id}`, data);
+    return handleResponse(response);
+  },
+
+  deleteDevice: async (id: string): Promise<ApiResponse> => {
+    const response = await api.delete(`/devices/${id}`);
+    return handleResponse(response);
+  },
+
+  // Sync operations
+  syncDevice: async (deviceId: string, data?: any): Promise<ApiResponse> => {
+    const response = await api.post('/devices/sync', { device_id: deviceId, ...data });
+    return handleResponse(response);
+  },
+
+  // Bulk operations
+  bulkSync: async (deviceIds: string[]): Promise<ApiResponse> => {
+    const response = await api.post('/devices/bulk-operations', {
+      action: 'bulk_sync',
+      device_ids: deviceIds
+    });
+    return handleResponse(response);
+  },
+
+  bulkUpdate: async (deviceIds: string[], updates: any): Promise<ApiResponse> => {
+    const response = await api.post('/devices/bulk-operations', {
+      action: 'bulk_update',
+      device_ids: deviceIds,
+      updates
+    });
+    return handleResponse(response);
+  },
+
+  bulkTest: async (deviceIds: string[]): Promise<ApiResponse> => {
+    const response = await api.post('/devices/bulk-operations', {
+      action: 'bulk_test',
+      device_ids: deviceIds
+    });
+    return handleResponse(response);
+  },
+
+  bulkRestart: async (deviceIds: string[]): Promise<ApiResponse> => {
+    const response = await api.post('/devices/bulk-operations', {
+      action: 'bulk_restart',
+      device_ids: deviceIds
+    });
+    return handleResponse(response);
+  },
+
+  // Health monitoring
+  getHealthStatus: async (params?: {
+    device_ids?: string[];
+    include_history?: boolean;
+    time_range?: 'hour' | 'day' | 'week' | 'month';
+  }): Promise<ApiResponse> => {
+    const response = await api.get('/devices/health-monitor', { params });
+    return handleResponse(response);
+  },
+
+  updateHealthStatus: async (deviceId: string, data: {
+    metrics?: any;
+    status?: string;
+    error_message?: string;
+  }): Promise<ApiResponse> => {
+    const response = await api.post('/devices/health-monitor', {
+      device_id: deviceId,
+      ...data
+    });
+    return handleResponse(response);
+  },
+
+  // Real-time sync
+  startRealtimeSync: async (deviceId: string, options?: {
+    sync_type?: 'full' | 'incremental' | 'attendance_only' | 'user_only';
+    last_sync_timestamp?: string;
+    force_sync?: boolean;
+  }): Promise<ApiResponse> => {
+    const response = await api.post('/devices/realtime-sync', {
+      device_id: deviceId,
+      ...options
+    });
+    return handleResponse(response);
+  },
+
+  getSyncStatus: async (syncId?: string, deviceId?: string): Promise<ApiResponse> => {
+    const params: any = {};
+    if (syncId) params.sync_id = syncId;
+    if (deviceId) params.device_id = deviceId;
+    const response = await api.get('/devices/realtime-sync', { params });
+    return handleResponse(response);
+  },
+
+  cancelSync: async (syncId: string): Promise<ApiResponse> => {
+    const response = await api.delete(`/devices/realtime-sync?sync_id=${syncId}`);
+    return handleResponse(response);
+  },
+
+  // Analytics
+  getAnalytics: async (params?: {
+    device_ids?: string[];
+    cabang_id?: number;
+    start_date?: string;
+    end_date?: string;
+    metrics?: string[];
+    group_by?: 'device' | 'cabang' | 'day' | 'week' | 'month';
+  }): Promise<ApiResponse> => {
+    const response = await api.get('/devices/analytics', { params });
+    return handleResponse(response);
+  },
+
+  generateReport: async (data: {
+    device_ids?: string[];
+    cabang_id?: number;
+    start_date?: string;
+    end_date?: string;
+    report_type?: string;
+    format?: 'json' | 'pdf' | 'excel';
+  }): Promise<ApiResponse> => {
+    const response = await api.post('/devices/analytics', data);
+    return handleResponse(response);
+  },
+};
+
 // Payroll API
 export const payrollApi = {
   getDeductions: async (period: string): Promise<ApiResponse<any[]>> => {

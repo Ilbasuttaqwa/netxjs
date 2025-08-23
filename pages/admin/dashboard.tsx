@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import { withAdminOrManagerAuth } from '../../lib/withManagerAuth';
 import StatsCard from '../../components/dashboard/StatsCard';
 import RecentActivities from '../../components/dashboard/RecentActivities';
 import AttendanceChart from '../../components/dashboard/AttendanceChart';
@@ -25,9 +24,7 @@ interface DashboardStats {
   attendancePercentage: number;
 }
 
-export default function AdminDashboard() {
-  const { user, isLoading } = useAuth();
-  const router = useRouter();
+function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats>({
     totalEmployees: 0,
     totalBranches: 0,
@@ -39,15 +36,8 @@ export default function AdminDashboard() {
   const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
-    if (!isLoading && (!user || !['admin', 'manager'].includes(user.role))) {
-      router.push('/login');
-      return;
-    }
-
-    if (user) {
-      fetchDashboardData();
-    }
-  }, [user, isLoading, router]);
+    fetchDashboardData();
+  }, []);
 
   const fetchDashboardData = async () => {
     try {
@@ -72,7 +62,7 @@ export default function AdminDashboard() {
     }
   };
 
-  if (isLoading || loadingStats) {
+  if (loadingStats) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-64">
@@ -199,3 +189,5 @@ export default function AdminDashboard() {
     </DashboardLayout>
   );
 }
+
+export default withAdminOrManagerAuth(AdminDashboard);

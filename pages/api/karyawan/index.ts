@@ -1,43 +1,8 @@
 import { NextApiResponse } from 'next';
 import { withAdminAuth, AuthenticatedRequest } from '../../../lib/auth-middleware';
+import { PrismaClient } from '@prisma/client';
 
-// Mock data for demonstration
-const mockKaryawan = [
-  {
-    id: 1,
-    nama: 'John Doe',
-    email: 'john@afms.com',
-    jabatan_id: 1,
-    jabatan: { nama: 'Manager' },
-    cabang_id: 1,
-    cabang: { nama: 'Cabang Utama' },
-    telepon: '081234567890',
-    alamat: 'Jl. Contoh No. 123',
-    tanggal_masuk: '2023-01-15',
-    fingerprint_id: 'FP001',
-    status: 'aktif',
-    created_at: '2023-01-15T00:00:00.000Z',
-    updated_at: '2023-01-15T00:00:00.000Z'
-  },
-  {
-    id: 2,
-    nama: 'Jane Smith',
-    email: 'jane@afms.com',
-    jabatan_id: 2,
-    jabatan: { nama: 'Staff' },
-    cabang_id: 1,
-    cabang: { nama: 'Cabang Utama' },
-    telepon: '081234567891',
-    alamat: 'Jl. Contoh No. 124',
-    tanggal_masuk: '2023-02-01',
-    fingerprint_id: 'FP002',
-    status: 'aktif',
-    created_at: '2023-02-01T00:00:00.000Z',
-    updated_at: '2023-02-01T00:00:00.000Z'
-  }
-];
-
-let nextId = 3;
+const prisma = new PrismaClient();
 
 async function handler(
   req: AuthenticatedRequest,
@@ -48,44 +13,61 @@ async function handler(
       case 'GET':
         const { page = 1, limit = 10, search = '', cabang_id, jabatan_id } = req.query;
         
-        let filteredKaryawan = [...mockKaryawan];
+        const pageNum = parseInt(page.toString());
+        const limitNum = parseInt(limit.toString());
+        const skip = (pageNum - 1) * limitNum;
         
-        // Apply filters
+        // Build where clause for search and filters
+        const whereClause: any = {};
+        
         if (search) {
-          filteredKaryawan = filteredKaryawan.filter(k => 
-            k.nama.toLowerCase().includes(search.toString().toLowerCase()) ||
-            k.email.toLowerCase().includes(search.toString().toLowerCase())
-          );
+          whereClause.OR = [
+            { nama: { contains: search.toString(), mode: 'insensitive' } },
+            { email: { contains: search.toString(), mode: 'insensitive' } }
+          ];
         }
         
         if (cabang_id) {
-          filteredKaryawan = filteredKaryawan.filter(k => 
-            k.cabang_id === parseInt(cabang_id.toString())
-          );
+          whereClause.cabang_id = parseInt(cabang_id.toString());
         }
         
         if (jabatan_id) {
-          filteredKaryawan = filteredKaryawan.filter(k => 
-            k.jabatan_id === parseInt(jabatan_id.toString())
-          );
+          whereClause.jabatan_id = parseInt(jabatan_id.toString());
         }
         
-        // Pagination
-        const pageNum = parseInt(page.toString());
-        const limitNum = parseInt(limit.toString());
-        const startIndex = (pageNum - 1) * limitNum;
-        const endIndex = startIndex + limitNum;
+        // Get total count for pagination
+        const total = await prisma.karyawan.count({ where: whereClause });
         
-        const paginatedKaryawan = filteredKaryawan.slice(startIndex, endIndex);
+        // Get karyawan with pagination, search, and sorting
+        const karyawanList = await prisma.karyawan.findMany({
+          where: whereClause,
+          include: {
+            jabatan: {
+              select: {
+                id: true,
+                nama: true
+              }
+            },
+            cabang: {
+              select: {
+                id: true,
+                nama: true
+              }
+            }
+          },
+          orderBy: { created_at: 'desc' },
+          skip,
+          take: limitNum
+        });
         
         return res.status(200).json({
           success: true,
-          data: paginatedKaryawan,
+          data: karyawanList,
           pagination: {
             current_page: pageNum,
             per_page: limitNum,
-            total: filteredKaryawan.length,
-            total_pages: Math.ceil(filteredKaryawan.length / limitNum)
+            total,
+            total_pages: Math.ceil(total / limitNum)
           }
         });
 
@@ -99,31 +81,58 @@ async function handler(
         }
         
         // Check if email already exists
-        const existingKaryawan = mockKaryawan.find(k => k.email === email);
+        const existingKaryawan = await prisma.karyawan.findFirst({
+          where: { email }
+        });
+        
         if (existingKaryawan) {
           return res.status(400).json({
             message: 'Email already exists'
           });
         }
         
-        const newKaryawan = {
-          id: nextId++,
-          nama,
-          email,
-          jabatan_id: parseInt(jId),
-          jabatan: { nama: 'Staff' }, // Mock jabatan
-          cabang_id: parseInt(cId),
-          cabang: { nama: 'Cabang Utama' }, // Mock cabang
-          telepon: telepon || '',
-          alamat: alamat || '',
-          tanggal_masuk: tanggal_masuk || new Date().toISOString().split('T')[0],
-          fingerprint_id: finger_id || null,
-          status: status || 'aktif',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
+        // Verify jabatan and cabang exist
+        const jabatan = await prisma.jabatan.findUnique({
+          where: { id: parseInt(jId) }
+        });
         
-        mockKaryawan.push(newKaryawan);
+        const cabang = await prisma.cabang.findUnique({
+          where: { id: parseInt(cId) }
+        });
+        
+        if (!jabatan || !cabang) {
+          return res.status(400).json({
+            message: 'Invalid jabatan_id or cabang_id'
+          });
+        }
+        
+        const newKaryawan = await prisma.karyawan.create({
+          data: {
+            nama,
+            email,
+            jabatan_id: parseInt(jId),
+            cabang_id: parseInt(cId),
+            telepon: telepon || '',
+            alamat: alamat || '',
+            tanggal_masuk: tanggal_masuk ? new Date(tanggal_masuk) : new Date(),
+            fingerprint_id: finger_id || null,
+            status: status || 'aktif'
+          },
+          include: {
+            jabatan: {
+              select: {
+                id: true,
+                nama: true
+              }
+            },
+            cabang: {
+              select: {
+                id: true,
+                nama: true
+              }
+            }
+          }
+        });
         
         return res.status(201).json({
           success: true,
@@ -140,6 +149,8 @@ async function handler(
     return res.status(500).json({
       message: 'Internal server error'
     });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 

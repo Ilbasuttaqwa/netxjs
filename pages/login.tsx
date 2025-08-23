@@ -43,7 +43,16 @@ export default function Login() {
           localStorage.setItem('auth_token', data.data.token)
            localStorage.setItem('auth_user', JSON.stringify(data.data.user))
            addToast({ title: 'Login Berhasil', message: 'Selamat datang!', type: 'success' })
-           router.replace('/dashboard')
+           
+           // Redirect based on role
+           const user = data.data.user
+           if (user.role === 'admin') {
+             router.replace('/admin/dashboard')
+           } else if (user.role === 'manager') {
+             router.replace('/manager/dashboard')
+           } else {
+             router.replace('/dashboard')
+           }
         } else {
          addToast({ title: 'Login Gagal', message: data.message || 'Email atau password salah.', type: 'error' })
        }

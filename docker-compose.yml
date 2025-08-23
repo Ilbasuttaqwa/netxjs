@@ -1,8 +1,8 @@
 version: '3.8'
 
 services:
-  # Main Application
-  app:
+  # Next.js Frontend
+  nextjs:
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,68 +10,82 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://afms_user:afms_password@postgres:5432/afms_db
-      - REDIS_URL=redis://redis:6379
-      - NEXTAUTH_SECRET=your-secret-key-here
-      - NEXTAUTH_URL=http://localhost:3000
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/afms_db
+      - LARAVEL_API_URL=http://laravel-api:80
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - postgres
+      - laravel-api
+    networks:
+      - afms-network
+    restart: unless-stopped
+
+  # Laravel API Backend
+  laravel-api:
+    build:
+      context: ./laravel-api
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    environment:
+      - APP_ENV=production
+      - DB_HOST=mysql
+      - DB_DATABASE=afms_laravel_api
+      - DB_USERNAME=root
+      - DB_PASSWORD=password
+      - REDIS_HOST=redis
+      - NEXTJS_API_URL=http://nextjs:3000
+    depends_on:
+      - mysql
+      - redis
     networks:
       - afms-network
     restart: unless-stopped
     volumes:
-      - app-logs:/app/logs
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      - laravel-storage:/var/www/html/storage
 
-  # PostgreSQL Database
+  # PostgreSQL Database for Next.js
   postgres:
     image: postgres:15-alpine
     environment:
       - POSTGRES_DB=afms_db
-      - POSTGRES_USER=afms_user
-      - POSTGRES_PASSWORD=afms_password
-      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
     ports:
       - "5432:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-      - ./init-scripts:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - afms-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U afms_user -d afms_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
 
-  # Redis for Caching and Session Storage
+  # MySQL Database for Laravel API
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=afms_laravel_api
+      - MYSQL_USER=afms
+      - MYSQL_PASSWORD=password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - afms-network
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Redis for Laravel API caching
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
     volumes:
-      - redis-data:/data
-      - ./redis.conf:/usr/local/etc/redis/redis.conf
-    command: redis-server /usr/local/etc/redis/redis.conf
+      - redis_data:/data
     networks:
       - afms-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-      start_period: 30s
+    command: redis-server --appendonly yes
 
   # Nginx Reverse Proxy
   nginx:
@@ -201,9 +215,13 @@ networks:
 
 # Volumes
 volumes:
-  postgres-data:
+  postgres_data:
     driver: local
-  redis-data:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  laravel-storage:
     driver: local
   prometheus-data:
     driver: local

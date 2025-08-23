@@ -1,39 +1,8 @@
 import { NextApiResponse } from 'next';
 import { withAuth, AuthenticatedRequest } from '../../../lib/auth-middleware';
+import { PrismaClient } from '@prisma/client';
 
-// Mock data for demonstration
-const mockCabang = [
-  {
-    id: 1,
-    nama: 'Cabang Utama',
-    alamat: 'Jl. Sudirman No. 123, Jakarta',
-    no_telp: '021-12345678',
-    email: 'utama@afms.com',
-    status: 'aktif',
-    created_at: '2023-01-01T00:00:00.000Z',
-    updated_at: '2023-01-01T00:00:00.000Z'
-  },
-  {
-    id: 2,
-    nama: 'Cabang Bandung',
-    alamat: 'Jl. Asia Afrika No. 456, Bandung',
-    no_telp: '022-87654321',
-    email: 'bandung@afms.com',
-    status: 'aktif',
-    created_at: '2023-01-15T00:00:00.000Z',
-    updated_at: '2023-01-15T00:00:00.000Z'
-  },
-  {
-    id: 3,
-    nama: 'Cabang Surabaya',
-    alamat: 'Jl. Tunjungan No. 789, Surabaya',
-    no_telp: '031-11223344',
-    email: 'surabaya@afms.com',
-    status: 'aktif',
-    created_at: '2023-02-01T00:00:00.000Z',
-    updated_at: '2023-02-01T00:00:00.000Z'
-  }
-];
+const prisma = new PrismaClient();
 
 async function handler(
   req: AuthenticatedRequest,
@@ -44,23 +13,28 @@ async function handler(
       case 'GET':
         const { search = '', status } = req.query;
         
-        let filteredCabang = [...mockCabang];
+        // Build where clause for search and filters
+        const whereClause: any = {};
         
-        // Apply filters
         if (search) {
-          filteredCabang = filteredCabang.filter(c => 
-            c.nama.toLowerCase().includes(search.toString().toLowerCase()) ||
-            c.alamat.toLowerCase().includes(search.toString().toLowerCase())
-          );
+          whereClause.OR = [
+            { nama: { contains: search.toString(), mode: 'insensitive' } },
+            { alamat: { contains: search.toString(), mode: 'insensitive' } }
+          ];
         }
         
         if (status) {
-          filteredCabang = filteredCabang.filter(c => c.status === status);
+          whereClause.status = status;
         }
+        
+        const cabangList = await prisma.cabang.findMany({
+          where: whereClause,
+          orderBy: { created_at: 'desc' }
+        });
         
         return res.status(200).json({
           success: true,
-          data: filteredCabang
+          data: cabangList
         });
 
       case 'POST':
@@ -80,25 +54,25 @@ async function handler(
         }
         
         // Check if nama already exists
-        const existingCabang = mockCabang.find(c => c.nama === nama);
+        const existingCabang = await prisma.cabang.findFirst({
+          where: { nama }
+        });
+        
         if (existingCabang) {
           return res.status(400).json({
             message: 'Cabang name already exists'
           });
         }
         
-        const newCabang = {
-          id: Math.max(...mockCabang.map(c => c.id)) + 1,
-          nama,
-          alamat,
-          no_telp: no_telp || '',
-          email: email || '',
-          status: 'aktif',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
-        
-        mockCabang.push(newCabang);
+        const newCabang = await prisma.cabang.create({
+          data: {
+            nama,
+            alamat,
+            no_telp: no_telp || '',
+            email: email || '',
+            status: 'aktif'
+          }
+        });
         
         return res.status(201).json({
           success: true,
@@ -115,6 +89,8 @@ async function handler(
     return res.status(500).json({
       message: 'Internal server error'
     });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
