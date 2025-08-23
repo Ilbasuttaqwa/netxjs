@@ -53,9 +53,9 @@ export default async function handler(
       {
         id: user.id,
         email: user.email,
-        name: user.name,
+        name: user.nama_pegawai,
         role: user.role,
-        cabang_id: user.cabang_id
+        cabang_id: user.id_cabang
       },
       process.env.JWT_SECRET || 'your-secret-key',
       {

@@ -143,7 +143,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 <UserCircleIcon className="h-6 w-6 text-gray-600" />
               </div>
               <div className="ml-3">
-                <p className="text-base font-medium text-gray-700">{user?.name}</p>
+                <p className="text-base font-medium text-gray-700">{user?.nama_pegawai}</p>
                 <p className="text-sm font-medium text-gray-500">{user?.role}</p>
               </div>
             </div>
@@ -195,7 +195,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 <UserCircleIcon className="h-5 w-5 text-gray-600 dark:text-gray-300" />
               </div>
               <div className="ml-3 flex-1">
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{user?.name}</p>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{user?.nama_pegawai}</p>
                 <UserRoleBadge size="sm" className="mt-1" />
               </div>
               <Button
@@ -243,7 +243,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     <UserCircleIcon className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{user?.name}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{user?.nama_pegawai}</span>
                     <UserRoleBadge size="sm" />
                   </div>
                 </div>

@@ -33,7 +33,7 @@ interface DeviceStatus {
 
 const DeviceMonitoring = () => {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { addToast } = useToast();
   const [deviceStatuses, setDeviceStatuses] = useState<DeviceStatus[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,14 +45,14 @@ const DeviceMonitoring = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    if (!loading && (!user || user.role !== 'admin')) {
+    if (!authLoading && (!user || user.role !== 'admin')) {
       router.push('/login');
       return;
     }
     if (user) {
       fetchDeviceStatuses();
     }
-  }, [user, loading]);
+  }, [user, authLoading]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -135,7 +135,7 @@ const DeviceMonitoring = () => {
   const offlineCount = deviceStatuses.filter(d => d.latest_status === 'offline').length;
   const errorCount = deviceStatuses.filter(d => d.latest_status === 'error').length;
 
-  if (loading || isLoading) {
+  if (authLoading || isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">

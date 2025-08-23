@@ -37,9 +37,8 @@ export default async function handler(
     const whereClause = search
       ? {
           OR: [
-            { name: { contains: search, mode: 'insensitive' as const } },
+            { nama_pegawai: { contains: search, mode: 'insensitive' as const } },
             { email: { contains: search, mode: 'insensitive' as const } },
-            { username: { contains: search, mode: 'insensitive' as const } },
           ],
         }
       : {};
@@ -62,60 +61,13 @@ export default async function handler(
       take: pageSizeNum,
       select: {
         id: true,
-        name: true,
+        nama_pegawai: true,
         email: true,
-        username: true,
         role: true,
-        status: true,
+        status_pegawai: true,
         created_at: true,
         updated_at: true,
         // Exclude sensitive fields like password
-      },
-    });
-
-    const totalPages = Math.ceil(total / pageSizeNum);
-
-    res.status(200).json({
-      data: users,
-      pagination: {
-        current: pageNum,
-        pageSize: pageSizeNum,
-        total,
-        totalPages,
-      },
-      success: true,
-    });
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    res.status(500).json({
-      message: 'Internal server error',
-      success: false,
-    });
-  }
-}
-*/
-
-// Mock data for development (when database is not available)
-    };
-
-    // Get total count for pagination
-    const total = await prisma.user.count({ where: whereClause });
-
-    // Get users with pagination, search, and sorting
-    const users = await prisma.user.findMany({
-      where: whereClause,
-      orderBy,
-      skip,
-      take: pageSizeNum,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        username: true,
-        role: true,
-        status: true,
-        created_at: true,
-        updated_at: true,
       },
     });
 

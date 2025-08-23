@@ -70,7 +70,7 @@ const DashboardContent: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Selamat datang, {user?.name}!
+                  Selamat datang, {user?.nama_pegawai}!
                 </h1>
                 <p className="text-gray-600 mt-1">
                   {user?.role === 'admin' ? 'Administrator' : user?.jabatan?.nama_jabatan} - {user?.cabang?.nama_cabang}

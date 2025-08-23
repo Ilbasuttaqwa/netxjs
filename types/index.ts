@@ -154,11 +154,11 @@ export interface LoginCredentials {
 
 export interface AuthUser {
   id: number;
-  name: string;
+  nama_pegawai: string;
   email: string;
   role: 'admin' | 'manager' | 'user';
-  cabang_id?: number;
-  jabatan_id?: number;
+  id_cabang?: number;
+  id_jabatan?: number;
   cabang?: Cabang;
   jabatan?: Jabatan;
 }

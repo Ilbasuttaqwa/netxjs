@@ -103,30 +103,13 @@ async function handleBulkSync(req: AuthenticatedRequest, res: NextApiResponse) {
         }
       });
       
-      // Create sync history record
-      await prisma.deviceSyncHistory.create({
-        data: {
-          device_id: device.id,
-          sync_type: 'manual',
-          records_synced: Math.floor(Math.random() * 50) + 10,
-          status: 'success',
-          duration_seconds: Math.floor(Math.random() * 30) + 5,
-          started_at: new Date(),
-          completed_at: new Date()
-        }
-      });
-      
       // Create status log
       await prisma.deviceStatusLog.create({
         data: {
           device_id: device.id,
           status: 'online',
           firmware_version: device.firmware_version,
-          battery_level: Math.floor(Math.random() * 40) + 60,
-          temperature: Math.floor(Math.random() * 20) + 30,
-          memory_usage: Math.floor(Math.random() * 30) + 40,
           storage_usage: Math.floor(Math.random() * 40) + 30,
-          sync_records_count: Math.floor(Math.random() * 50) + 10,
           timestamp: new Date()
         }
       });

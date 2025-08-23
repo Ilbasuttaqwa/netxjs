@@ -114,7 +114,7 @@ async function handler(
                 tipe: true,
                 cabang: {
                   select: {
-                    nama: true
+                    nama_cabang: true
                   }
                 }
               }
@@ -131,7 +131,7 @@ async function handler(
               device_id: deviceId,
               nama: log.device.nama,
               tipe: log.device.tipe,
-              cabang: log.device.cabang.nama,
+              cabang: log.device.cabang.nama_cabang,
               latest_status: log.status,
               latest_sync: log.timestamp,
               firmware_version: log.firmware_version,

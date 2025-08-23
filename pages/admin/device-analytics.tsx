@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { deviceApi } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
-import { Modal } from '@/components/ui/Modal';
+import Modal from '@/components/ui/Modal';
 import { cn } from '@/utils/cn';
 import {
   ChartBarIcon,
@@ -18,8 +18,8 @@ import {
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
   CpuChipIcon,
-  ThermometerIcon,
-  BatteryIcon,
+  FireIcon,
+  Battery0Icon,
   WifiIcon
 } from '@heroicons/react/24/outline';
 import {
@@ -96,12 +96,12 @@ interface ReportConfig {
   date_to: string;
   device_ids?: string[];
   group_by: 'day' | 'week' | 'month';
-  format: 'pdf' | 'excel' | 'csv';
+  format: 'pdf' | 'excel' | 'json';
 }
 
 export default function DeviceAnalyticsPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { addToast } = useToast();
   
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
@@ -137,8 +137,9 @@ export default function DeviceAnalyticsPage() {
     try {
       setLoading(true);
       const params = {
-        date_range: dateRange,
-        group_by: 'day'
+        start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        end_date: new Date().toISOString().split('T')[0],
+        group_by: 'day' as 'day' | 'week' | 'month' | 'device' | 'cabang'
       };
       
       const response = await deviceApi.getAnalytics(params);
@@ -402,7 +403,7 @@ export default function DeviceAnalyticsPage() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) => `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
@@ -426,7 +427,7 @@ export default function DeviceAnalyticsPage() {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Hardware Summary</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center p-4 bg-gray-50 rounded-lg">
-              <ThermometerIcon className="h-8 w-8 text-orange-500 mx-auto mb-2" />
+              <FireIcon className="h-8 w-8 text-orange-500 mx-auto mb-2" />
               <p className="text-sm font-medium text-gray-600">Avg Temperature</p>
               <p className="text-2xl font-bold text-gray-900">{analytics.hardware.avg_temperature}°C</p>
             </div>
@@ -436,7 +437,7 @@ export default function DeviceAnalyticsPage() {
               <p className="text-2xl font-bold text-gray-900">{analytics.hardware.avg_memory_usage}%</p>
             </div>
             <div className="text-center p-4 bg-gray-50 rounded-lg">
-              <BatteryIcon className="h-8 w-8 text-green-500 mx-auto mb-2" />
+              <Battery0Icon className="h-8 w-8 text-green-500 mx-auto mb-2" />
               <p className="text-sm font-medium text-gray-600">Avg Battery Level</p>
               <p className="text-2xl font-bold text-gray-900">{analytics.hardware.avg_battery_level}%</p>
             </div>

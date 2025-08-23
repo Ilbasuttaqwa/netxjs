@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import { withAdminOrManagerAuth } from '../../lib/withManagerAuth';
+import { useAuth } from '../../contexts/AuthContext';
 import StatsCard from '../../components/dashboard/StatsCard';
 import RecentActivities from '../../components/dashboard/RecentActivities';
 import AttendanceChart from '../../components/dashboard/AttendanceChart';
@@ -25,6 +27,8 @@ interface DashboardStats {
 }
 
 function AdminDashboard() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [stats, setStats] = useState<DashboardStats>({
     totalEmployees: 0,
     totalBranches: 0,
@@ -97,7 +101,7 @@ function AdminDashboard() {
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Dashboard Admin</h1>
               <p className="text-gray-600 mt-1">
-                Selamat datang, {user.name} ({user.role})
+                Selamat datang, {user.nama_pegawai} ({user.role})
               </p>
               <p className="text-sm text-gray-500 mt-1">
                 {user.jabatan?.nama_jabatan} - {user.cabang?.nama_cabang}

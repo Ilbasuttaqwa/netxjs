@@ -1,6 +1,6 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
-import { verifyToken } from '../../../lib/auth-middleware';
+import { withAdminAuth, AuthenticatedRequest } from '../../../lib/auth-middleware';
 
 const prisma = new PrismaClient();
 
@@ -25,8 +25,8 @@ interface CloudServerConfig {
   timeout: number;
 }
 
-export default async function handler(
-  req: NextApiRequest,
+async function handler(
+  req: AuthenticatedRequest,
   res: NextApiResponse
 ) {
   try {
@@ -94,7 +94,7 @@ export default async function handler(
           tipe,
           cabang_id: parseInt(cabang_id.toString()),
           ip_address,
-          port,
+          port: port ? parseInt(port) : null,
           lokasi,
           keterangan,
           firmware_version,
@@ -127,12 +127,12 @@ export default async function handler(
       await prisma.deviceStatusLog.create({
         data: {
           device_id: newDevice.id,
-          status: 'registered',
+          status: 'online',
           firmware_version,
-          ip_address,
-          port,
           error_message: null,
-          sync_time: new Date()
+          employee_count: 0,
+          storage_usage: 0,
+          timestamp: new Date()
         }
       });
 
@@ -211,3 +211,5 @@ export default async function handler(
     await prisma.$disconnect();
   }
 }
+
+export default withAdminAuth(handler);

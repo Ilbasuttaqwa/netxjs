@@ -91,25 +91,28 @@ const handler = async (req: AuthenticatedRequest, res: NextApiResponse<ApiRespon
       };
 
       // Save to database
-      const savedRecord = await prisma.attendance.create({
+      const savedRecord = await prisma.fingerprintAttendance.create({
         data: {
-          karyawan_id: attendanceRecord.karyawan_id,
+          user_id: attendanceRecord.karyawan_id,
+          device_user_id: data.user_id,
           device_id: attendanceRecord.device_id,
-          timestamp: new Date(attendanceRecord.timestamp),
-          type: attendanceRecord.type,
-          verify_method: attendanceRecord.verify_method,
-          status: attendanceRecord.status,
+          attendance_time: new Date(attendanceRecord.timestamp),
+          attendance_type: data.in_out_mode,
+          verification_type: attendanceRecord.verify_method,
+          is_realtime: true,
+          created_at: new Date(),
+          updated_at: new Date()
         },
         include: {
-          karyawan: {
+          user: {
             select: {
               id: true,
-              nama: true,
-              nip: true,
+              nama_pegawai: true,
+              device_user_id: true,
               cabang: {
                 select: {
                   id: true,
-                  nama: true,
+                  nama_cabang: true,
                 }
               }
             }
@@ -143,7 +146,7 @@ const handler = async (req: AuthenticatedRequest, res: NextApiResponse<ApiRespon
 
   if (req.method === 'DELETE') {
     // Clear all records (for testing - use with caution in production)
-    await prisma.attendance.deleteMany({});
+    await prisma.fingerprintAttendance.deleteMany({});
     broadcastToClients({
       type: 'records_cleared',
       data: null,

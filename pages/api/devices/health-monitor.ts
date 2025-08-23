@@ -18,9 +18,6 @@ interface DeviceHealthStatus {
   uptime_percentage: number;
   issues: string[];
   metrics: {
-    battery_level?: number;
-    temperature?: number;
-    memory_usage?: number;
     storage_usage?: number;
     connection_quality?: 'excellent' | 'good' | 'fair' | 'poor';
     sync_frequency?: number;
@@ -84,7 +81,7 @@ async function handleHealthCheck(req: AuthenticatedRequest, res: NextApiResponse
     where: deviceFilter,
     include: {
       cabang: true,
-      deviceStatusLogs: {
+      statusLogs: {
         where: {
           timestamp: {
             gte: startTime
@@ -92,17 +89,6 @@ async function handleHealthCheck(req: AuthenticatedRequest, res: NextApiResponse
         },
         orderBy: {
           timestamp: 'desc'
-        },
-        take: include_history ? 100 : 1
-      },
-      deviceSyncHistory: {
-        where: {
-          started_at: {
-            gte: startTime
-          }
-        },
-        orderBy: {
-          started_at: 'desc'
         },
         take: 10
       }
@@ -112,9 +98,9 @@ async function handleHealthCheck(req: AuthenticatedRequest, res: NextApiResponse
   const healthStatuses: DeviceHealthStatus[] = [];
 
   for (const device of devices) {
-    const latestLog = device.deviceStatusLogs[0];
-    const allLogs = device.deviceStatusLogs;
-    const syncHistory = device.deviceSyncHistory;
+    const latestLog = device.statusLogs[0];
+    const allLogs = device.statusLogs;
+    const statusLogs = device.statusLogs;
 
     // Calculate uptime percentage
     const onlineLogs = allLogs.filter(log => log.status === 'online');
@@ -139,18 +125,6 @@ async function handleHealthCheck(req: AuthenticatedRequest, res: NextApiResponse
       }
 
       // Check for critical issues
-      if (latestLog.battery_level && latestLog.battery_level < 20) {
-        healthStatus = 'critical';
-        issues.push(`Low battery: ${latestLog.battery_level}%`);
-      }
-      if (latestLog.temperature && latestLog.temperature > 60) {
-        healthStatus = 'critical';
-        issues.push(`High temperature: ${latestLog.temperature}°C`);
-      }
-      if (latestLog.memory_usage && latestLog.memory_usage > 90) {
-        healthStatus = 'critical';
-        issues.push(`High memory usage: ${latestLog.memory_usage}%`);
-      }
       if (latestLog.storage_usage && latestLog.storage_usage > 95) {
         healthStatus = 'critical';
         issues.push(`Storage almost full: ${latestLog.storage_usage}%`);
@@ -168,7 +142,7 @@ async function handleHealthCheck(req: AuthenticatedRequest, res: NextApiResponse
     else if (uptimePercentage >= 70) connectionQuality = 'fair';
 
     // Calculate sync frequency (syncs per hour)
-    const successfulSyncs = syncHistory.filter(sync => sync.status === 'success');
+    const successfulSyncs = statusLogs.filter(log => log.status === 'online');
     const syncFrequency = successfulSyncs.length / (time_range === 'hour' ? 1 : time_range === 'day' ? 24 : time_range === 'week' ? 168 : 720);
 
     // Count errors in the time range
@@ -182,9 +156,6 @@ async function handleHealthCheck(req: AuthenticatedRequest, res: NextApiResponse
       uptime_percentage: Math.round(uptimePercentage * 100) / 100,
       issues,
       metrics: {
-        battery_level: latestLog?.battery_level || undefined,
-        temperature: latestLog?.temperature || undefined,
-        memory_usage: latestLog?.memory_usage || undefined,
         storage_usage: latestLog?.storage_usage || undefined,
         connection_quality: connectionQuality,
         sync_frequency: Math.round(syncFrequency * 100) / 100,
@@ -220,8 +191,7 @@ async function handleHealthCheck(req: AuthenticatedRequest, res: NextApiResponse
       ...(include_history && {
         history: devices.map(device => ({
           device_id: device.device_id,
-          status_logs: device.deviceStatusLogs,
-          sync_history: device.deviceSyncHistory
+          status_logs: device.statusLogs
         }))
       })
     }
@@ -257,11 +227,7 @@ async function handleHealthUpdate(req: AuthenticatedRequest, res: NextApiRespons
         device_id: device.id,
         status: status || 'online',
         firmware_version: device.firmware_version,
-        battery_level: metrics?.battery_level,
-        temperature: metrics?.temperature,
-        memory_usage: metrics?.memory_usage,
         storage_usage: metrics?.storage_usage,
-        sync_records_count: metrics?.sync_records_count,
         error_message: error_message || null,
         timestamp: new Date()
       }

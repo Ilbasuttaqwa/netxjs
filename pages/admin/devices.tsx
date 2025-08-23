@@ -42,7 +42,7 @@ interface Cabang {
 
 const DeviceManagement = () => {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { addToast } = useToast();
   const [devices, setDevices] = useState<Device[]>([]);
   const [cabangList, setCabangList] = useState<any[]>([]);
@@ -69,7 +69,7 @@ const DeviceManagement = () => {
   });
 
   useEffect(() => {
-    if (!loading && (!user || user.role !== 'admin')) {
+    if (!authLoading && (!user || user.role !== 'admin')) {
       router.push('/login');
       return;
     }
@@ -77,7 +77,7 @@ const DeviceManagement = () => {
       fetchDevices();
       fetchCabangList();
     }
-  }, [user, loading, currentPage, searchTerm, filterStatus, filterCabang, filterTipe]);
+  }, [user, authLoading, currentPage, searchTerm, filterStatus, filterCabang, filterTipe]);
 
   const fetchDevices = async () => {
     try {
@@ -267,7 +267,7 @@ const DeviceManagement = () => {
     }
   };
 
-  if (loading || isLoading) {
+  if (authLoading || isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>

@@ -100,15 +100,7 @@ async function handleStartSync(req: AuthenticatedRequest, res: NextApiResponse) 
     // Generate sync ID
     const syncId = `sync_${device_id}_${Date.now()}`;
 
-    // Create sync history record
-    const syncHistory = await prisma.deviceSyncHistory.create({
-      data: {
-        device_id: device.id,
-        sync_type: 'manual',
-        status: 'in_progress',
-        started_at: new Date()
-      }
-    });
+    // Note: Sync history tracking removed as deviceSyncHistory model is not available
 
     // Initialize sync response
     const syncResponse: SyncResponse = {
@@ -124,7 +116,7 @@ async function handleStartSync(req: AuthenticatedRequest, res: NextApiResponse) 
     activeSyncs.set(syncId, syncResponse);
 
     // Start async sync process
-    performAsyncSync(syncId, device, sync_type, last_sync_timestamp, syncHistory.id)
+    performAsyncSync(syncId, device, sync_type, last_sync_timestamp)
       .catch(error => {
         console.error(`Sync ${syncId} failed:`, error);
         const sync = activeSyncs.get(syncId);
@@ -298,18 +290,7 @@ async function performAsyncSync(
       }
     });
 
-    // Update sync history
-    if (syncHistoryId) {
-      await prisma.deviceSyncHistory.update({
-        where: { id: syncHistoryId },
-        data: {
-          status: 'success',
-          records_synced: totalRecords,
-          completed_at: new Date(),
-          duration_seconds: Math.floor((Date.now() - new Date(sync.estimated_completion.getTime() - 5 * 60 * 1000).getTime()) / 1000)
-        }
-      });
-    }
+    // Note: Sync history update removed as deviceSyncHistory model is not available
 
     // Create status log
     await prisma.deviceStatusLog.create({
@@ -317,11 +298,7 @@ async function performAsyncSync(
         device_id: device.id,
         status: 'online',
         firmware_version: device.firmware_version,
-        battery_level: Math.floor(Math.random() * 40) + 60,
-        temperature: Math.floor(Math.random() * 20) + 30,
-        memory_usage: Math.floor(Math.random() * 30) + 40,
         storage_usage: Math.floor(Math.random() * 40) + 30,
-        sync_records_count: totalRecords,
         timestamp: new Date()
       }
     });
@@ -338,17 +315,7 @@ async function performAsyncSync(
     sync.error_message = error.message;
     activeSyncs.set(syncId, sync);
 
-    // Update sync history with failure
-    if (syncHistoryId) {
-      await prisma.deviceSyncHistory.update({
-        where: { id: syncHistoryId },
-        data: {
-          status: 'failed',
-          error_message: error.message,
-          completed_at: new Date()
-        }
-      });
-    }
+    // Note: Sync history error update removed as deviceSyncHistory model is not available
 
     // Clean up failed sync after 1 minute
     setTimeout(() => {

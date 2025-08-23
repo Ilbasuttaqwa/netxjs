@@ -36,22 +36,22 @@ async function handler(
         }
         
         // Get total count for pagination
-        const total = await prisma.karyawan.count({ where: whereClause });
+        const total = await prisma.user.count({ where: whereClause });
         
         // Get karyawan with pagination, search, and sorting
-        const karyawanList = await prisma.karyawan.findMany({
+        const karyawanList = await prisma.user.findMany({
           where: whereClause,
           include: {
             jabatan: {
               select: {
                 id: true,
-                nama: true
+                nama_jabatan: true
               }
             },
             cabang: {
               select: {
                 id: true,
-                nama: true
+                nama_cabang: true
               }
             }
           },
@@ -81,7 +81,7 @@ async function handler(
         }
         
         // Check if email already exists
-        const existingKaryawan = await prisma.karyawan.findFirst({
+        const existingKaryawan = await prisma.user.findFirst({
           where: { email }
         });
         
@@ -106,29 +106,29 @@ async function handler(
           });
         }
         
-        const newKaryawan = await prisma.karyawan.create({
+        const newKaryawan = await prisma.user.create({
           data: {
-            nama,
+            nama_pegawai: nama,
             email,
-            jabatan_id: parseInt(jId),
-            cabang_id: parseInt(cId),
-            telepon: telepon || '',
-            alamat: alamat || '',
+            password: 'defaultpassword123', // Default password
+            id_jabatan: parseInt(jId),
+            id_cabang: parseInt(cId),
+            alamat: alamat || null,
             tanggal_masuk: tanggal_masuk ? new Date(tanggal_masuk) : new Date(),
-            fingerprint_id: finger_id || null,
-            status: status || 'aktif'
+            device_user_id: finger_id || null,
+            status_pegawai: status === 'aktif'
           },
           include: {
             jabatan: {
               select: {
                 id: true,
-                nama: true
+                nama_jabatan: true
               }
             },
             cabang: {
               select: {
                 id: true,
-                nama: true
+                nama_cabang: true
               }
             }
           }

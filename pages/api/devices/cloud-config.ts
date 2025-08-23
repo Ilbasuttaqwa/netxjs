@@ -1,6 +1,6 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
-import { verifyToken } from '../../../lib/auth-middleware';
+import { withAdminAuth, AuthenticatedRequest } from '../../../lib/auth-middleware';
 
 const prisma = new PrismaClient();
 
@@ -29,19 +29,11 @@ interface CloudConfigResponse {
   updated_at: Date;
 }
 
-export default async function handler(
-  req: NextApiRequest,
+async function handler(
+  req: AuthenticatedRequest,
   res: NextApiResponse
 ) {
   try {
-    // Verify admin authentication
-    const authResult = await verifyToken(req);
-    if (!authResult.success || authResult.user?.role !== 'admin') {
-      return res.status(401).json({
-        success: false,
-        message: 'Unauthorized. Admin access required.'
-      });
-    }
 
     if (req.method === 'GET') {
       // Get current cloud server configuration
@@ -262,3 +254,5 @@ export default async function handler(
     await prisma.$disconnect();
   }
 }
+
+export default withAdminAuth(handler);

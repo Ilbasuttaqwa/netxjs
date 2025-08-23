@@ -28,25 +28,24 @@ async function handler(
             cabang: {
               select: {
                 id: true,
-                nama: true,
-                alamat: true,
-                no_telp: true
+                nama_cabang: true,
+                alamat_cabang: true,
+                telepon_cabang: true
               }
             },
             attendance: {
               select: {
                 id: true,
-                timestamp: true,
-                type: true,
-                karyawan: {
+                attendance_time: true,
+                attendance_type: true,
+                user: {
                   select: {
                     id: true,
-                    nama: true,
-                    nip: true
+                    nama_pegawai: true
                   }
                 }
               },
-              orderBy: { timestamp: 'desc' },
+              orderBy: { attendance_time: 'desc' },
               take: 10 // Last 10 attendance records
             }
           }
@@ -110,8 +109,8 @@ async function handler(
             cabang: {
               select: {
                 id: true,
-                nama: true,
-                alamat: true
+                nama_cabang: true,
+                alamat_cabang: true
               }
             }
           }
@@ -137,7 +136,7 @@ async function handler(
         }
         
         // Check if device has attendance records
-        const attendanceCount = await prisma.attendance.count({
+        const attendanceCount = await prisma.fingerprintAttendance.count({
           where: { device_id: deviceToDelete.device_id }
         });
         

@@ -31,7 +31,7 @@ interface CloudConfig {
 }
 
 const CloudConfigPage = () => {
-  const { user, loading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
@@ -49,14 +49,14 @@ const CloudConfigPage = () => {
   });
 
   useEffect(() => {
-    if (!loading && (!user || user.role !== 'admin')) {
+    if (!authLoading && (!user || user.role !== 'admin')) {
       router.push('/login');
       return;
     }
     if (user) {
       fetchConfig();
     }
-  }, [user, loading]);
+  }, [user, authLoading]);
 
   const fetchConfig = async () => {
     try {
@@ -135,7 +135,7 @@ const CloudConfigPage = () => {
     }));
   };
 
-  if (loading || isLoading) {
+  if (authLoading || isLoading) {
     return (
       <DashboardLayout>
         <div className="flex justify-center items-center h-64">

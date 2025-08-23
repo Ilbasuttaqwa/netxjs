@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         addToast({
           type: 'success',
           title: 'Login Berhasil',
-          message: `Selamat datang, ${user.name}!`,
+          message: `Selamat datang, ${user.nama_pegawai}!`,
         });
         
         // Redirect based on role

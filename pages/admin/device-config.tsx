@@ -5,8 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { deviceApi } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
-import { Modal } from '@/components/ui/Modal';
-import { Card } from '@/components/ui/Card';
+import Modal from '@/components/ui/Modal';
+import Card from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Dropdown';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
@@ -27,8 +27,8 @@ import {
   MapPinIcon,
   SignalIcon,
   CpuChipIcon,
-  ThermometerIcon,
-  BatteryIcon
+  FireIcon,
+  Battery0Icon
 } from '@heroicons/react/24/outline';
 
 interface Device {
@@ -82,7 +82,7 @@ interface TroubleshootResult {
 
 export default function DeviceConfigPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { addToast } = useToast();
   
   const [devices, setDevices] = useState<Device[]>([]);
@@ -128,7 +128,7 @@ export default function DeviceConfigPage() {
       setLoading(true);
       const response = await deviceApi.getDevices();
       if (response.success) {
-        setDevices(response.data.data || []);
+        setDevices(response.data?.data || []);
       }
     } catch (error: any) {
       addToast({
@@ -196,7 +196,7 @@ export default function DeviceConfigPage() {
       
       if (selectedDevice) {
         // Update existing device
-        const response = await deviceApi.updateDevice(selectedDevice.id, configForm);
+        const response = await deviceApi.updateDevice(selectedDevice.id.toString(), configForm);
         if (response.success) {
           addToast({
             type: 'success',
@@ -236,7 +236,7 @@ export default function DeviceConfigPage() {
     }
 
     try {
-      const response = await deviceApi.deleteDevice(device.id);
+      const response = await deviceApi.deleteDevice(device.id.toString());
       if (response.success) {
         addToast({
           type: 'success',
@@ -664,7 +664,7 @@ export default function DeviceConfigPage() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           {troubleshootResult.details.hardware_status.temperature && (
                             <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-                              <ThermometerIcon className="h-4 w-4 text-gray-400" />
+                              <FireIcon className="h-4 w-4 text-gray-400" />
                               <span className="text-sm text-gray-600">
                                 Suhu: {troubleshootResult.details.hardware_status.temperature}°C
                               </span>
@@ -682,7 +682,7 @@ export default function DeviceConfigPage() {
                           
                           {troubleshootResult.details.hardware_status.battery_level && (
                             <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-                              <BatteryIcon className="h-4 w-4 text-gray-400" />
+                              <Battery0Icon className="h-4 w-4 text-gray-400" />
                               <span className="text-sm text-gray-600">
                                 Baterai: {troubleshootResult.details.hardware_status.battery_level}%
                               </span>

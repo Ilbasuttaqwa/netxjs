@@ -65,8 +65,8 @@ async function handler(
             cabang: {
               select: {
                 id: true,
-                nama: true,
-                alamat: true
+                nama_cabang: true,
+                alamat_cabang: true
               }
             }
           },
@@ -137,8 +137,8 @@ async function handler(
             cabang: {
               select: {
                 id: true,
-                nama: true,
-                alamat: true
+                nama_cabang: true,
+                alamat_cabang: true
               }
             }
           }

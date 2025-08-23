@@ -33,17 +33,6 @@ export default async function handler(
       where: { id: decoded.id },
       include: {
         cabang: true
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        cabang_id: true,
-        cabang: true,
-        status: true,
-        created_at: true,
-        updated_at: true
       }
     });
     

@@ -336,7 +336,7 @@ const AbsensiUserPage: React.FC = () => {
           <div className="bg-white shadow-sm rounded-lg p-6">
             <div className="text-center">
               <h1 className="text-2xl font-bold text-gray-900">
-                Selamat Datang, {user?.name}
+                Selamat Datang, {user?.nama_pegawai}
               </h1>
               <p className="text-gray-600 mt-1">
                 {formatCurrentDate()}

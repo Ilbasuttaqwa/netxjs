@@ -2,9 +2,5 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/admin/device-monitoring": "pages/admin/device-monitoring.js",
-  "/dashboard": "pages/dashboard.js",
-  "/api/devices": "pages/api/devices.js",
-  "/admin/device-config": "pages/admin/device-config.js",
-  "/admin/cloud-config": "pages/admin/cloud-config.js"
+  "/login": "pages/login.js"
 }

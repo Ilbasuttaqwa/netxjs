@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import { withManagerAuth } from '../../lib/withManagerAuth';
+import { useAuth } from '../../contexts/AuthContext';
 import StatsCard from '../../components/dashboard/StatsCard';
 import RecentActivities from '../../components/dashboard/RecentActivities';
 import AttendanceChart from '../../components/dashboard/AttendanceChart';
@@ -25,6 +26,7 @@ interface DashboardStats {
 }
 
 function ManagerDashboard() {
+  const { user } = useAuth();
   const [stats, setStats] = useState<DashboardStats>({
     totalEmployees: 0,
     totalBranches: 0,
@@ -83,7 +85,7 @@ function ManagerDashboard() {
                 Dashboard Manager
               </h1>
               <p className="text-gray-600">
-                Selamat datang, {user?.name} - {user?.cabang?.nama_cabang || 'Cabang Utama'}
+                Selamat datang, {user?.nama_pegawai} - {user?.cabang?.nama_cabang || 'Cabang Utama'}
               </p>
             </div>
             <div className="flex items-center space-x-2">
@@ -99,30 +101,26 @@ function ManagerDashboard() {
           <StatsCard
             title="Total Karyawan"
             value={stats.totalEmployees.toString()}
-            icon={UsersIcon}
-            color="blue"
-            description="Karyawan di cabang ini"
+            icon={<UsersIcon className="h-6 w-6" />}
+            color="info"
           />
           <StatsCard
             title="Hadir Hari Ini"
             value={stats.todayAttendance.toString()}
-            icon={CheckCircleIcon}
-            color="green"
-            description="Karyawan yang hadir"
+            icon={<CheckCircleIcon className="h-6 w-6" />}
+            color="success"
           />
           <StatsCard
             title="Terlambat"
             value={stats.lateToday.toString()}
-            icon={ExclamationTriangleIcon}
-            color="yellow"
-            description="Karyawan terlambat"
+            icon={<ExclamationTriangleIcon className="h-6 w-6" />}
+            color="warning"
           />
           <StatsCard
             title="Tidak Hadir"
             value={stats.absentToday.toString()}
-            icon={XCircleIcon}
-            color="red"
-            description="Karyawan tidak hadir"
+            icon={<XCircleIcon className="h-6 w-6" />}
+            color="danger"
           />
         </div>
 

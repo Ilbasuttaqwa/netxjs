@@ -18,8 +18,8 @@ import {
   ClipboardDocumentListIcon,
   MapPinIcon,
   CpuChipIcon,
-  BatteryIcon,
-  ThermometerIcon,
+  Battery0Icon,
+  FireIcon,
   ExclamationTriangleIcon,
   CheckCircleIcon,
   XCircleIcon,
@@ -750,7 +750,7 @@ const MonitoringPage: React.FC = () => {
                       )}
                       {device.battery_level !== undefined && (
                         <div className="flex items-center space-x-2">
-                          <BatteryIcon className={cn(
+                          <Battery0Icon className={cn(
                             'h-4 w-4',
                             device.battery_level > 50 ? 'text-success-500' :
                             device.battery_level > 20 ? 'text-warning-500' : 'text-danger-500'
@@ -766,7 +766,7 @@ const MonitoringPage: React.FC = () => {
                       )}
                       {device.temperature !== undefined && (
                         <div className="flex items-center space-x-2">
-                          <ThermometerIcon className={cn(
+                          <FireIcon className={cn(
                             'h-4 w-4',
                             device.temperature < 60 ? 'text-success-500' :
                             device.temperature < 80 ? 'text-warning-500' : 'text-danger-500'

@@ -45,17 +45,17 @@ async function handler(
           });
         }
         
-        const { nama, alamat, no_telp, email } = req.body;
+        const { nama, alamat, no_telp, email, kode_cabang } = req.body;
         
-        if (!nama || !alamat) {
+        if (!nama || !alamat || !kode_cabang) {
           return res.status(400).json({
-            message: 'Required fields: nama, alamat'
+            message: 'Required fields: nama, alamat, kode_cabang'
           });
         }
         
         // Check if nama already exists
         const existingCabang = await prisma.cabang.findFirst({
-          where: { nama }
+          where: { nama_cabang: nama }
         });
         
         if (existingCabang) {
@@ -66,11 +66,12 @@ async function handler(
         
         const newCabang = await prisma.cabang.create({
           data: {
-            nama,
-            alamat,
-            no_telp: no_telp || '',
-            email: email || '',
-            status: 'aktif'
+            nama_cabang: nama,
+            alamat_cabang: alamat,
+            telepon_cabang: no_telp || '',
+            email_cabang: email || '',
+            kode_cabang: kode_cabang,
+            status: true
           }
         });
         
