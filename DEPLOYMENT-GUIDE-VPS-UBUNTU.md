@@ -40,7 +40,7 @@ sudo apt install nginx -y
 sudo apt install certbot python3-certbot-nginx -y
 
 # Install Git
-sudo apt install git -y
+s-y
 ```
 
 ### 1.3 Restart untuk apply Docker group
@@ -50,7 +50,7 @@ sudo reboot
 
 ---
 
-## Step 2: Struktur Folder di VPS
+## Step 2: Struktur Foldudo apt install git er di VPS
 
 ### 2.1 Buat Struktur Folder
 ```bash
@@ -138,7 +138,7 @@ WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --only=
 
 # Copy source code
 COPY . .
@@ -147,7 +147,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:18-alpine AS runner
+FROM node:18-alpine ASproduction runner
 
 WORKDIR /app
 
