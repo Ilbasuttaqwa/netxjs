@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import Card from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -174,13 +174,13 @@ const FingerprintTestCrud: React.FC = () => {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <Card.Header>
+          <h2 className="flex items-center gap-2 text-lg font-semibold">
             <Play className="h-5 w-5" />
             Antarmuka Pengujian CRUD Sidik Jari
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </h2>
+        </Card.Header>
+        <Card.Body>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="create">Tes CREATE</TabsTrigger>
@@ -326,16 +326,16 @@ const FingerprintTestCrud: React.FC = () => {
               </Button>
             </TabsContent>
           </Tabs>
-        </CardContent>
+        </Card.Body>
       </Card>
 
       {/* Test Results */}
       {testSummary && (
         <Card>
-          <CardHeader>
-            <CardTitle>Ringkasan Tes</CardTitle>
-          </CardHeader>
-          <CardContent>
+          <Card.Header>
+            <h2 className="text-lg font-semibold">Ringkasan Tes</h2>
+          </Card.Header>
+          <Card.Body>
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="text-center">
                 <div className="text-2xl font-bold">{testSummary.total_tests}</div>
@@ -374,7 +374,7 @@ const FingerprintTestCrud: React.FC = () => {
                 </div>
               ))}
             </div>
-          </CardContent>
+          </Card.Body>
         </Card>
       )}
     </div>

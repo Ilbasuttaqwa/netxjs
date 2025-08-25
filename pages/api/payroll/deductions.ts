@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { requireRole } from '../../../middleware/auth';
-import { ApiResponse } from '../../../types';
+import { ApiResponse } from '../../../types/index';
 
 interface AttendanceRule {
   id: number;

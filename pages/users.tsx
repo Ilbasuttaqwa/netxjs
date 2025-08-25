@@ -11,7 +11,7 @@ import TataLetakDasbor from '../components/layouts/TataLetakDasbor';
 import DataTable from '../components/ui/DataTable';
 import useDataTable from '../hooks/useDataTable';
 import { Button } from '../components/ui/button';
-import Modal from '../components/ui/Modal';
+import Modal from '../components/ui/modal';
 import { cn } from '../utils/cn';
 import { useToast } from '../contexts/ToastContext';
 
@@ -356,7 +356,6 @@ const UsersPage = () => {
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         title="Hapus Pengguna"
-        size="md"
       >
         <div className="space-y-4">
           <p className="text-gray-600">

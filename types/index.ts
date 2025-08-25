@@ -1,11 +1,22 @@
 // User types
 export interface User {
   id: number;
-  name: string;
-  role: 'admin' | 'manager' | 'user';
-  cabang_id?: number;
-  jabatan_id?: number;
-  status: 'aktif' | 'tidak_aktif';
+  nama_pegawai: string;
+  tempat_lahir?: string;
+  tanggal_lahir?: string;
+  jenis_kelamin?: string;
+  alamat?: string;
+  tanggal_masuk?: string;
+  gaji?: number;
+  status_pegawai?: boolean;
+  password: string;
+  remember_token?: string;
+  role?: string;
+  id_jabatan?: number;
+  id_cabang?: number;
+  jam_istirahat_mulai?: string;
+  jam_istirahat_selesai?: string;
+  device_user_id?: string;
   created_at: string;
   updated_at: string;
   cabang?: Cabang;
@@ -18,7 +29,7 @@ export interface Cabang {
   nama_cabang: string;
   alamat: string;
   telepon?: string;
-  status: 'aktif' | 'tidak_aktif';
+  status: 'aktif' | 'nonaktif';
   created_at: string;
   updated_at: string;
 }
@@ -44,7 +55,7 @@ export interface Karyawan {
   cabang_id: number;
   jabatan_id: number;
   tanggal_masuk: string;
-  status: 'aktif' | 'tidak_aktif';
+  status: 'aktif' | 'nonaktif';
   fingerprint_id?: string;
   created_at: string;
   updated_at: string;
@@ -55,15 +66,15 @@ export interface Karyawan {
 // Absensi types
 export interface Absensi {
   id: number;
-  karyawan_id: number;
+  user_id: number;
   tanggal: string;
   jam_masuk?: string;
   jam_keluar?: string;
-  status: 'hadir' | 'terlambat' | 'alpha' | 'izin' | 'sakit';
+  status: 'hadir' | 'tidak_hadir' | 'terlambat' | 'pulang_cepat';
   keterangan?: string;
   created_at: string;
   updated_at: string;
-  karyawan?: Karyawan;
+  user?: User;
 }
 
 // Monitoring types
@@ -184,6 +195,11 @@ export interface DashboardStats {
 
 // Chart types
 export interface ChartData {
+  label: string;
+  value: number;
+}
+
+export interface ChartDataset {
   labels: string[];
   datasets: {
     label: string;

@@ -84,8 +84,7 @@ export default async function handler(
         user: {
           select: {
             id: true,
-            nama_pegawai: true,
-            email: true
+            nama_pegawai: true
           }
         }
       },
@@ -110,8 +109,7 @@ export default async function handler(
       user: {
         id: item.user.id.toString(),
         name: item.user.nama_pegawai,
-        username: item.user.nama_pegawai, // Use nama_pegawai as username fallback
-        email: item.user.email
+        username: item.user.nama_pegawai // Use nama_pegawai as username fallback
       }
     }));
 

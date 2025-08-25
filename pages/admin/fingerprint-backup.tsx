@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import Card from '../../components/ui/Card';
+import Card from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
-import { Modal } from '../../components/ui/Modal';
+import { Modal } from '../../components/ui/modal';
 import {
   CircleStackIcon as Database,
   ArrowDownTrayIcon as Download,
@@ -47,8 +47,8 @@ interface Backup {
 
 const FingerprintBackupPage: NextPage = () => {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
-  const { toast } = useToast();
+  const { user, isLoading: authLoading } = useAuth();
+  const { addToast } = useToast();
   
   const [devices, setDevices] = useState<Device[]>([]);
   const [backups, setBackups] = useState<Backup[]>([]);
@@ -110,10 +110,10 @@ const FingerprintBackupPage: NextPage = () => {
       }
     } catch (error) {
       console.error('Error fetching backups:', error);
-      toast({
+      addToast({
+        type: 'error',
         title: 'Error',
-        description: 'Gagal mengambil daftar backup',
-        variant: 'destructive'
+        message: 'Gagal mengambil daftar backup'
       });
     } finally {
       setLoading(false);
@@ -122,10 +122,10 @@ const FingerprintBackupPage: NextPage = () => {
 
   const handleCreateBackup = async () => {
     if (!selectedDevice) {
-      toast({
+      addToast({
+        type: 'error',
         title: 'Error',
-        description: 'Pilih device terlebih dahulu',
-        variant: 'destructive'
+        message: 'Pilih device terlebih dahulu'
       });
       return;
     }
@@ -147,9 +147,10 @@ const FingerprintBackupPage: NextPage = () => {
       const data = await response.json();
       
       if (response.ok && data.success) {
-        toast({
+        addToast({
+          type: 'success',
           title: 'Success',
-          description: data.message
+          message: data.message
         });
         setShowBackupModal(false);
         setSelectedDevice('');
@@ -158,10 +159,10 @@ const FingerprintBackupPage: NextPage = () => {
         throw new Error(data.message || 'Gagal membuat backup');
       }
     } catch (error: any) {
-      toast({
+      addToast({
+        type: 'error',
         title: 'Error',
-        description: error.message || 'Gagal membuat backup',
-        variant: 'destructive'
+        message: error.message || 'Gagal membuat backup'
       });
     } finally {
       setLoading(false);
@@ -170,11 +171,11 @@ const FingerprintBackupPage: NextPage = () => {
 
   const handleRestoreBackup = async () => {
     if (!selectedBackup || !targetDevice) {
-      toast({
-        title: 'Error',
-        description: 'Pilih backup dan target device terlebih dahulu',
-        variant: 'destructive'
-      });
+      addToast({
+         type: 'error',
+         title: 'Error',
+         message: 'Pilih backup dan target device terlebih dahulu'
+       });
       return;
     }
 
@@ -196,9 +197,10 @@ const FingerprintBackupPage: NextPage = () => {
       const data = await response.json();
       
       if (response.ok && data.success) {
-        toast({
+        addToast({
+          type: 'success',
           title: 'Success',
-          description: data.message
+          message: data.message
         });
         setShowRestoreModal(false);
         setSelectedBackup(null);
@@ -207,10 +209,10 @@ const FingerprintBackupPage: NextPage = () => {
         throw new Error(data.message || 'Gagal melakukan restore');
       }
     } catch (error: any) {
-      toast({
+      addToast({
+        type: 'error',
         title: 'Error',
-        description: error.message || 'Gagal melakukan restore',
-        variant: 'destructive'
+        message: error.message || 'Gagal melakukan restore'
       });
     } finally {
       setLoading(false);
@@ -230,9 +232,10 @@ const FingerprintBackupPage: NextPage = () => {
       });
       
       if (response.ok) {
-        toast({
+        addToast({
+          type: 'success',
           title: 'Success',
-          description: 'Backup berhasil dihapus'
+          message: 'Backup berhasil dihapus'
         });
         setShowDeleteModal(false);
         setBackupToDelete(null);
@@ -241,10 +244,10 @@ const FingerprintBackupPage: NextPage = () => {
         throw new Error('Gagal menghapus backup');
       }
     } catch (error: any) {
-      toast({
+      addToast({
+        type: 'error',
         title: 'Error',
-        description: error.message || 'Gagal menghapus backup',
-        variant: 'destructive'
+        message: error.message || 'Gagal menghapus backup'
       });
     } finally {
       setLoading(false);

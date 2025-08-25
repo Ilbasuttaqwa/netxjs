@@ -69,7 +69,6 @@ async function handler(
             nama_cabang: nama,
             alamat_cabang: alamat,
             telepon_cabang: no_telp || '',
-            email_cabang: email || '',
             kode_cabang: kode_cabang,
             status: true
           }

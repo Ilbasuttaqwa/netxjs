@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { ApiResponse, PaginatedResponse, LoginCredentials, AuthUser, User, Cabang, Jabatan, Karyawan, Absensi, MonitoringFingerprint, DashboardStats, FilterOptions } from '../types';
+import { ApiResponse, PaginatedResponse, LoginCredentials, AuthUser, User, Cabang, Jabatan, Karyawan, Absensi, MonitoringFingerprint, DashboardStats, FilterOptions } from '../types/index';
 
 // Create axios instance
 const api: AxiosInstance = axios.create({

@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { Karyawan, Cabang, Jabatan, PaginatedResponse } from '../../types';
+import { Karyawan, Cabang, Jabatan, PaginatedResponse } from '../../types/index';
 import { karyawanApi, cabangApi, jabatanApi } from '../../lib/api';
 import { useToast } from '../../contexts/ToastContext';
 import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
 import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/Input';
+import { Input } from '../../components/ui/input';
 import {
   PlusIcon,
   PencilIcon,
@@ -28,7 +28,7 @@ interface KaryawanFormData {
   cabang_id: string;
   jabatan_id: string;
   finger_id?: string;
-  status: 'aktif' | 'tidak_aktif';
+  status: 'aktif' | 'nonaktif';
 }
 
 const KaryawanPage: React.FC = () => {
@@ -581,11 +581,11 @@ const KaryawanPage: React.FC = () => {
                   </label>
                   <select
                     value={formData.status}
-                    onChange={(e) => setFormData({ ...formData, status: e.target.value as 'aktif' | 'tidak_aktif' })}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value as 'aktif' | 'nonaktif' })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="aktif">Aktif</option>
-                    <option value="tidak_aktif">Tidak Aktif</option>
+                    <option value="nonaktif">Tidak Aktif</option>
                   </select>
                 </div>
                 

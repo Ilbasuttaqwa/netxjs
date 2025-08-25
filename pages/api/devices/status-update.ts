@@ -70,8 +70,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         firmware_version: updateData.firmware_version || device.firmware_version,
         employee_count: updateData.employee_count || 0,
         storage_usage: updateData.storage_usage || 0,
-        memory_usage: updateData.memory_usage || 0,
-        temperature: updateData.temperature || null,
         error_message: updateData.error_message || null,
         timestamp: updateData.timestamp ? new Date(updateData.timestamp) : new Date()
       }
@@ -102,15 +100,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
-// Example usage for devices to send status updates:
-// POST /api/devices/status-update
-// {
-//   "device_id": "FP001",
-//   "status": "online",
-//   "firmware_version": "v2.1.0",
-//   "employee_count": 150,
-//   "storage_usage": 45,
-//   "memory_usage": 67,
-//   "temperature": 42,
-//   "timestamp": "2024-01-15T10:30:00Z"
-// }

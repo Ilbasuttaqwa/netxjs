@@ -62,7 +62,6 @@ export default async function handler(
       select: {
         id: true,
         nama_pegawai: true,
-        email: true,
         role: true,
         status_pegawai: true,
         created_at: true,

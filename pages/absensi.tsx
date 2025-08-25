@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { Absensi } from '../types';
+import { Absensi } from '../types/index';
 import { absensiApi } from '../lib/api';
 import { useToast } from '../contexts/ToastContext';
 import TataLetakDasbor from '../components/layouts/TataLetakDasbor';
@@ -90,7 +90,7 @@ const AbsensiUserPage: React.FC = () => {
       if (today === '2024-01-15') {
         setTodayAttendance({
           id: 1,
-          karyawan_id: user?.id || 1,
+          user_id: user?.id || 1,
           tanggal: today,
           jam_masuk: '08:00:00',
           jam_keluar: undefined,
@@ -116,7 +116,7 @@ const AbsensiUserPage: React.FC = () => {
         setRecentAttendance([
           {
             id: 1,
-            karyawan_id: user?.id || 1,
+            user_id: user?.id || 1,
             tanggal: '2024-01-15',
             jam_masuk: '08:00:00',
             jam_keluar: '17:00:00',
@@ -127,7 +127,7 @@ const AbsensiUserPage: React.FC = () => {
           },
           {
             id: 2,
-            karyawan_id: user?.id || 1,
+            user_id: user?.id || 1,
             tanggal: '2024-01-14',
             jam_masuk: '08:30:00',
             jam_keluar: '17:00:00',
@@ -138,11 +138,11 @@ const AbsensiUserPage: React.FC = () => {
           },
           {
             id: 3,
-            karyawan_id: user?.id || 1,
+            user_id: user?.id || 1,
             tanggal: '2024-01-13',
             jam_masuk: undefined,
             jam_keluar: undefined,
-            status: 'alpha',
+            status: 'tidak_hadir',
             keterangan: 'Tidak hadir tanpa keterangan',
             created_at: '2024-01-13 00:00:00',
             updated_at: '2024-01-13 00:00:00',

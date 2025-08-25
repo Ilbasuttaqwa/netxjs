@@ -1,6 +1,6 @@
 import { NextApiResponse } from 'next';
 import { withAdminAuth, AuthenticatedRequest } from '../../../lib/auth-middleware';
-import { Bon } from '../../../types';
+import { Bon } from '../../../types/index';
 
 // Import mock data from index.ts (in real app, this would be from database)
 const mockBon: Bon[] = [

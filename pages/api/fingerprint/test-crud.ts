@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth, AuthenticatedRequest } from '../../../lib/auth-middleware';
-import { ApiResponse } from '../../../types';
+import { ApiResponse } from '../../../types/index';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -11,7 +11,6 @@ interface TestFingerprintData {
   timestamp: string;
   verify_type: number;
   in_out_mode: number;
-  work_code?: number;
   test_mode?: boolean;
 }
 
@@ -45,7 +44,7 @@ const handler = async (req: AuthenticatedRequest, res: NextApiResponse<ApiRespon
     return res.status(500).json({
       success: false,
       message: 'Internal server error',
-      error: error.message
+      errors: { general: [error.message] }
     });
   } finally {
     await prisma.$disconnect();
@@ -59,11 +58,10 @@ async function handleCreate(req: AuthenticatedRequest, res: NextApiResponse) {
   try {
     const testData: TestFingerprintData = {
       device_id: req.body.device_id || 'TEST_DEVICE_001',
-      user_id: req.body.user_id || '999',
+      user_id: req.body.user_id || '1',
       timestamp: req.body.timestamp || new Date().toISOString(),
       verify_type: req.body.verify_type || 1,
-      in_out_mode: req.body.in_out_mode || 0,
-      work_code: req.body.work_code || 0,
+      in_out_mode: req.body.in_out_mode || 1,
       test_mode: true
     };
 
@@ -111,7 +109,7 @@ async function handleCreate(req: AuthenticatedRequest, res: NextApiResponse) {
           verification_type: getVerifyMethod(testData.verify_type),
           is_realtime: true,
           processing_status: 'validated',
-          work_code: testData.work_code,
+
           created_at: new Date(),
           updated_at: new Date()
         }
@@ -189,8 +187,8 @@ async function handleCreate(req: AuthenticatedRequest, res: NextApiResponse) {
     return res.status(500).json({
       success: false,
       message: 'CREATE test failed',
-      error: error.message
-    });
+      errors: { general: [error.message] }
+      });
   }
 }
 
@@ -354,7 +352,7 @@ async function handleRead(req: AuthenticatedRequest, res: NextApiResponse) {
     return res.status(500).json({
       success: false,
       message: 'READ test failed',
-      error: error.message
+      errors: { general: [error.message] }
     });
   }
 }
@@ -482,7 +480,7 @@ async function handleUpdate(req: AuthenticatedRequest, res: NextApiResponse) {
     return res.status(500).json({
       success: false,
       message: 'UPDATE test failed',
-      error: error.message
+      errors: { general: [error.message] }
     });
   }
 }
@@ -598,7 +596,7 @@ async function handleDelete(req: AuthenticatedRequest, res: NextApiResponse) {
     return res.status(500).json({
       success: false,
       message: 'DELETE test failed',
-      error: error.message
+      errors: { general: [error.message] }
     });
   }
 }

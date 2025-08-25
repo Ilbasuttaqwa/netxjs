@@ -7,15 +7,55 @@ export interface ApiResponse<T = any> {
   errors?: Record<string, string[]>;
 }
 
+// Karyawan Types
+export interface Karyawan {
+  id: number;
+  nama: string;
+  telepon?: string;
+  alamat?: string;
+  tanggal_lahir?: string;
+  jenis_kelamin: 'L' | 'P';
+  cabang_id: number;
+  jabatan_id: number;
+  tanggal_masuk: string;
+  status: 'aktif' | 'nonaktif';
+  fingerprint_id?: string;
+  created_at: string;
+  updated_at: string;
+  cabang?: any;
+  jabatan?: any;
+}
+
 // User Types
 export interface User {
   id: number;
   nama_pegawai: string;
-  role: string;
+  tempat_lahir?: string;
+  tanggal_lahir?: string;
+  jenis_kelamin?: string;
+  agama?: string;
+  alamat?: string;
+  no_telepon?: string;
+  email?: string;
+  nik?: string;
+  npwp?: string;
+  no_rekening?: string;
+  nama_bank?: string;
+  role?: string;
   device_user_id?: string;
   cabang_id?: number;
+  jabatan_id?: number;
+  status_karyawan?: string;
+  tanggal_masuk?: string;
+  tanggal_keluar?: string;
+  gaji_pokok?: number;
+  tunjangan?: number;
+  potongan?: number;
+  foto?: string;
   created_at: string;
   updated_at: string;
+  cabang?: any;
+  jabatan?: any;
 }
 
 // Device Types
@@ -56,7 +96,7 @@ export interface Cabang {
   nama_cabang: string;
   alamat: string;
   telepon?: string;
-  status: 'active' | 'inactive';
+  status: 'aktif' | 'nonaktif';
   created_at: string;
   updated_at: string;
 }

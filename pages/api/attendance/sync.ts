@@ -8,11 +8,7 @@ interface AttendanceLogData {
   device_user_id: string;
   attendance_time: string;
   fingerprint_id?: string;
-  verification_mode?: string;
-  work_code?: string;
-  temperature?: number;
-  mask_detection?: boolean;
-  photo_url?: string;
+  verification_type?: string;
 }
 
 interface SyncRequest {
@@ -70,7 +66,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const user = await prisma.user.findFirst({
           where: {
             device_user_id: log.device_user_id,
-            cabang_id: device.cabang_id
+            id_cabang: device.cabang_id
           }
         });
 
@@ -90,8 +86,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Check for duplicate attendance within 5 minutes
         const existingAttendance = await prisma.attendanceDeduplication.findFirst({
           where: {
-            deviceId: device.id,
-            employeeId: user.id,
+            deviceId: device.id.toString(),
+            employeeId: user.id.toString(),
             timestamp: {
               gte: new Date(attendanceTime.getTime() - 5 * 60 * 1000), // 5 minutes before
               lte: new Date(attendanceTime.getTime() + 5 * 60 * 1000)  // 5 minutes after
@@ -107,8 +103,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Create attendance deduplication record
         await prisma.attendanceDeduplication.create({
           data: {
-            deviceId: device.id,
-            employeeId: user.id,
+            deviceId: device.id.toString(),
+            employeeId: user.id.toString(),
             fingerprintHash: fingerprintHash,
             timestamp: attendanceTime
           }
@@ -121,13 +117,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             device_user_id: log.device_user_id,
             attendance_time: attendanceTime,
             fingerprint_id: log.fingerprint_id || null,
-            verification_mode: log.verification_mode || 'fingerprint',
-            work_code: log.work_code || null,
-            temperature: log.temperature || null,
-            mask_detection: log.mask_detection || null,
-            photo_url: log.photo_url || null,
+            verification_type: log.verification_type || 'fingerprint',
             cabang_id: device.cabang_id,
-            device_id: device.id
+            device_id: device.id.toString()
           }
         });
 
@@ -143,7 +135,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         
         const todayAttendance = await prisma.absensi.findFirst({
           where: {
-            user_id: user.id,
+            id_user: user.id,
             tanggal: {
               gte: todayStart,
               lte: todayEnd
@@ -160,39 +152,50 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         attendanceDate.setHours(0, 0, 0, 0);
 
         if (attendanceType === 'masuk') {
-          await prisma.absensi.upsert({
+          const existingAttendance = await prisma.absensi.findFirst({
             where: {
-              user_id_tanggal: {
-                user_id: user.id,
-                tanggal: attendanceDate
-              }
-            },
-            update: {
-              jam_masuk: attendanceTime,
-              status: 'hadir',
-              updated_at: new Date()
-            },
-            create: {
-              user_id: user.id,
-              tanggal: attendanceDate,
-              jam_masuk: attendanceTime,
-              status: 'hadir',
-              cabang_id: device.cabang_id
+              id_user: user.id,
+              tanggal: attendanceDate
             }
           });
+
+          if (existingAttendance) {
+            await prisma.absensi.update({
+              where: { id: existingAttendance.id },
+              data: {
+                jam_masuk: attendanceTime,
+                status: 'hadir',
+                updated_at: new Date()
+              }
+            });
+          } else {
+            await prisma.absensi.create({
+              data: {
+                id_user: user.id,
+                tanggal: attendanceDate,
+                jam_masuk: attendanceTime,
+                status: 'hadir',
+                id_cabang: device.cabang_id
+              }
+            });
+          }
         } else {
-          await prisma.absensi.update({
+          const existingAttendance = await prisma.absensi.findFirst({
             where: {
-              user_id_tanggal: {
-                user_id: user.id,
-                tanggal: attendanceDate
-              }
-            },
-            data: {
-              jam_keluar: attendanceTime,
-              updated_at: new Date()
+              id_user: user.id,
+              tanggal: attendanceDate
             }
           });
+
+          if (existingAttendance) {
+            await prisma.absensi.update({
+              where: { id: existingAttendance.id },
+              data: {
+                jam_keluar: attendanceTime,
+                updated_at: new Date()
+              }
+            });
+          }
         }
 
         processedLogs.push({
@@ -259,20 +262,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await prisma.$disconnect();
   }
 }
-
-// Example usage for devices to sync attendance data:
-// POST /api/attendance/sync
-// {
-//   "device_id": "FP001",
-//   "timestamp": "2024-01-15T10:30:00Z",
-//   "logs": [
-//     {
-//       "device_user_id": "001",
-//       "attendance_time": "2024-01-15T08:00:00Z",
-//       "fingerprint_id": "fp_001",
-//       "verification_mode": "fingerprint",
-//       "temperature": 36.5,
-//       "mask_detection": true
-//     }
-//   ]
-// }

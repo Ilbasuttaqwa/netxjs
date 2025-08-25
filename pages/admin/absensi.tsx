@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { Absensi, Karyawan, Cabang } from '../../types';
+import { Absensi, Karyawan, Cabang } from '../../types/index';
 import { absensiApi, karyawanApi, cabangApi } from '../../lib/api';
 import { useToast } from '../../contexts/ToastContext';
 import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
 import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/Input';
+import { Input } from '../../components/ui/input';
 import {
   CalendarDaysIcon,
   ClockIcon,
@@ -450,11 +450,11 @@ const AbsensiPage: React.FC = () => {
                             </div>
                             <div className="ml-4">
                               <div className="text-sm font-medium text-gray-900">
-                                {item.karyawan?.nama || 'Tidak Diketahui'}
+                                {item.user?.nama_pegawai || 'Tidak Diketahui'}
                               </div>
                               <div className="text-sm text-gray-500 flex items-center">
                                 <BuildingOfficeIcon className="h-3 w-3 mr-1" />
-                                {item.karyawan?.cabang?.nama_cabang || 'Tidak Diketahui'}
+                                {item.user?.cabang?.nama_cabang || 'Tidak Diketahui'}
                               </div>
                             </div>
                           </div>

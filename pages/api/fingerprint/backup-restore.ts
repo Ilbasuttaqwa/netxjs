@@ -15,7 +15,7 @@ interface AuthenticatedRequest extends NextApiRequest {
 
 interface FingerprintTemplate {
   device_user_id: string;
-  user_id: string;
+  user_id: number;
   template_data: string;
   template_quality: number;
   finger_index: number;
@@ -83,7 +83,7 @@ async function handleBackupTemplates(req: AuthenticatedRequest, res: NextApiResp
     // Get all users with fingerprint data for this device's branch
     const users = await prisma.user.findMany({
       where: {
-        cabang_id: device.cabang_id,
+        id_cabang: device.cabang_id,
         device_user_id: {
           not: null
         }
@@ -91,8 +91,7 @@ async function handleBackupTemplates(req: AuthenticatedRequest, res: NextApiResp
       select: {
         id: true,
         device_user_id: true,
-        nama: true,
-        email: true
+        nama_pegawai: true
       }
     });
 
@@ -128,7 +127,7 @@ async function handleBackupTemplates(req: AuthenticatedRequest, res: NextApiResp
         backup_name: `Backup_${device.nama}_${new Date().toISOString().split('T')[0]}`,
         backup_data: JSON.stringify(backupData),
         template_count: templates.length,
-        created_by: req.user!.id,
+        created_by: parseInt(req.user!.id),
         created_at: new Date()
       }
     });
@@ -212,7 +211,7 @@ async function handleRestoreTemplates(req: AuthenticatedRequest, res: NextApiRes
         const user = await prisma.user.findFirst({
           where: {
             device_user_id: template.device_user_id,
-            cabang_id: targetDevice.cabang_id
+            id_cabang: targetDevice.cabang_id
           }
         });
 
@@ -250,7 +249,7 @@ async function handleRestoreTemplates(req: AuthenticatedRequest, res: NextApiRes
           valid_templates: validTemplates,
           errors: errors
         }),
-        restored_by: req.user!.id,
+        restored_by: parseInt(req.user!.id),
         restored_at: new Date()
       }
     });
@@ -317,8 +316,7 @@ async function handleGetBackupList(req: AuthenticatedRequest, res: NextApiRespon
         },
         creator: {
           select: {
-            nama: true,
-            email: true
+            nama_pegawai: true
           }
         }
       },
@@ -336,7 +334,7 @@ async function handleGetBackupList(req: AuthenticatedRequest, res: NextApiRespon
         cabang: backup.device.cabang.nama_cabang
       },
       template_count: backup.template_count,
-      created_by: backup.creator.nama,
+      created_by: backup.creator.nama_pegawai,
       created_at: backup.created_at,
       file_size: backup.backup_data.length // Approximate size
     }));

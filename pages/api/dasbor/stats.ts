@@ -98,7 +98,7 @@ async function handler(
         
         const userAttendance = await prisma.absensi.findFirst({
           where: {
-            id_user: BigInt(userId),
+            id_user: parseInt(userId),
             tanggal: {
               gte: today,
               lt: tomorrow

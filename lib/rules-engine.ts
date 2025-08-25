@@ -383,12 +383,12 @@ export class RulesEngine implements EventHandler {
       aggregateId: context.employeeId,
       aggregateType: 'Employee',
       eventType: 'NotificationTriggered',
-      eventData: {
+      eventData: JSON.stringify({
         employeeId: context.employeeId,
         message,
         type,
         recipients,
-      },
+      }),
       eventVersion: 1,
       occurredAt: new Date(),
     });
@@ -406,15 +406,15 @@ export class RulesEngine implements EventHandler {
         eventType: 'approval_required',
         aggregateId: context.employeeId,
         aggregateType: 'employee',
-        eventData: {
+        eventData: JSON.stringify({
           approverRole,
           reason,
           requestData: data,
           status: 'pending'
-        },
-        metadata: {
+        }),
+        metadata: JSON.stringify({
             ruleContext: JSON.parse(JSON.stringify(context))
-          },
+          }),
         version: 1,
         userId: context.employeeId,
       },
@@ -488,17 +488,17 @@ export class RulesEngine implements EventHandler {
           eventType: 'rule_execution',
           aggregateId: ruleId,
           aggregateType: 'rule',
-          eventData: {
+          eventData: JSON.stringify({
             ruleId,
             employeeId: context.employeeId,
             executionContext: JSON.parse(JSON.stringify(context)),
             executedActions: JSON.parse(JSON.stringify(actions)),
             success,
             executedAt: new Date().toISOString(),
-          },
-          metadata: {
+          }),
+          metadata: JSON.stringify({
             category: 'rules_engine'
-          },
+          }),
           version: 1,
           userId: context.employeeId,
         },
@@ -545,8 +545,7 @@ export class RulesEngine implements EventHandler {
             eventType: 'rule_execution',
             timestamp: { gte: startDate },
             eventData: {
-              path: ['success'],
-              equals: true
+              contains: '"success":true'
             }
           }
         }),
@@ -555,8 +554,7 @@ export class RulesEngine implements EventHandler {
             eventType: 'rule_execution',
             timestamp: { gte: startDate },
             eventData: {
-              path: ['success'],
-              equals: false
+              contains: '"success":false'
             }
           }
         }),

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassIcon, PencilIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { cn } from '../../utils/cn';
-import Card from './Card';
+import Card from './card';
 import Loading from './Loading';
 import { Select } from './Dropdown';
 

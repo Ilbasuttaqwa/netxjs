@@ -72,22 +72,11 @@ async function handler(
         });
 
       case 'POST':
-        const { nama, email, jabatan_id: jId, cabang_id: cId, telepon, alamat, tanggal_masuk, finger_id, status } = req.body;
+        const { nama, jabatan_id: jId, cabang_id: cId, telepon, alamat, tanggal_masuk, finger_id, status } = req.body;
         
-        if (!nama || !email || !jId || !cId) {
+        if (!nama || !jId || !cId) {
           return res.status(400).json({
-            message: 'Required fields: nama, email, jabatan_id, cabang_id'
-          });
-        }
-        
-        // Check if email already exists
-        const existingKaryawan = await prisma.user.findFirst({
-          where: { email }
-        });
-        
-        if (existingKaryawan) {
-          return res.status(400).json({
-            message: 'Email already exists'
+            message: 'Required fields: nama, jabatan_id, cabang_id'
           });
         }
         
@@ -109,7 +98,6 @@ async function handler(
         const newKaryawan = await prisma.user.create({
           data: {
             nama_pegawai: nama,
-            email,
             password: 'defaultpassword123', // Default password
             id_jabatan: parseInt(jId),
             id_cabang: parseInt(cId),

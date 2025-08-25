@@ -4,8 +4,8 @@ import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
 import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/Input';
-import Modal from '../../components/ui/Modal';
+import { Input } from '../../components/ui/input';
+import Modal from '../../components/ui/modal';
 import DataTable from '../../components/ui/DataTable';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 

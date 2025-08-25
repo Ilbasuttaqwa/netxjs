@@ -15,18 +15,18 @@ export default async function handler(
   }
 
   try {
-    const { email, password, remember } = req.body;
+    const { username, password, remember } = req.body;
 
-    if (!email || !password) {
+    if (!username || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Email dan password wajib diisi'
+        message: 'Username dan password wajib diisi'
       });
     }
 
-    // Find user by email in database
-    const user = await prisma.user.findUnique({
-      where: { email },
+    // Find user by username in database
+    const user = await prisma.user.findFirst({
+      where: { nama_pegawai: username },
       include: {
         cabang: true
       }
@@ -52,7 +52,6 @@ export default async function handler(
     const token = jwt.sign(
       {
         id: user.id.toString(),
-        email: user.email,
         name: user.nama_pegawai,
         role: user.role,
         cabang_id: user.id_cabang?.toString()

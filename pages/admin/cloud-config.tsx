@@ -4,8 +4,8 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
 import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/Input';
-import Card from '../../components/ui/Card';
+import { Input } from '../../components/ui/input';
+import Card from '../../components/ui/card';
 import { useToast } from '../../contexts/ToastContext';
 import {
   CloudIcon,

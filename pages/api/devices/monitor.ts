@@ -140,7 +140,6 @@ async function handleGetMonitorData(req: AuthenticatedRequest, res: NextApiRespo
       online_devices: deviceStats.filter(d => d.status === 'online').length,
       offline_devices: deviceStats.filter(d => d.status === 'offline').length,
       error_devices: deviceStats.filter(d => d.status === 'error').length,
-      maintenance_devices: deviceStats.filter(d => d.status === 'maintenance').length,
       total_attendance_today: deviceStats.reduce((sum, d) => sum + d.today_attendance_count, 0),
       last_updated: new Date().toISOString()
     };

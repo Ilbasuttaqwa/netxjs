@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { Jabatan, PaginatedResponse } from '../../types';
+import { Jabatan, PaginatedResponse } from '../../types/index';
 import { jabatanApi } from '../../lib/api';
 import { useToast } from '../../contexts/ToastContext';
 import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
 import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/Input';
+import { Input } from '../../components/ui/input';
 import {
   PlusIcon,
   PencilIcon,

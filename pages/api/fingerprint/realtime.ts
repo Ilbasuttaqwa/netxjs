@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth, AuthenticatedRequest } from '../../../lib/auth-middleware';
-import { ApiResponse } from '../../../types';
+import { ApiResponse } from '../../../types/index';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { MonitoringFingerprint } from '../../types';
+import { MonitoringFingerprint } from '../../types/index';
 import { monitoringApi, deviceApi } from '../../lib/api';
 import { useToast } from '../../contexts/ToastContext';
 import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';

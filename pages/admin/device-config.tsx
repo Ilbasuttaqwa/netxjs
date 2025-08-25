@@ -5,9 +5,9 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
 import { deviceApi } from '../../lib/api';
 import { Button } from '../../components/ui/button';
-import Modal from '../../components/ui/Modal';
-import Card from '../../components/ui/Card';
-import { Input } from '../../components/ui/Input';
+import Modal from '../../components/ui/modal';
+import Card from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
 import { Select } from '../../components/ui/Dropdown';
 import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
 import { cn } from '../../utils/cn';
@@ -507,7 +507,6 @@ export default function DeviceConfigPage() {
           isOpen={showConfigModal}
           onClose={() => setShowConfigModal(false)}
           title={selectedDevice ? 'Edit Device' : 'Tambah Device Baru'}
-          size="lg"
         >
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -643,7 +642,6 @@ export default function DeviceConfigPage() {
           isOpen={showTroubleshootModal}
           onClose={() => setShowTroubleshootModal(false)}
           title={`Troubleshoot - ${selectedDevice?.nama}`}
-          size="lg"
         >
           <div className="space-y-6">
             {troubleshooting ? (
@@ -780,7 +778,6 @@ export default function DeviceConfigPage() {
           isOpen={showClearConfirm}
           onClose={() => setShowClearConfirm(false)}
           title="Konfirmasi Hapus Data Fingerprint"
-          size="md"
         >
           <div className="space-y-4">
             <div className="flex items-center space-x-3 p-4 bg-danger-50 rounded-lg">
@@ -815,7 +812,7 @@ export default function DeviceConfigPage() {
                 Batal
               </Button>
               <Button
-                variant="danger"
+                variant="destructive"
                 onClick={handleClearFingerprintData}
                 loading={clearingData}
                 leftIcon={<TrashIcon className="h-4 w-4" />}

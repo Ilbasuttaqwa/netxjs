@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Button } from '../../components/ui/button'
-import Card from '../../components/ui/Card'
+import Card from '../../components/ui/card'
 
 const errors = {
   Signin: 'Coba masuk dengan akun yang berbeda.',

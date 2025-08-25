@@ -12,7 +12,7 @@ import TataLetakDasbor from '../components/layouts/TataLetakDasbor';
 import DataTable from '../components/ui/DataTable';
 import useDataTable from '../hooks/useDataTable';
 import { Button } from '../components/ui/button';
-import Card from '../components/ui/Card';
+import Card from '../components/ui/card';
 import { Select } from '../components/ui/Dropdown';
 import { cn } from '../utils/cn';
 

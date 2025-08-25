@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth, AuthenticatedRequest } from '../../../lib/auth-middleware';
-import { ApiResponse } from '../../../types';
+import { ApiResponse } from '../../../types/index';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -174,7 +174,7 @@ const handler = async (req: AuthenticatedRequest, res: NextApiResponse<ApiRespon
       success: false,
       message: 'Fingerprint service tidak dapat diakses',
       data: healthCheck,
-      error: error.message
+      errors: { general: [error.message] }
     });
   } finally {
     await prisma.$disconnect();

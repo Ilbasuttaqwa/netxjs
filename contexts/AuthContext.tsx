@@ -1,10 +1,14 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { AuthState, AuthUser, LoginCredentials } from '../types';
+import { AuthState, AuthUser, LoginCredentials } from '../types/index';
 import { authApi } from '../lib/api';
 import { useToast } from './ToastContext';
 import { useRouter } from 'next/router';
 
-interface AuthContextType extends AuthState {
+interface AuthContextType {
+  user: AuthUser | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -179,7 +183,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useAuth() {
+export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');

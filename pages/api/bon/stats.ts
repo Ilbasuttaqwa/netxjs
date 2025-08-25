@@ -1,6 +1,6 @@
 import { NextApiResponse } from 'next';
 import { withAdminAuth, AuthenticatedRequest } from '../../../lib/auth-middleware';
-import { BonStats } from '../../../types';
+import { BonStats } from '../../../types/index';
 
 // Mock data for demonstration
 const mockBon = [

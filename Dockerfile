@@ -15,8 +15,6 @@ RUN npm ci --only=production && npm cache clean --force
 # Environment variables for build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-ENV SKIP_TYPE_CHECK=true
-ENV DISABLE_TYPE_CHECK=true
 
 # Copy source code
 COPY . .

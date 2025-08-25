@@ -12,8 +12,7 @@ async function seedDevices() {
         kode_cabang: 'HQ001',
         nama_cabang: 'Head Office',
         alamat_cabang: 'Jakarta Pusat',
-        telepon_cabang: '021-1234567',
-        email_cabang: 'hq@company.com'
+        telepon_cabang: '021-1234567'
       }
     });
 
@@ -24,8 +23,7 @@ async function seedDevices() {
         kode_cabang: 'BR001',
         nama_cabang: 'Branch Office 1',
         alamat_cabang: 'Surabaya',
-        telepon_cabang: '031-1234567',
-        email_cabang: 'branch1@company.com'
+        telepon_cabang: '031-1234567'
       }
     });
 

@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
-import { Button } from '../../components/ui/Button';
-import { Modal } from '../../components/ui/Modal';
+import { Button } from '../../components/ui/button';
+import { Modal } from '../../components/ui/modal';
 import { cn } from '../../utils/cn';
 
 interface Device {

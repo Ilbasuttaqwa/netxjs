@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { ApiResponse } from '../../../types';
+import { ApiResponse } from '../../../types/index';
 
 interface PayrollRule {
   id: number;

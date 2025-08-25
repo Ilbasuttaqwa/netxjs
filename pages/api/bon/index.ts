@@ -1,6 +1,6 @@
 import { NextApiResponse } from 'next';
 import { withAdminAuth, AuthenticatedRequest } from '../../../lib/auth-middleware';
-import { Bon, BonFormData } from '../../../types';
+import { Bon, BonFormData } from '../../../types/index';
 import { validateBonApplication, getBonEligibilityStatus, defaultBonRules, EmployeeData, ExistingBon } from '../../../lib/bon-rules';
 
 // Mock data for demonstration
@@ -21,7 +21,6 @@ const mockBon: Bon[] = [
     karyawan: {
       id: 1,
       nama: 'John Doe',
-      email: 'john@afms.com',
       telepon: '081234567890',
       alamat: 'Jl. Contoh No. 123',
       tanggal_lahir: '1990-01-01',
@@ -49,7 +48,6 @@ const mockBon: Bon[] = [
     karyawan: {
       id: 2,
       nama: 'Jane Smith',
-      email: 'jane@afms.com',
       telepon: '081234567891',
       alamat: 'Jl. Contoh No. 124',
       tanggal_lahir: '1992-05-15',
