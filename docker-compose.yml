@@ -9,14 +9,20 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://afms_user:afms_secure_password_2024@postgres:5432/afms_database
-      - NEXT_PUBLIC_API_URL=https://api.yourdomain.com
-      - NEXT_PUBLIC_APP_URL=https://yourdomain.com
-      - NEXTAUTH_URL=https://yourdomain.com
-      - NEXTAUTH_SECRET=your-nextauth-secret-key-here-change-this
-      - JWT_SECRET=your-jwt-secret-key-here-change-this
+      - NEXT_PUBLIC_API_URL=https://api.afms.my.id/api
+      - NEXT_PUBLIC_APP_URL=https://afms.my.id
+      - NEXTAUTH_URL=https://afms.my.id
+      - NEXTAUTH_SECRET=afms-nextauth-production-secret-2024-secure-key-abc123
+      - JWT_SECRET=afms-production-jwt-secret-key-2024-ultra-secure-random-string-xyz789
       - NEXT_PUBLIC_FINGERPRINT_ENABLED=true
       - NEXT_PUBLIC_FINGERPRINT_REALTIME=true
-      - NEXT_PUBLIC_LARAVEL_API_URL=https://api.yourdomain.com
+      - NEXT_PUBLIC_LARAVEL_API_URL=https://api.afms.my.id
+      - FINGERPRINT_DEVICE_TYPE=solution-type-100c
+      - FINGERPRINT_CLOUD_ADMS_SERVER=https://api.afms.my.id/api/fingerprint
+      - DEVICE_REGISTRATION_KEY=afms-device-key-production-2024
+      - SECURE_COOKIES=true
+      - SAME_SITE_COOKIES=strict
+      - HTTPS_ONLY=true
     depends_on:
       postgres:
         condition: service_healthy
@@ -42,9 +48,9 @@ services:
     environment:
       - APP_NAME="AFMS API"
       - APP_ENV=production
-      - APP_KEY=base64:your-app-key-here-change-this
+      - APP_KEY=base64:afms-laravel-app-key-production-2024-secure-base64-encoded-key
       - APP_DEBUG=false
-      - APP_URL=https://api.yourdomain.com
+      - APP_URL=https://api.afms.my.id
       - DB_CONNECTION=pgsql
       - DB_HOST=postgres
       - DB_PORT=5432
@@ -70,7 +76,7 @@ services:
       - laravel-storage:/var/www/html/storage
       - laravel-logs:/var/www/html/storage/logs
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -83,7 +89,6 @@ services:
       - POSTGRES_DB=afms_database
       - POSTGRES_USER=afms_user
       - POSTGRES_PASSWORD=afms_secure_password_2024
-      - POSTGRES_INITDB_ARGS="--encoding=UTF8 --lc-collate=C --lc-ctype=C"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init:/docker-entrypoint-initdb.d
@@ -122,7 +127,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl:/etc/nginx/ssl:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
       - nginx-logs:/var/log/nginx
     depends_on:
       - nextjs

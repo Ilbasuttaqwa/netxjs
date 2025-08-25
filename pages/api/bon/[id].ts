@@ -121,7 +121,7 @@ async function handler(
           
           Object.keys(updateData).forEach(key => {
             if (allowedFields.includes(key)) {
-              updates[key as keyof Bon] = updateData[key];
+              (updates as any)[key] = (updateData as any)[key];
             }
           });
           

@@ -48,14 +48,14 @@ export default async function handler(
       });
     }
 
-    // Generate JWT token
+    // Generate JWT token (convert BigInt to string)
     const token = jwt.sign(
       {
-        id: user.id,
+        id: user.id.toString(),
         email: user.email,
         name: user.nama_pegawai,
         role: user.role,
-        cabang_id: user.id_cabang
+        cabang_id: user.id_cabang?.toString()
       },
       process.env.JWT_SECRET || 'your-secret-key',
       {
@@ -74,23 +74,46 @@ export default async function handler(
 
     res.setHeader('Set-Cookie', cookie);
 
-    // Return user data (without password)
+    // Return user data (without password) and convert BigInt to string
     const { password: _, ...userWithoutPassword } = user;
+    
+    // Convert BigInt fields to strings for JSON serialization
+    const convertBigIntToString = (obj: any): any => {
+      if (obj === null || obj === undefined) return obj;
+      if (typeof obj === 'bigint') return obj.toString();
+      if (Array.isArray(obj)) return obj.map(convertBigIntToString);
+      if (typeof obj === 'object') {
+        const converted: any = {};
+        for (const [key, value] of Object.entries(obj)) {
+          converted[key] = convertBigIntToString(value);
+        }
+        return converted;
+      }
+      return obj;
+    };
+    
+    const serializedUser = convertBigIntToString(userWithoutPassword);
     
     return res.status(200).json({
       success: true,
       message: 'Login successful',
       data: {
-        user: userWithoutPassword,
+        user: serializedUser,
         token
       }
     });
 
   } catch (error) {
     console.error('Login error:', error);
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace',
+      name: error instanceof Error ? error.name : 'Unknown'
+    });
     return res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : 'Unknown error') : undefined
     });
   } finally {
     await prisma.$disconnect();

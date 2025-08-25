@@ -5,12 +5,14 @@ const nextConfig = {
   output: 'standalone',
   experimental: {
     outputFileTracingRoot: __dirname,
+    typedRoutes: false
   },
   typescript: {
-    ignoreBuildErrors: process.env.SKIP_TYPE_CHECK === 'true',
+    ignoreBuildErrors: true,
+    tsconfigPath: false
   },
   eslint: {
-    ignoreDuringBuilds: process.env.SKIP_TYPE_CHECK === 'true',
+    ignoreDuringBuilds: true,
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',

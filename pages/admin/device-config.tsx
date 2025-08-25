@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/contexts/ToastContext';
-import { deviceApi } from '@/lib/api';
-import { Button } from '@/components/ui/Button';
-import Modal from '@/components/ui/Modal';
-import Card from '@/components/ui/Card';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Dropdown';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { cn } from '@/utils/cn';
+import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
+import { deviceApi } from '../../lib/api';
+import { Button } from '../../components/ui/Button';
+import Modal from '../../components/ui/Modal';
+import Card from '../../components/ui/Card';
+import { Input } from '../../components/ui/Input';
+import { Select } from '../../components/ui/Dropdown';
+import DashboardLayout from '../../components/layouts/DashboardLayout';
+import { cn } from '../../utils/cn';
 import {
   ComputerDesktopIcon,
   CogIcon,

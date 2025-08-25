@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/contexts/ToastContext';
-import { deviceApi } from '@/lib/api';
-import { Button } from '@/components/ui/Button';
-import Modal from '@/components/ui/Modal';
-import { cn } from '@/utils/cn';
+import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
+import { deviceApi } from '../../lib/api';
+import { Button } from '../../components/ui/Button';
+import Modal from '../../components/ui/Modal';
+import { cn } from '../../utils/cn';
 import {
   ChartBarIcon,
   DocumentArrowDownIcon,

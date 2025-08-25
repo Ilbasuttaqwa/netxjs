@@ -15,7 +15,22 @@ RUN apk add --no-cache \
     unzip \
     postgresql-client \
     nginx \
-    supervisor
+    supervisor \
+    oniguruma-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev \
+    libxpm-dev \
+    autoconf \
+    g++ \
+    make
+
+# Configure and install GD extension
+RUN docker-php-ext-configure gd \
+    --with-freetype \
+    --with-jpeg \
+    --with-webp \
+    --with-xpm
 
 # Install PHP extensions
 RUN docker-php-ext-install \
@@ -34,6 +49,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy application files
 COPY . .
 
+# Create required directories
+RUN mkdir -p bootstrap/cache storage/logs storage/framework/cache storage/framework/sessions storage/framework/views
+RUN chmod -R 775 bootstrap/cache storage
+
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
@@ -49,17 +68,29 @@ COPY docker/default.conf /etc/nginx/conf.d/default.conf
 # Copy supervisor configuration
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Copy entrypoint script
-COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+# Create startup script inline
+RUN echo '#!/bin/sh' > /start.sh && \
+    echo 'set -e' >> /start.sh && \
+    echo 'echo "Starting Laravel API container..."' >> /start.sh && \
+    echo 'mkdir -p /var/www/html/storage/logs' >> /start.sh && \
+    echo 'mkdir -p /var/www/html/storage/framework/cache' >> /start.sh && \
+    echo 'mkdir -p /var/www/html/storage/framework/sessions' >> /start.sh && \
+    echo 'mkdir -p /var/www/html/storage/framework/views' >> /start.sh && \
+    echo 'mkdir -p /var/www/html/bootstrap/cache' >> /start.sh && \
+    echo 'mkdir -p /var/log/supervisor' >> /start.sh && \
+    echo 'chown -R www-data:www-data /var/www/html/storage' >> /start.sh && \
+    echo 'chown -R www-data:www-data /var/www/html/bootstrap/cache' >> /start.sh && \
+    echo 'chmod -R 775 /var/www/html/storage' >> /start.sh && \
+    echo 'chmod -R 775 /var/www/html/bootstrap/cache' >> /start.sh && \
+    echo 'exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf' >> /start.sh && \
+    chmod +x /start.sh
 
 # Expose port
 EXPOSE 80
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost/api/health || exit 1
+    CMD curl -f http://localhost/health || exit 1
 
 # Start services
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["/start.sh"]
