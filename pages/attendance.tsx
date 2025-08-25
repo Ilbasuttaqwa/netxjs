@@ -8,10 +8,10 @@ import {
   FunnelIcon,
   ArrowDownTrayIcon,
 } from '@heroicons/react/24/outline';
-import DashboardLayout from '../components/layouts/DashboardLayout';
+import TataLetakDasbor from '../components/layouts/TataLetakDasbor';
 import DataTable from '../components/ui/DataTable';
 import useDataTable from '../hooks/useDataTable';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/button';
 import Card from '../components/ui/Card';
 import { Select } from '../components/ui/Dropdown';
 import { cn } from '../utils/cn';
@@ -257,7 +257,7 @@ const AttendancePage = () => {
   ];
 
   return (
-    <DashboardLayout>
+    <TataLetakDasbor>
       <Head>
         <title>Catatan Kehadiran - AFMS</title>
       </Head>
@@ -412,7 +412,7 @@ const AttendancePage = () => {
           pageSizeOptions={[10, 15, 25, 50]}
         />
       </div>
-    </DashboardLayout>
+    </TataLetakDasbor>
   );
 };
 

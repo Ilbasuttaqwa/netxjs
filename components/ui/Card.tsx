@@ -40,13 +40,13 @@ const Card: React.FC<CardProps> & {
   const getVariantClasses = () => {
     switch (variant) {
       case 'glass':
-        return 'bg-white/90 backdrop-blur-md border-2 border-white/30 shadow-glow';
+        return 'glass rounded-2xl shadow-xl';
       case 'elevated':
-        return 'bg-white shadow-4xl border-2 border-slate-100';
+        return 'card-modern';
       case 'outlined':
-        return 'bg-white border-2 border-violet-200 hover:border-violet-300 transition-colors duration-300';
+        return 'bg-white/95 dark:bg-slate-800/95 border border-violet-200/50 dark:border-violet-700/50 hover:border-violet-300 dark:hover:border-violet-600 transition-all duration-300 backdrop-blur-md';
       default:
-        return 'bg-white shadow-medium border-2 border-slate-200 hover:border-slate-300 transition-all duration-300';
+        return 'card';
     }
   };
 
@@ -68,11 +68,11 @@ const Card: React.FC<CardProps> & {
   return (
     <div
       className={cn(
-        'rounded-2xl transition-all duration-200',
+        'transition-all duration-300',
         getVariantClasses(),
         getPaddingClasses(),
-        hover && 'hover:shadow-glow hover:-translate-y-2 hover:scale-[1.02] transition-all duration-300 cursor-pointer',
-        animate && 'animate-fadeIn hover:animate-float',
+        hover && 'hover-lift cursor-pointer group',
+        animate && 'animate-fade-in',
         className
       )}
     >
@@ -83,7 +83,7 @@ const Card: React.FC<CardProps> & {
 
 const CardHeader: React.FC<CardHeaderProps> = ({ children, className }) => {
   return (
-    <div className={cn('border-b-2 border-slate-200 pb-6 mb-6 bg-gradient-to-r from-violet-50/50 to-indigo-50/50 -mx-6 px-6 pt-6 rounded-t-2xl', className)}>
+    <div className={cn('card-header', className)}>
       {children}
     </div>
   );
@@ -91,7 +91,7 @@ const CardHeader: React.FC<CardHeaderProps> = ({ children, className }) => {
 
 const CardBody: React.FC<CardBodyProps> = ({ children, className }) => {
   return (
-    <div className={cn('flex-1', className)}>
+    <div className={cn('card-body', className)}>
       {children}
     </div>
   );
@@ -99,7 +99,7 @@ const CardBody: React.FC<CardBodyProps> = ({ children, className }) => {
 
 const CardFooter: React.FC<CardFooterProps> = ({ children, className }) => {
   return (
-    <div className={cn('border-t border-gray-200 pt-4 mt-4', className)}>
+    <div className={cn('card-footer', className)}>
       {children}
     </div>
   );

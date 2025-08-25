@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
+import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
 import { withManagerAuth } from '../../lib/withManagerAuth';
 import { useAuth } from '../../contexts/AuthContext';
 import StatsCard from '../../components/dashboard/StatsCard';
@@ -66,16 +66,16 @@ function ManagerDashboard() {
 
   if (loadingStats) {
     return (
-      <DashboardLayout>
+      <TataLetakDasbor>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
         </div>
-      </DashboardLayout>
+      </TataLetakDasbor>
     );
   }
 
   return (
-    <DashboardLayout>
+    <TataLetakDasbor>
       <div className="space-y-6">
         {/* Header */}
         <div className="bg-white shadow rounded-lg p-6">
@@ -205,7 +205,7 @@ function ManagerDashboard() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </TataLetakDasbor>
   );
 }
 

@@ -3,8 +3,8 @@ import Head from 'next/head';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
 import { useToast } from '../../contexts/ToastContext';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
-import { Button } from '../../components/ui/Button';
+import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
+import { Button } from '../../components/ui/button';
 import Modal from '../../components/ui/Modal';
 import { Input } from '../../components/ui/Input';
 import {
@@ -276,7 +276,7 @@ const PayrollRulesPage: React.FC = () => {
         <meta name="description" content="Kelola aturan perhitungan gaji dan komponen payroll" />
       </Head>
       
-      <DashboardLayout>
+      <TataLetakDasbor>
         <div className="space-y-6">
           {/* Header */}
           <div className="bg-white shadow-sm rounded-lg p-6">
@@ -555,7 +555,7 @@ const PayrollRulesPage: React.FC = () => {
             }}
           />
         )}
-      </DashboardLayout>
+      </TataLetakDasbor>
     </>
   );
 };

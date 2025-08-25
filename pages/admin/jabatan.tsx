@@ -5,8 +5,8 @@ import { useRouter } from 'next/router';
 import { Jabatan, PaginatedResponse } from '../../types';
 import { jabatanApi } from '../../lib/api';
 import { useToast } from '../../contexts/ToastContext';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
-import { Button } from '../../components/ui/Button';
+import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
+import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/Input';
 import {
   PlusIcon,
@@ -178,7 +178,7 @@ const JabatanPage: React.FC = () => {
   }
 
   return (
-    <DashboardLayout>
+    <TataLetakDasbor>
       <Head>
         <title>Manajemen Jabatan - AFMS</title>
       </Head>
@@ -423,7 +423,7 @@ const JabatanPage: React.FC = () => {
           </div>
         </div>
       )}
-    </DashboardLayout>
+    </TataLetakDasbor>
   );
 };
 

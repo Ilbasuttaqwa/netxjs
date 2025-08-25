@@ -11,7 +11,6 @@ export interface ApiResponse<T = any> {
 export interface User {
   id: number;
   nama_pegawai: string;
-  email: string;
   role: string;
   device_user_id?: string;
   cabang_id?: number;
@@ -57,7 +56,6 @@ export interface Cabang {
   nama_cabang: string;
   alamat: string;
   telepon?: string;
-  email?: string;
   status: 'active' | 'inactive';
   created_at: string;
   updated_at: string;
@@ -105,7 +103,7 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
 
 // Form Types
 export interface LoginForm {
-  email: string;
+  nama_pegawai: string;
   password: string;
 }
 
@@ -121,7 +119,6 @@ export interface DeviceForm {
 
 export interface UserForm {
   nama_pegawai: string;
-  email: string;
   password?: string;
   role: string;
   device_user_id?: string;

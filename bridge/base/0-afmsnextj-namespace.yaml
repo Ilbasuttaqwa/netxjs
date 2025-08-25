@@ -1,8 +1,0 @@
-#! 0-afmsnextj-namespace.yaml
-# Generated code, do not edit
-apiVersion: v1
-kind: Namespace
-metadata:
-    name: afmsnextj
-    labels:
-        com.docker.compose.project: afmsnextj

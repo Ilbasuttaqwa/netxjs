@@ -182,7 +182,7 @@ Konfigurasi integrasi dengan NextJS:
 
 ## Monitoring
 
-- Health check endpoint: `GET /api/kesehatan`
+- Health check endpoint: `GET /api/health`
 - Device status monitoring
 - Attendance processing logs
 - Error tracking dan reporting

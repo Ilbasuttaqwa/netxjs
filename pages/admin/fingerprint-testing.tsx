@@ -89,9 +89,9 @@ const FingerprintTestingPage: NextPage = () => {
         return;
       }
 
-      // Check Database Connection
+      // Check Database Connection (using test-db endpoint)
       try {
-        const dbResponse = await fetch('/api/kesehatan/database', {
+        const dbResponse = await fetch('/api/test-db', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         status.database = dbResponse.ok;
@@ -99,21 +99,10 @@ const FingerprintTestingPage: NextPage = () => {
           issues.push('Koneksi database gagal');
         }
       } catch (error) {
-        issues.push('Tidak dapat mengakses endpoint database health check');
+        issues.push('Tidak dapat mengakses endpoint database');
       }
 
-      // Check API Connection
-      try {
-        const apiResponse = await fetch('/api/kesehatan/api', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        status.api = apiResponse.ok;
-        if (!apiResponse.ok) {
-          issues.push('API service tidak tersedia');
-        }
-      } catch (error) {
-        issues.push('Tidak dapat mengakses API health check');
-      }
+      // API service check removed - focusing on fingerprint integration
 
       // Check Fingerprint Service
       try {

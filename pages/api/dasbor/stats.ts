@@ -91,9 +91,14 @@ async function handler(
     } else {
       try {
         // Get user's attendance for today
+        const userId = req.user?.id;
+        if (!userId) {
+          return res.status(401).json({ message: 'User ID not found' });
+        }
+        
         const userAttendance = await prisma.absensi.findFirst({
           where: {
-            id_user: BigInt(req.user?.id || 0),
+            id_user: BigInt(userId),
             tanggal: {
               gte: today,
               lt: tomorrow

@@ -74,9 +74,8 @@ async function handler(req: AuthenticatedRequest, res: NextApiResponse) {
       });
     }
 
-    // In a real application, you would fetch this data from your database
-    // For now, we'll return mock data
-    const activities = generateMockActivities(limitNum);
+    // Return empty array since database is cleared
+    const activities: any[] = [];
 
     return res.status(200).json({
       success: true,

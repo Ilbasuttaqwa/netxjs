@@ -4,12 +4,12 @@ import Head from 'next/head';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
 import { deviceApi } from '../../lib/api';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/ui/button';
 import Modal from '../../components/ui/Modal';
 import Card from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Dropdown';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
+import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
 import { cn } from '../../utils/cn';
 import {
   ComputerDesktopIcon,
@@ -105,6 +105,8 @@ export default function DeviceConfigPage() {
   const [troubleshooting, setTroubleshooting] = useState(false);
   const [configLoading, setConfigLoading] = useState(false);
   const [branches, setBranches] = useState<any[]>([]);
+  const [clearingData, setClearingData] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -295,6 +297,41 @@ export default function DeviceConfigPage() {
     }
   };
 
+  const handleClearFingerprintData = async () => {
+    setClearingData(true);
+    try {
+      const response = await fetch('/api/fingerprint/clear-data', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        addToast({
+          type: 'success',
+          title: 'Berhasil',
+          message: 'Semua data fingerprint berhasil dihapus'
+        });
+        // Refresh device list to update last_sync status
+        fetchDevices();
+      } else {
+        throw new Error(result.message || 'Gagal menghapus data fingerprint');
+      }
+    } catch (error: any) {
+      addToast({
+        type: 'error',
+        title: 'Error',
+        message: error.message || 'Gagal menghapus data fingerprint'
+      });
+    } finally {
+      setClearingData(false);
+      setShowClearConfirm(false);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       online: { color: 'bg-success-100 text-success-800', label: 'Aktif', icon: CheckCircleIcon },
@@ -323,7 +360,7 @@ export default function DeviceConfigPage() {
   }
 
   return (
-    <DashboardLayout>
+    <TataLetakDasbor>
       <Head>
         <title>Konfigurasi Device - AFMS</title>
       </Head>
@@ -337,12 +374,22 @@ export default function DeviceConfigPage() {
                 Kelola konfigurasi dan troubleshooting device fingerprint
               </p>
             </div>
-            <Button
-              onClick={handleCreateDevice}
-              leftIcon={<PlusIcon className="h-5 w-5" />}
-            >
-              Tambah Device
-            </Button>
+            <div className="flex space-x-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowClearConfirm(true)}
+                leftIcon={<TrashIcon className="h-5 w-5" />}
+                className="text-danger-600 hover:text-danger-700 border-danger-300 hover:border-danger-400"
+              >
+                Clear Data Fingerprint
+              </Button>
+              <Button
+                onClick={handleCreateDevice}
+                leftIcon={<PlusIcon className="h-5 w-5" />}
+              >
+                Tambah Device
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -727,7 +774,58 @@ export default function DeviceConfigPage() {
             )}
           </div>
         </Modal>
+
+        {/* Clear Fingerprint Data Confirmation Modal */}
+        <Modal
+          isOpen={showClearConfirm}
+          onClose={() => setShowClearConfirm(false)}
+          title="Konfirmasi Hapus Data Fingerprint"
+          size="md"
+        >
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3 p-4 bg-danger-50 rounded-lg">
+              <ExclamationTriangleIcon className="h-8 w-8 text-danger-600 flex-shrink-0" />
+              <div>
+                <h4 className="font-medium text-danger-900">Peringatan!</h4>
+                <p className="text-sm text-danger-700 mt-1">
+                  Tindakan ini akan menghapus SEMUA data fingerprint dari database termasuk:
+                </p>
+              </div>
+            </div>
+            
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <ul className="text-sm text-gray-700 space-y-1">
+                <li>• Semua data absensi fingerprint</li>
+                <li>• Template sidik jari karyawan</li>
+                <li>• Mapping device_user_id</li>
+                <li>• History sinkronisasi device</li>
+              </ul>
+            </div>
+            
+            <p className="text-sm text-gray-600">
+              Data yang dihapus <strong>tidak dapat dikembalikan</strong>. Pastikan Anda telah membuat backup jika diperlukan.
+            </p>
+            
+            <div className="flex justify-end space-x-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowClearConfirm(false)}
+                disabled={clearingData}
+              >
+                Batal
+              </Button>
+              <Button
+                variant="danger"
+                onClick={handleClearFingerprintData}
+                loading={clearingData}
+                leftIcon={<TrashIcon className="h-4 w-4" />}
+              >
+                {clearingData ? 'Menghapus...' : 'Ya, Hapus Semua Data'}
+              </Button>
+            </div>
+          </div>
+        </Modal>
       </div>
-    </DashboardLayout>
+    </TataLetakDasbor>
   );
 }

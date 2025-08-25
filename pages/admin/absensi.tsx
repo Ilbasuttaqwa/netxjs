@@ -5,8 +5,8 @@ import { useRouter } from 'next/router';
 import { Absensi, Karyawan, Cabang } from '../../types';
 import { absensiApi, karyawanApi, cabangApi } from '../../lib/api';
 import { useToast } from '../../contexts/ToastContext';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
-import { Button } from '../../components/ui/Button';
+import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
+import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/Input';
 import {
   CalendarDaysIcon,
@@ -18,6 +18,8 @@ import {
   CheckCircleIcon,
   XCircleIcon,
   ExclamationTriangleIcon,
+  ChevronDownIcon,
+  EllipsisVerticalIcon,
 } from '@heroicons/react/24/outline';
 import { cn } from '../../utils/cn';
 
@@ -49,6 +51,7 @@ const AbsensiPage: React.FC = () => {
     status: '',
   });
   const [exporting, setExporting] = useState(false);
+  const [actionDropdownOpen, setActionDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -82,136 +85,20 @@ const AbsensiPage: React.FC = () => {
         setAbsensi(absensiRes.data.data || []);
         setTotalPages(absensiRes.data.last_page || 1);
       } else {
-        // Use dummy data if API fails
-        setAbsensi([
-          {
-            id: 1,
-            karyawan_id: 1,
-            tanggal: '2024-01-15',
-            jam_masuk: '08:00:00',
-            jam_keluar: '17:00:00',
-            status: 'hadir',
-            keterangan: '',
-            created_at: '2024-01-15 08:00:00',
-            updated_at: '2024-01-15 17:00:00',
-            karyawan: {
-              id: 1,
-              nama: 'John Doe',
-              email: 'john@example.com',
-              telepon: '081234567890',
-              alamat: 'Jl. Sudirman No. 123',
-              jenis_kelamin: 'L',
-              tanggal_masuk: '2024-01-01',
-              cabang_id: 1,
-              jabatan_id: 1,
-              fingerprint_id: 'FP001',
-              status: 'aktif',
-              created_at: '2024-01-01 00:00:00',
-              updated_at: '2024-01-01 00:00:00',
-              cabang: { id: 1, nama_cabang: 'Kantor Pusat', alamat: 'Jakarta', telepon: '', status: 'aktif', created_at: '', updated_at: '' },
-            }
-          },
-          {
-            id: 2,
-            karyawan_id: 2,
-            tanggal: '2024-01-15',
-            jam_masuk: '08:30:00',
-            jam_keluar: '17:00:00',
-            status: 'terlambat',
-            keterangan: 'Terlambat 30 menit',
-            created_at: '2024-01-15 08:30:00',
-            updated_at: '2024-01-15 17:00:00',
-            karyawan: {
-              id: 2,
-              nama: 'Jane Smith',
-              email: 'jane@example.com',
-              telepon: '081234567891',
-              alamat: 'Jl. Thamrin No. 456',
-              jenis_kelamin: 'P',
-              tanggal_masuk: '2024-01-01',
-              cabang_id: 2,
-              jabatan_id: 2,
-              fingerprint_id: 'FP002',
-              status: 'aktif',
-              created_at: '2024-01-01 00:00:00',
-              updated_at: '2024-01-01 00:00:00',
-              cabang: { id: 2, nama_cabang: 'Cabang Jakarta', alamat: 'Jakarta Selatan', telepon: '', status: 'aktif', created_at: '', updated_at: '' },
-            }
-          },
-          {
-            id: 3,
-            karyawan_id: 1,
-            tanggal: '2024-01-14',
-            jam_masuk: undefined,
-            jam_keluar: undefined,
-            status: 'alpha',
-            keterangan: 'Tidak hadir tanpa keterangan',
-            created_at: '2024-01-14 00:00:00',
-            updated_at: '2024-01-14 00:00:00',
-            karyawan: {
-              id: 1,
-              nama: 'John Doe',
-              email: 'john@example.com',
-              telepon: '081234567890',
-              alamat: 'Jl. Sudirman No. 123',
-              jenis_kelamin: 'L',
-              tanggal_masuk: '2024-01-01',
-              cabang_id: 1,
-              jabatan_id: 1,
-              fingerprint_id: 'FP001',
-              status: 'aktif',
-              created_at: '2024-01-01 00:00:00',
-              updated_at: '2024-01-01 00:00:00',
-              cabang: { id: 1, nama_cabang: 'Kantor Pusat', alamat: 'Jakarta', telepon: '', status: 'aktif', created_at: '', updated_at: '' }
-            },
-          },
-        ]);
+        setAbsensi([]);
+        setTotalPages(1);
       }
 
       if (karyawanRes.success && karyawanRes.data) {
         setKaryawan(Array.isArray(karyawanRes.data) ? karyawanRes.data : (karyawanRes.data.data || []));
       } else {
-        setKaryawan([
-          {
-            id: 1,
-            nama: 'John Doe',
-            email: 'john@example.com',
-            telepon: '081234567890',
-            alamat: 'Jl. Sudirman No. 123',
-            jenis_kelamin: 'L',
-            tanggal_masuk: '2024-01-01',
-            cabang_id: 1,
-            jabatan_id: 1,
-            fingerprint_id: 'FP001',
-            status: 'aktif',
-            created_at: '2024-01-01 00:00:00',
-            updated_at: '2024-01-01 00:00:00',
-          },
-          {
-            id: 2,
-            nama: 'Jane Smith',
-            email: 'jane@example.com',
-            telepon: '081234567891',
-            alamat: 'Jl. Thamrin No. 456',
-            jenis_kelamin: 'P',
-            tanggal_masuk: '2024-01-01',
-            cabang_id: 2,
-            jabatan_id: 2,
-            fingerprint_id: 'FP002',
-            status: 'aktif',
-            created_at: '2024-01-01 00:00:00',
-            updated_at: '2024-01-01 00:00:00',
-          },
-        ]);
+        setKaryawan([]);
       }
 
       if (cabangRes.success && cabangRes.data) {
         setCabang(Array.isArray(cabangRes.data) ? cabangRes.data : (cabangRes.data.data || []));
       } else {
-        setCabang([
-          { id: 1, nama_cabang: 'Kantor Pusat', alamat: 'Jakarta', telepon: '', status: 'aktif', created_at: '', updated_at: '' },
-          { id: 2, nama_cabang: 'Cabang Jakarta', alamat: 'Jakarta Selatan', telepon: '', status: 'aktif', created_at: '', updated_at: '' },
-        ]);
+        setCabang([]);
       }
     } catch (error: any) {
       addToast({
@@ -350,7 +237,7 @@ const AbsensiPage: React.FC = () => {
         <meta name="description" content="Laporan data absensi karyawan" />
       </Head>
       
-      <DashboardLayout>
+      <TataLetakDasbor>
         <div className="space-y-6">
           {/* Header */}
           <div className="bg-white shadow-sm rounded-lg p-6">
@@ -363,21 +250,40 @@ const AbsensiPage: React.FC = () => {
                   Lihat dan kelola data absensi karyawan
                 </p>
               </div>
-              <div className="flex space-x-3">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowFilter(!showFilter)}
-                  leftIcon={<FunnelIcon className="h-4 w-4" />}
+              <div className="relative">
+                <button
+                  onClick={() => setActionDropdownOpen(!actionDropdownOpen)}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                 >
-                  Filter
-                </Button>
-                <Button
-                  onClick={handleExport}
-                  loading={exporting}
-                  leftIcon={<DocumentArrowDownIcon className="h-4 w-4" />}
-                >
-                  Export Excel
-                </Button>
+                  <span>Aksi</span>
+                  <ChevronDownIcon className={`h-4 w-4 transition-transform ${actionDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {actionDropdownOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                    <button
+                      onClick={() => {
+                        setShowFilter(!showFilter);
+                        setActionDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100"
+                    >
+                      <FunnelIcon className="h-4 w-4 text-blue-600" />
+                      <span className="text-gray-700">Filter</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleExport();
+                        setActionDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3"
+                      disabled={exporting}
+                    >
+                      <DocumentArrowDownIcon className="h-4 w-4 text-green-600" />
+                      <span className="text-gray-700">{exporting ? 'Mengexport...' : 'Export Excel'}</span>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -646,7 +552,7 @@ const AbsensiPage: React.FC = () => {
             )}
           </div>
         </div>
-      </DashboardLayout>
+      </TataLetakDasbor>
     </>
   );
 };

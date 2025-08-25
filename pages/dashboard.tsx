@@ -6,7 +6,7 @@ import { dashboardApi } from '../lib/api';
 import { useToast } from '../contexts/ToastContext';
 import { useAuth } from '../contexts/AuthContext';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
-import DashboardLayout from '../components/layouts/DashboardLayout';
+import TataLetakDasbor from '../components/layouts/TataLetakDasbor';
 import StatsCard from '../components/dashboard/StatsCard';
 import AttendanceChart from '../components/dashboard/AttendanceChart';
 import RecentActivities from '../components/dashboard/RecentActivities';
@@ -63,7 +63,7 @@ const DashboardContent: React.FC = () => {
         <meta name="description" content="Dashboard AFMS" />
       </Head>
       
-      <DashboardLayout>
+      <TataLetakDasbor>
         <div className="space-y-6">
           {/* Header */}
           <div className="bg-white shadow-sm rounded-lg p-6">
@@ -181,7 +181,7 @@ const DashboardContent: React.FC = () => {
             <RecentActivities />
           </div>
         </div>
-      </DashboardLayout>
+      </TataLetakDasbor>
     </>
   );
 };

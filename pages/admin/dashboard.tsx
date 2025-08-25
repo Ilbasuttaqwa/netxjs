@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
+import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
 import { withAdminOrManagerAuth } from '../../lib/withManagerAuth';
 import { useAuth } from '../../contexts/AuthContext';
 import StatsCard from '../../components/dashboard/StatsCard';
 import RecentActivities from '../../components/dashboard/RecentActivities';
-import AttendanceChart from '../../components/dashboard/AttendanceChart';
+import GrafikKehadiran from '../../components/dashboard/GrafikKehadiran';
 import { 
   UsersIcon, 
   BuildingOfficeIcon, 
@@ -14,7 +14,8 @@ import {
   XCircleIcon,
   ChartBarIcon,
   ComputerDesktopIcon,
-  CalendarDaysIcon
+  CalendarDaysIcon,
+  ChevronDownIcon
 } from '@heroicons/react/24/outline';
 
 interface DashboardStats {
@@ -38,6 +39,7 @@ function AdminDashboard() {
     attendancePercentage: 0
   });
   const [loadingStats, setLoadingStats] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -52,14 +54,14 @@ function AdminDashboard() {
       }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-      // Set default data if API fails
+      // Keep stats as initialized (all zeros) if API fails
       setStats({
-        totalEmployees: 150,
-        totalBranches: 5,
-        todayAttendance: 142,
-        lateToday: 8,
-        absentToday: 8,
-        attendancePercentage: 94.7
+        totalEmployees: 0,
+        totalBranches: 0,
+        todayAttendance: 0,
+        lateToday: 0,
+        absentToday: 0,
+        attendancePercentage: 0
       });
     } finally {
       setLoadingStats(false);
@@ -68,11 +70,11 @@ function AdminDashboard() {
 
   if (loadingStats) {
     return (
-      <DashboardLayout>
+      <TataLetakDasbor>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
         </div>
-      </DashboardLayout>
+      </TataLetakDasbor>
     );
   }
 
@@ -93,7 +95,7 @@ function AdminDashboard() {
   });
 
   return (
-    <DashboardLayout>
+    <TataLetakDasbor>
       <div className="space-y-6">
         {/* Header */}
         <div className="bg-white rounded-lg shadow p-6">
@@ -157,40 +159,60 @@ function AdminDashboard() {
             color="success"
           />
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Aksi Cepat</h3>
-            <div className="space-y-3">
+            <div className="relative">
               <button
-                onClick={() => router.push('/admin/pemantauan')}
-                className="w-full text-left px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center gap-3"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="w-full flex items-center justify-between px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
               >
-                <ComputerDesktopIcon className="h-5 w-5 text-blue-600" />
-                <span className="text-blue-700 font-medium">Pemantauan Sidik Jari</span>
+                <span className="font-medium">Aksi Cepat</span>
+                <ChevronDownIcon className={`h-5 w-5 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-              <button
-                onClick={() => router.push('/admin/karyawan')}
-                className="w-full text-left px-4 py-2 bg-green-50 hover:bg-green-100 rounded-lg transition-colors flex items-center gap-3"
-              >
-                <UsersIcon className="h-5 w-5 text-green-600" />
-                <span className="text-green-700 font-medium">Kelola Karyawan</span>
-              </button>
-              <button
-                onClick={() => router.push('/admin/absensi')}
-                className="w-full text-left px-4 py-2 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors flex items-center gap-3"
-              >
-                <CalendarDaysIcon className="h-5 w-5 text-purple-600" />
-                <span className="text-purple-700 font-medium">Laporan Absensi</span>
-              </button>
+              
+              {isDropdownOpen && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                  <button
+                    onClick={() => {
+                      router.push('/admin/pemantauan');
+                      setIsDropdownOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100"
+                  >
+                    <ComputerDesktopIcon className="h-5 w-5 text-blue-600" />
+                    <span className="text-gray-700">Pemantauan Sidik Jari</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      router.push('/admin/karyawan');
+                      setIsDropdownOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100"
+                  >
+                    <UsersIcon className="h-5 w-5 text-green-600" />
+                    <span className="text-gray-700">Kelola Karyawan</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      router.push('/admin/absensi');
+                      setIsDropdownOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3"
+                  >
+                    <CalendarDaysIcon className="h-5 w-5 text-purple-600" />
+                    <span className="text-gray-700">Laporan Absensi</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Charts and Activities */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <AttendanceChart />
+          <GrafikKehadiran />
           <RecentActivities />
         </div>
       </div>
-    </DashboardLayout>
+    </TataLetakDasbor>
   );
 }
 

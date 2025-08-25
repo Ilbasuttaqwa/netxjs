@@ -3,36 +3,36 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
-  id                     BigInt                  @id @default(autoincrement())
-  nama_pegawai           String                  @db.VarChar(255)
-  tempat_lahir           String?                 @db.VarChar(255)
-  tanggal_lahir          DateTime?               @db.Date
-  jenis_kelamin          String?                 @db.VarChar(255)
+  id                     Int                     @id @default(autoincrement())
+  nama_pegawai           String
+  tempat_lahir           String?
+  tanggal_lahir          DateTime?
+  jenis_kelamin          String?
   alamat                 String?
-  tanggal_masuk          DateTime?               @db.Date
+  tanggal_masuk          DateTime?
   gaji                   Int?                    @default(0)
   status_pegawai         Boolean?                @default(false)
-  email                  String                  @unique @db.VarChar(255)
-  email_verified_at      DateTime?               @db.Timestamp(6)
-  password               String                  @db.VarChar(255)
-  remember_token         String?                 @db.VarChar(100)
-  created_at             DateTime?               @db.Timestamp(6)
-  updated_at             DateTime?               @db.Timestamp(6)
-  role                   String?                 @default("user") @db.VarChar(50)
-  id_jabatan             BigInt?
-  id_cabang              BigInt?
-  jam_istirahat_mulai    DateTime?               @db.Time(6)
-  jam_istirahat_selesai  DateTime?               @db.Time(6)
-  device_user_id         String?                 @db.VarChar(50)                 
+  password               String
+  remember_token         String?
+  created_at             DateTime?
+  updated_at             DateTime?
+  role                   String?                 @default("user")
+  id_jabatan             Int?
+  id_cabang              Int?
+  jam_istirahat_mulai    DateTime?
+  jam_istirahat_selesai  DateTime?
+  device_user_id         String?                 
   absensi                Absensi[]
   fingerprintAttendances FingerprintAttendance[]
   cabang                 Cabang?                 @relation(fields: [id_cabang], references: [id])
   jabatan                Jabatan?                @relation(fields: [id_jabatan], references: [id], onDelete: Restrict)
+  createdBackups         FingerprintBackup[]     @relation("BackupCreator")
+  performedRestores      FingerprintRestore[]    @relation("RestorePerformer")
 
   @@index([role, id_cabang], map: "idx_users_role_cabang")
   @@index([device_user_id], map: "idx_users_device_id")
@@ -40,14 +40,14 @@ model User {
 }
 
 model Jabatan {
-  id                    BigInt    @id @default(autoincrement())
-  nama_jabatan          String    @db.VarChar(255)
-  jam_masuk             DateTime? @db.Time(6)
-  jam_masuk_siang       DateTime? @db.Time(6)
+  id                    Int       @id @default(autoincrement())
+  nama_jabatan          String
+  jam_masuk             DateTime?
+  jam_masuk_siang       DateTime?
   jatah_libur_per_bulan Int       @default(2)
-  denda_per_hari_libur  Decimal   @default(50000.00) @db.Decimal(10, 2)
-  bonus_tidak_libur     Decimal   @default(25000.00) @db.Decimal(10, 2)
-  gaji_pokok            Decimal?  @db.Decimal(15, 2)  
+  denda_per_hari_libur  Float     @default(50000.00)
+  bonus_tidak_libur     Float     @default(25000.00)
+  gaji_pokok            Float?
   created_at            DateTime? 
   updated_at            DateTime? 
   users                 User[]
@@ -56,11 +56,10 @@ model Jabatan {
 }
 
 model Cabang {
-  id                     BigInt                  @id @default(autoincrement())
+  id                     Int                     @id @default(autoincrement())
   nama_cabang            String                  
   alamat_cabang          String?
   telepon_cabang         String?                 
-  email_cabang           String?                 
   kode_cabang            String                  @unique 
   status                 Boolean                 @default(true)
   created_at             DateTime?               
@@ -74,8 +73,8 @@ model Cabang {
 }
 
 model Absensi {
-  id                    BigInt    @id @default(autoincrement())
-  id_user               BigInt
+  id                    Int       @id @default(autoincrement())
+  id_user               Int
   tanggal               DateTime  
   jam_masuk             DateTime? 
   jam_keluar            DateTime? 
@@ -85,7 +84,7 @@ model Absensi {
   keterangan            String?
   created_at            DateTime? 
   updated_at            DateTime? 
-  id_cabang             BigInt?
+  id_cabang             Int?
   cabang                Cabang?   @relation(fields: [id_cabang], references: [id])
   user                  User      @relation(fields: [id_user], references: [id], onDelete: Cascade)
 
@@ -96,10 +95,10 @@ model Absensi {
 }
 
 model FingerprintAttendance {
-  id                BigInt    @id @default(autoincrement())
-  user_id           BigInt?
+  id                Int       @id @default(autoincrement())
+  user_id           Int?
   device_user_id    String?   
-  cabang_id         BigInt?
+  cabang_id         Int?
   device_id         String?   
   attendance_time   DateTime  
   attendance_type   Int       @default(1)
@@ -127,14 +126,14 @@ model FingerprintAttendance {
 
 model Event {
   id            String   @id @default(cuid())
-  eventType     String   @db.VarChar(255)
-  aggregateId   String   @db.VarChar(255)
-  aggregateType String   @db.VarChar(255)
-  eventData     Json
-  metadata      Json?
+  eventType     String
+  aggregateId   String
+  aggregateType String
+  eventData     String
+  metadata      String?
   version       Int
-  timestamp     DateTime @default(now()) @db.Timestamp(6)
-  userId        String?  @db.VarChar(255)  
+  timestamp     DateTime @default(now())
+  userId        String?  
 
   @@index([aggregateId, version], map: "events_aggregate_id_version_index")
   @@index([eventType], map: "events_event_type_index")
@@ -144,10 +143,10 @@ model Event {
 
 model ReadModel {
   id          String   @id @default(cuid())
-  type        String   @db.VarChar(255)
-  data        Json
+  type        String
+  data        String
   version     Int      @default(1)
-  lastUpdated DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  lastUpdated DateTime @default(now()) @updatedAt
 
   @@unique([type, id], map: "read_models_type_id_unique")
   @@index([type], map: "read_models_type_index")
@@ -155,12 +154,12 @@ model ReadModel {
 }
 
 model IdempotencyKey {
-  key         String   @id @db.VarChar(255)
-  requestHash String   @db.VarChar(255)
-  response    Json?
-  status      String   @default("processing") @db.VarChar(50)
-  createdAt   DateTime @default(now()) @db.Timestamp(6)
-  expiresAt   DateTime @db.Timestamp(6)
+  key         String   @id
+  requestHash String
+  response    String?
+  status      String   @default("processing")
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
 
   @@index([status], map: "idempotency_keys_status_index")
   @@index([expiresAt], map: "idempotency_keys_expires_at_index")
@@ -183,20 +182,20 @@ model AttendanceDeduplication {
 
 model BusinessRules {
   id          String    @id @default(cuid())
-  name        String    @db.VarChar(255)
+  name        String
   description String
-  category    String    @db.VarChar(100)
-  conditions  Json
-  actions     Json
+  category    String
+  conditions  String
+  actions     String
   priority    Int       @default(0)
   isActive    Boolean   @default(true)
-  validFrom   DateTime  @default(now()) @db.Timestamp(6)
-  validTo     DateTime? @db.Timestamp(6)
-  createdBy   String    @db.VarChar(255)
-  updatedBy   String    @db.VarChar(255)
+  validFrom   DateTime  @default(now())
+  validTo     DateTime?
+  createdBy   String
+  updatedBy   String
   version     Int       @default(1)
-  createdAt   DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt   DateTime  @updatedAt @db.Timestamp(6)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([category, isActive], map: "business_rules_category_active_index")
   @@index([validFrom, validTo], map: "business_rules_validity_index")
@@ -207,7 +206,7 @@ model BusinessRules {
 model PayrollDeductions {
   id          String   @id @default(cuid())
   employeeId  String   
-  amount      Decimal  
+  amount      Float  
   reason      String   
   type        String   
   ruleId      String?  
@@ -223,11 +222,11 @@ model PayrollDeductions {
 }
 
 model Device {
-  id               BigInt                  @id @default(autoincrement())
+  id               Int                     @id @default(autoincrement())
   device_id        String                  @unique 
   nama             String                  
   tipe             String                  
-  cabang_id        BigInt
+  cabang_id        Int
   ip_address       String?                 
   port             Int?
   status           String                  @default("aktif") 
@@ -240,6 +239,8 @@ model Device {
   statusLogs       DeviceStatusLog[]
   cabang           Cabang                  @relation(fields: [cabang_id], references: [id], onDelete: Cascade)
   attendance       FingerprintAttendance[] @relation("DeviceAttendance")
+  backups          FingerprintBackup[]
+  restores         FingerprintRestore[]    @relation("TargetDeviceRestores")
 
   @@index([device_id], map: "devices_device_id_index")
   @@index([cabang_id], map: "devices_cabang_id_index")
@@ -249,8 +250,8 @@ model Device {
 }
 
 model DeviceStatusLog {
-  id               BigInt   @id @default(autoincrement())
-  device_id        BigInt
+  id               Int      @id @default(autoincrement())
+  device_id        Int
   status           String   
   firmware_version String?  
   error_message    String?
@@ -263,4 +264,40 @@ model DeviceStatusLog {
   @@index([status], map: "device_status_logs_status_index")
   @@index([timestamp], map: "device_status_logs_timestamp_index")
   @@map("device_status_logs")
+}
+
+model FingerprintBackup {
+  id             Int      @id @default(autoincrement())
+  device_id      Int
+  backup_name    String
+  backup_data    String
+  template_count Int      @default(0)
+  created_by     Int
+  created_at     DateTime @default(now())
+  device         Device   @relation(fields: [device_id], references: [id], onDelete: Cascade)
+  creator        User     @relation("BackupCreator", fields: [created_by], references: [id], onDelete: Cascade)
+  restores       FingerprintRestore[]
+
+  @@index([device_id], map: "fingerprint_backups_device_index")
+  @@index([created_at], map: "fingerprint_backups_created_index")
+  @@map("fingerprint_backups")
+}
+
+model FingerprintRestore {
+  id                      Int      @id @default(autoincrement())
+  backup_id               Int
+  target_device_id        Int
+  restored_template_count Int      @default(0)
+  error_count            Int      @default(0)
+  restore_data           String?
+  restored_by            Int
+  restored_at            DateTime @default(now())
+  backup                 FingerprintBackup @relation(fields: [backup_id], references: [id], onDelete: Cascade)
+  targetDevice           Device   @relation("TargetDeviceRestores", fields: [target_device_id], references: [id], onDelete: Cascade)
+  restorer               User     @relation("RestorePerformer", fields: [restored_by], references: [id], onDelete: Cascade)
+
+  @@index([backup_id], map: "fingerprint_restores_backup_index")
+  @@index([target_device_id], map: "fingerprint_restores_device_index")
+  @@index([restored_at], map: "fingerprint_restores_restored_index")
+  @@map("fingerprint_restores")
 }

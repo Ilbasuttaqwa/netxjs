@@ -3,8 +3,8 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
 import { deviceApi } from '../../lib/api';
-import { Button } from '../../components/ui/Button';
-import Modal from '../../components/ui/Modal';
+import { Button } from '../../components/ui/button';
+import Modal from '../../components/ui/JendelaModal';
 import { cn } from '../../utils/cn';
 import {
   ChartBarIcon,
@@ -143,8 +143,59 @@ export default function DeviceAnalyticsPage() {
       };
       
       const response = await deviceApi.getAnalytics(params);
-      if (response.success) {
-        setAnalytics(response.data);
+      if (response.success && response.data) {
+        // Transform API response to expected format
+        const apiData = response.data;
+        const transformedData: AnalyticsData = {
+          uptime: {
+            total_devices: apiData.summary?.total_devices || 0,
+            online_devices: Math.round((apiData.summary?.avg_uptime_percentage || 0) / 100 * (apiData.summary?.total_devices || 0)),
+            offline_devices: (apiData.summary?.total_devices || 0) - Math.round((apiData.summary?.avg_uptime_percentage || 0) / 100 * (apiData.summary?.total_devices || 0)),
+            error_devices: 0,
+            uptime_percentage: apiData.summary?.avg_uptime_percentage || 0,
+            trends: apiData.analytics?.map((item: any, index: number) => ({
+              date: new Date(Date.now() - (30 - index) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+              uptime: item.metrics?.uptime_percentage || 0,
+              online: Math.round((item.metrics?.uptime_percentage || 0) / 100),
+              offline: 1 - Math.round((item.metrics?.uptime_percentage || 0) / 100)
+            })) || []
+          },
+          sync: {
+            total_syncs: apiData.summary?.total_syncs || 0,
+            successful_syncs: apiData.summary?.total_successful_syncs || 0,
+            failed_syncs: (apiData.summary?.total_syncs || 0) - (apiData.summary?.total_successful_syncs || 0),
+            success_rate: apiData.summary?.sync_success_rate || 0,
+            trends: apiData.analytics?.map((item: any, index: number) => ({
+              date: new Date(Date.now() - (30 - index) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+              successful: item.metrics?.successful_syncs || 0,
+              failed: item.metrics?.failed_syncs || 0
+            })) || []
+          },
+          hardware: {
+            avg_temperature: apiData.analytics?.reduce((sum: number, item: any) => sum + (item.metrics?.avg_temperature || 0), 0) / Math.max(apiData.analytics?.length || 1, 1) || 0,
+            avg_memory_usage: apiData.analytics?.reduce((sum: number, item: any) => sum + (item.metrics?.avg_memory_usage || 0), 0) / Math.max(apiData.analytics?.length || 1, 1) || 0,
+            avg_battery_level: apiData.analytics?.reduce((sum: number, item: any) => sum + (item.metrics?.avg_battery_level || 0), 0) / Math.max(apiData.analytics?.length || 1, 1) || 0,
+            devices_with_issues: apiData.analytics?.filter((item: any) => (item.metrics?.error_count || 0) > 0).length || 0,
+            trends: apiData.analytics?.map((item: any, index: number) => ({
+              date: new Date(Date.now() - (30 - index) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+              temperature: item.metrics?.avg_temperature || 0,
+              memory: item.metrics?.avg_memory_usage || 0,
+              battery: item.metrics?.avg_battery_level || 0
+            })) || []
+          },
+          performance: {
+            response_time: 150, // Default value
+            throughput: apiData.summary?.total_records_synced || 0,
+            error_rate: apiData.analytics?.reduce((sum: number, item: any) => sum + (item.metrics?.error_count || 0), 0) / Math.max(apiData.analytics?.length || 1, 1) || 0,
+            trends: apiData.analytics?.map((item: any, index: number) => ({
+              date: new Date(Date.now() - (30 - index) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+              response_time: 150, // Default value
+              throughput: item.metrics?.total_records_synced || 0,
+              errors: item.metrics?.error_count || 0
+            })) || []
+          }
+        };
+        setAnalytics(transformedData);
       }
     } catch (error: any) {
       addToast({

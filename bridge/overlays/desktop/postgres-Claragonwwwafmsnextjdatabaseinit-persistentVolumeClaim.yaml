@@ -1,9 +1,0 @@
-#! postgres-C:\laragon\www\afmsnextj\database\init-persistentVolumeClaim.yaml
-# Generated code, do not edit
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-    name: postgres-c--laragon-www-afmsnextj-database-init
-    namespace: afmsnextj
-spec:
-    storageClassName: "hostpath" # see docker/desktop-storage-provisioner

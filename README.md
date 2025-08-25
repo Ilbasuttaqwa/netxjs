@@ -11,7 +11,7 @@ Sistem manajemen absensi fingerprint terintegrasi dengan device X100-C menggunak
 - ✅ Manajemen pengguna dan cabang
 - ✅ Laporan absensi komprehensif
 - ✅ API callback untuk device
-- ✅ Monitoring kesehatan sistem
+- ✅ Integrasi fingerprint device
 
 ## Teknologi
 
@@ -122,7 +122,7 @@ Scheduled tasks:
 
 ### Monitoring
 - `GET /api/monitoring/statistics` - Statistik sistem
-- `GET /api/monitoring/devices/health` - Status kesehatan device
+- `GET /api/fingerprint/health` - Status fingerprint service
 
 ### Callback
 - `POST /api/fingerprint/callback` - Endpoint untuk device callback

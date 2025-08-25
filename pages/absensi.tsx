@@ -5,8 +5,8 @@ import { useRouter } from 'next/router';
 import { Absensi } from '../types';
 import { absensiApi } from '../lib/api';
 import { useToast } from '../contexts/ToastContext';
-import DashboardLayout from '../components/layouts/DashboardLayout';
-import { Button } from '../components/ui/Button';
+import TataLetakDasbor from '../components/layouts/TataLetakDasbor';
+import { Button } from '../components/ui/button';
 import {
   CalendarDaysIcon,
   ClockIcon,
@@ -330,7 +330,7 @@ const AbsensiUserPage: React.FC = () => {
         <meta name="description" content="Sistem absensi karyawan" />
       </Head>
       
-      <DashboardLayout>
+      <TataLetakDasbor>
         <div className="space-y-6">
           {/* Header */}
           <div className="bg-white shadow-sm rounded-lg p-6">
@@ -530,7 +530,7 @@ const AbsensiUserPage: React.FC = () => {
             )}
           </div>
         </div>
-      </DashboardLayout>
+      </TataLetakDasbor>
     </>
   );
 };

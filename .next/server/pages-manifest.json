@@ -2,5 +2,10 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/admin/devices": "pages/admin/devices.js"
+  "/admin/cloud-config": "pages/admin/cloud-config.js",
+  "/api/absensi": "pages/api/absensi.js",
+  "/api/devices/cloud-config": "pages/api/devices/cloud-config.js",
+  "/admin/absensi": "pages/admin/absensi.js",
+  "/api/karyawan": "pages/api/karyawan.js",
+  "/api/cabang": "pages/api/cabang.js"
 }

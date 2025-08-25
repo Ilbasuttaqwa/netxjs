@@ -43,43 +43,10 @@ const RecentActivities: React.FC = () => {
         throw new Error(response.message);
       }
     } catch (error: any) {
-      // Use dummy data if API fails
-      setActivities([
-        {
-          id: 1,
-          type: 'masuk',
-          karyawan_nama: 'John Doe',
-          waktu: '08:00',
-          keterangan: 'Masuk tepat waktu',
-        },
-        {
-          id: 2,
-          type: 'terlambat',
-          karyawan_nama: 'Jane Smith',
-          waktu: '08:30',
-          keterangan: 'Terlambat 30 menit',
-        },
-        {
-          id: 3,
-          type: 'keluar',
-          karyawan_nama: 'Bob Johnson',
-          waktu: '17:00',
-          keterangan: 'Pulang tepat waktu',
-        },
-        {
-          id: 4,
-          type: 'alpha',
-          karyawan_nama: 'Alice Brown',
-          waktu: '-',
-          keterangan: 'Tidak hadir tanpa keterangan',
-        },
-      ]);
+      // Set empty activities if API fails
+      setActivities([]);
       
-      addToast({
-        type: 'warning',
-        title: 'Peringatan',
-        message: 'Menggunakan data dummy untuk aktivitas terbaru',
-      });
+      console.error('Error fetching activities:', error);
     } finally {
       setLoading(false);
     }

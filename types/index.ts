@@ -2,7 +2,6 @@
 export interface User {
   id: number;
   name: string;
-  email: string;
   role: 'admin' | 'manager' | 'user';
   cabang_id?: number;
   jabatan_id?: number;
@@ -38,7 +37,6 @@ export interface Jabatan {
 export interface Karyawan {
   id: number;
   nama: string;
-  email: string;
   telepon?: string;
   alamat?: string;
   tanggal_lahir?: string;
@@ -147,7 +145,7 @@ export interface PaginatedResponse<T = any> {
 
 // Auth types
 export interface LoginCredentials {
-  email: string;
+  nama_pegawai: string;
   password: string;
   remember?: boolean;
 }
@@ -155,7 +153,6 @@ export interface LoginCredentials {
 export interface AuthUser {
   id: number;
   nama_pegawai: string;
-  email: string;
   role: 'admin' | 'manager' | 'user';
   id_cabang?: number;
   id_jabatan?: number;

@@ -19,10 +19,15 @@ self.__BUILD_MANIFEST = {
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/admin/devices": [
+    "/admin/absensi": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/admin/devices.js"
+      "static/chunks/pages/admin/absensi.js"
+    ],
+    "/admin/cloud-config": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/admin/cloud-config.js"
     ]
   },
   "ampFirstPages": []

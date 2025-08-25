@@ -3,8 +3,8 @@ import Head from 'next/head';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
 import { useToast } from '../../contexts/ToastContext';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
-import { Button } from '../../components/ui/Button';
+import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
+import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/Input';
 import {
   CogIcon,
@@ -139,7 +139,7 @@ const SettingsPage: React.FC = () => {
   }
 
   return (
-    <DashboardLayout>
+    <TataLetakDasbor>
       <Head>
         <title>Pengaturan Sistem - AFMS</title>
       </Head>
@@ -322,7 +322,7 @@ const SettingsPage: React.FC = () => {
           </form>
         )}
       </div>
-    </DashboardLayout>
+    </TataLetakDasbor>
   );
 };
 

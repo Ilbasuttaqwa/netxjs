@@ -7,10 +7,10 @@ import {
   PlusIcon,
   EyeIcon,
 } from '@heroicons/react/24/outline';
-import DashboardLayout from '../components/layouts/DashboardLayout';
+import TataLetakDasbor from '../components/layouts/TataLetakDasbor';
 import DataTable from '../components/ui/DataTable';
 import useDataTable from '../hooks/useDataTable';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/button';
 import Modal from '../components/ui/Modal';
 import { cn } from '../utils/cn';
 import { useToast } from '../contexts/ToastContext';
@@ -253,7 +253,7 @@ const UsersPage = () => {
   ];
 
   return (
-    <DashboardLayout>
+    <TataLetakDasbor>
       <Head>
         <title>Manajemen Pengguna - AFMS</title>
       </Head>
@@ -380,7 +380,7 @@ const UsersPage = () => {
           </div>
         </div>
       </Modal>
-    </DashboardLayout>
+    </TataLetakDasbor>
   );
 };
 

@@ -12,7 +12,6 @@ async function main() {
       nama_cabang: 'Kantor Pusat',
       alamat_cabang: 'Jl. Sudirman No. 123, Jakarta',
       telepon_cabang: '021-12345678',
-      email_cabang: 'pusat@afms.com',
       kode_cabang: 'KP001',
       status: true,
     },
@@ -25,7 +24,6 @@ async function main() {
       nama_cabang: 'Cabang Bandung',
       alamat_cabang: 'Jl. Asia Afrika No. 456, Bandung',
       telepon_cabang: '022-87654321',
-      email_cabang: 'bandung@afms.com',
       kode_cabang: 'BDG001',
       status: true,
     },
@@ -63,7 +61,6 @@ async function main() {
   const adminUser = await prisma.user.create({
     data: {
       nama_pegawai: 'Administrator',
-      email: 'admin@afms.com',
       password: hashedPassword,
       role: 'admin',
       status_pegawai: true,
@@ -82,7 +79,6 @@ async function main() {
   const managerUser = await prisma.user.create({
     data: {
       nama_pegawai: 'Manager Operasional',
-      email: 'manager@afms.com',
       password: hashedPassword,
       role: 'user',
       status_pegawai: true,
@@ -101,7 +97,6 @@ async function main() {
   const staffUser = await prisma.user.create({
     data: {
       nama_pegawai: 'Staff Operasional',
-      email: 'staff@afms.com',
       password: hashedPassword,
       role: 'user',
       status_pegawai: true,
@@ -119,9 +114,9 @@ async function main() {
 
   console.log('Seed data created successfully!')
   console.log('Users created:')
-  console.log('- Admin:', adminUser.email, '(password: password)')
-  console.log('- Manager:', managerUser.email, '(password: password)')
-  console.log('- Staff:', staffUser.email, '(password: password)')
+  console.log('- Admin:', adminUser.nama_pegawai, '(password: password)')
+  console.log('- Manager:', managerUser.nama_pegawai, '(password: password)')
+  console.log('- Staff:', staffUser.nama_pegawai, '(password: password)')
 }
 
 main()

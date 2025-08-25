@@ -3,8 +3,8 @@ import Head from 'next/head';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
 import { useToast } from '../../contexts/ToastContext';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
-import { Button } from '../../components/ui/Button';
+import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
+import { Button } from '../../components/ui/button';
 import {
   CurrencyDollarIcon,
   ClockIcon,
@@ -167,7 +167,7 @@ const PayrollPage: React.FC = () => {
         <meta name="description" content="Sistem payroll dan pemotongan gaji otomatis" />
       </Head>
       
-      <DashboardLayout>
+      <TataLetakDasbor>
         <div className="space-y-6">
           {/* Header */}
           <div className="bg-white shadow-sm rounded-lg p-6">
@@ -462,7 +462,7 @@ const PayrollPage: React.FC = () => {
             </div>
           </div>
         )}
-      </DashboardLayout>
+      </TataLetakDasbor>
     </>
   );
 };

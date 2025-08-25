@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
+import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/Input';
 import Modal from '../../components/ui/Modal';
 import DataTable from '../../components/ui/DataTable';
@@ -14,7 +14,6 @@ interface Cabang {
   nama: string;
   alamat: string;
   telepon: string;
-  email: string;
   kode: string;
   status: 'aktif' | 'nonaktif';
   created_at: string;
@@ -34,36 +33,11 @@ const CabangPage: React.FC = () => {
     nama: '',
     alamat: '',
     telepon: '',
-    email: '',
     kode: '',
     status: 'aktif' as 'aktif' | 'nonaktif'
   });
 
-  // Mock data for demonstration
-  const mockCabang: Cabang[] = [
-    {
-      id: 1,
-      nama: 'Cabang Pusat',
-      alamat: 'Jl. Sudirman No. 123, Jakarta',
-      telepon: '021-12345678',
-      email: 'pusat@afms.com',
-      kode: 'CP001',
-      status: 'aktif',
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
-    },
-    {
-      id: 2,
-      nama: 'Cabang Bandung',
-      alamat: 'Jl. Asia Afrika No. 456, Bandung',
-      telepon: '022-87654321',
-      email: 'bandung@afms.com',
-      kode: 'CB002',
-      status: 'aktif',
-      created_at: '2024-01-02T00:00:00Z',
-      updated_at: '2024-01-02T00:00:00Z'
-    }
-  ];
+
 
   useEffect(() => {
     fetchCabang();
@@ -72,14 +46,14 @@ const CabangPage: React.FC = () => {
   const fetchCabang = async () => {
     try {
       setLoading(true);
-      // Simulate API call
-      setTimeout(() => {
-        setCabangList(mockCabang);
-        setLoading(false);
-      }, 1000);
+      // TODO: Replace with actual API call
+      // const response = await cabangApi.getCabang();
+      // setCabangList(response.data);
+      setCabangList([]);
     } catch (error) {
       console.error('Error fetching cabang:', error);
       addToast({ type: 'error', title: 'Gagal memuat data cabang' });
+    } finally {
       setLoading(false);
     }
   };
@@ -114,7 +88,6 @@ const CabangPage: React.FC = () => {
         nama: '',
         alamat: '',
         telepon: '',
-        email: '',
         kode: '',
         status: 'aktif'
       });
@@ -128,11 +101,10 @@ const CabangPage: React.FC = () => {
     setEditingCabang(cabang);
     setFormData({
       nama: cabang.nama,
-      alamat: cabang.alamat,
-      telepon: cabang.telepon,
-      email: cabang.email,
-      kode: cabang.kode,
-      status: cabang.status
+        alamat: cabang.alamat,
+        telepon: cabang.telepon,
+        kode: cabang.kode,
+        status: cabang.status
     });
     setShowModal(true);
   };
@@ -170,11 +142,7 @@ const CabangPage: React.FC = () => {
       title: 'Telepon',
       sortable: false
     },
-    {
-      key: 'email',
-      title: 'Email',
-      sortable: false
-    },
+
     {
       key: 'status',
       title: 'Status',
@@ -215,7 +183,7 @@ const CabangPage: React.FC = () => {
   ];
 
   return (
-    <DashboardLayout>
+    <TataLetakDasbor>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
@@ -229,7 +197,6 @@ const CabangPage: React.FC = () => {
                 nama: '',
                 alamat: '',
                 telepon: '',
-                email: '',
                 kode: '',
                 status: 'aktif'
               });
@@ -284,23 +251,13 @@ const CabangPage: React.FC = () => {
               placeholder="Alamat lengkap cabang"
             />
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Telepon"
-                value={formData.telepon}
-                onChange={(e) => setFormData({ ...formData, telepon: e.target.value })}
-                required
-                placeholder="Nomor telepon"
-              />
-              <Input
-                label="Email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                required
-                placeholder="Email cabang"
-              />
-            </div>
+            <Input
+              label="Telepon"
+              value={formData.telepon}
+              onChange={(e) => setFormData({ ...formData, telepon: e.target.value })}
+              required
+              placeholder="Nomor telepon"
+            />
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -334,7 +291,7 @@ const CabangPage: React.FC = () => {
           </form>
         </Modal>
       </div>
-    </DashboardLayout>
+    </TataLetakDasbor>
   );
 };
 

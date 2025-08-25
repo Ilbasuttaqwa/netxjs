@@ -5,8 +5,8 @@ import { useRouter } from 'next/router';
 import { Karyawan, Cabang, Jabatan, PaginatedResponse } from '../../types';
 import { karyawanApi, cabangApi, jabatanApi } from '../../lib/api';
 import { useToast } from '../../contexts/ToastContext';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
-import { Button } from '../../components/ui/Button';
+import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
+import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/Input';
 import {
   PlusIcon,
@@ -17,12 +17,12 @@ import {
   BuildingOfficeIcon,
   BriefcaseIcon,
   XMarkIcon,
+  EllipsisVerticalIcon,
 } from '@heroicons/react/24/outline';
 import { cn } from '../../utils/cn';
 
 interface KaryawanFormData {
   nama: string;
-  email: string;
   telepon: string;
   alamat: string;
   cabang_id: string;
@@ -45,9 +45,9 @@ const KaryawanPage: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState<number | null>(null);
   const [formData, setFormData] = useState<KaryawanFormData>({
     nama: '',
-    email: '',
     telepon: '',
     alamat: '',
     cabang_id: '',
@@ -85,63 +85,22 @@ const KaryawanPage: React.FC = () => {
         setKaryawan(karyawanRes.data.data || []);
         setTotalPages(karyawanRes.data.last_page || 1);
       } else {
-        // Use dummy data if API fails
-        setKaryawan([
-          {
-            id: 1,
-            nama: 'John Doe',
-            email: 'john@example.com',
-            telepon: '081234567890',
-            alamat: 'Jl. Sudirman No. 123',
-            jenis_kelamin: 'L',
-            cabang_id: 1,
-            jabatan_id: 1,
-            tanggal_masuk: '2024-01-01',
-            fingerprint_id: 'FP001',
-            status: 'aktif',
-            created_at: '2024-01-01 00:00:00',
-            updated_at: '2024-01-01 00:00:00',
-            cabang: { id: 1, nama_cabang: 'Kantor Pusat', alamat: 'Jakarta', status: 'aktif', created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
-            jabatan: { id: 1, nama_jabatan: 'Manager', gaji_pokok: 5000000, created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
-          },
-          {
-            id: 2,
-            nama: 'Jane Smith',
-            email: 'jane@example.com',
-            telepon: '081234567891',
-            alamat: 'Jl. Thamrin No. 456',
-            jenis_kelamin: 'P',
-            cabang_id: 2,
-            jabatan_id: 2,
-            tanggal_masuk: '2024-01-01',
-            fingerprint_id: 'FP002',
-            status: 'aktif',
-            created_at: '2024-01-01 00:00:00',
-            updated_at: '2024-01-01 00:00:00',
-            cabang: { id: 2, nama_cabang: 'Cabang Jakarta', alamat: 'Jakarta Selatan', status: 'aktif', created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
-            jabatan: { id: 2, nama_jabatan: 'Staff', gaji_pokok: 3000000, created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
-          },
-        ]);
+        setKaryawan([]);
+        setTotalPages(1);
       }
 
       if (cabangRes.success && cabangRes.data) {
         const cabangData = Array.isArray(cabangRes.data) ? cabangRes.data : cabangRes.data.data;
         setCabang(cabangData);
       } else {
-        setCabang([
-          { id: 1, nama_cabang: 'Kantor Pusat', alamat: 'Jakarta', status: 'aktif', created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
-          { id: 2, nama_cabang: 'Cabang Jakarta', alamat: 'Jakarta Selatan', status: 'aktif', created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
-        ]);
+        setCabang([]);
       }
 
       if (jabatanRes.success && jabatanRes.data) {
         const jabatanData = Array.isArray(jabatanRes.data) ? jabatanRes.data : jabatanRes.data.data;
         setJabatan(jabatanData);
       } else {
-        setJabatan([
-          { id: 1, nama_jabatan: 'Manager', gaji_pokok: 5000000, created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
-          { id: 2, nama_jabatan: 'Staff', gaji_pokok: 3000000, created_at: '2024-01-01 00:00:00', updated_at: '2024-01-01 00:00:00' },
-        ]);
+        setJabatan([]);
       }
     } catch (error: any) {
       addToast({
@@ -201,7 +160,6 @@ const KaryawanPage: React.FC = () => {
     setEditingId(item.id);
     setFormData({
       nama: item.nama,
-      email: item.email,
       telepon: item.telepon || '',
       alamat: item.alamat || '',
       cabang_id: item.cabang_id.toString(),
@@ -239,7 +197,6 @@ const KaryawanPage: React.FC = () => {
   const resetForm = () => {
     setFormData({
       nama: '',
-      email: '',
       telepon: '',
       alamat: '',
       cabang_id: '',
@@ -287,7 +244,7 @@ const KaryawanPage: React.FC = () => {
         <meta name="description" content="Kelola data karyawan" />
       </Head>
       
-      <DashboardLayout>
+      <TataLetakDasbor>
         <div className="space-y-6">
           {/* Header */}
           <div className="bg-white shadow-sm rounded-lg p-6">
@@ -409,8 +366,7 @@ const KaryawanPage: React.FC = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{item.email}</div>
-                          <div className="text-sm text-gray-500">{item.telepon}</div>
+                          <div className="text-sm text-gray-900">{item.telepon}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
@@ -432,24 +388,39 @@ const KaryawanPage: React.FC = () => {
                           {getStatusBadge(item.status)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEdit(item)}
-                              leftIcon={<PencilIcon className="h-4 w-4" />}
+                          <div className="relative">
+                            <button
+                              onClick={() => setDropdownOpen(dropdownOpen === item.id ? null : item.id)}
+                              className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
                             >
-                              Ubah
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => handleDelete(item.id)}
-                              leftIcon={<TrashIcon className="h-4 w-4" />}
-                            >
-                              Hapus
-                            </Button>
-                          </div>
+                              <EllipsisVerticalIcon className="h-5 w-5" />
+                            </button>
+                            
+                            {dropdownOpen === item.id && (
+                              <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                                <button
+                                  onClick={() => {
+                                    handleEdit(item);
+                                    setDropdownOpen(null);
+                                  }}
+                                  className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2 border-b border-gray-100"
+                                >
+                                  <PencilIcon className="h-4 w-4 text-blue-600" />
+                                  <span className="text-gray-700">Ubah</span>
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    handleDelete(item.id);
+                                    setDropdownOpen(null);
+                                  }}
+                                  className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2 text-red-600"
+                                >
+                                  <TrashIcon className="h-4 w-4" />
+                                  <span>Hapus</span>
+                                </button>
+                              </div>
+                             )}
+                           </div>
                         </td>
                       </tr>
                     ))
@@ -531,15 +502,6 @@ const KaryawanPage: React.FC = () => {
                   value={formData.nama}
                   onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
                   error={formErrors.nama}
-                  required
-                />
-                
-                <Input
-                  label="Email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  error={formErrors.email}
                   required
                 />
                 
@@ -646,7 +608,7 @@ const KaryawanPage: React.FC = () => {
             </div>
           </div>
         )}
-      </DashboardLayout>
+      </TataLetakDasbor>
     </>
   );
 };

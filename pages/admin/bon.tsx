@@ -5,8 +5,8 @@ import { useRouter } from 'next/router';
 import { Bon, Karyawan, BonFormData, PaginatedResponse } from '../../types';
 import { karyawanApi } from '../../lib/api';
 import { useToast } from '../../contexts/ToastContext';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
-import { Button } from '../../components/ui/Button';
+import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
+import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/Input';
 import {
   PlusIcon,
@@ -325,7 +325,7 @@ const BonPage: React.FC = () => {
   }
 
   return (
-    <DashboardLayout>
+    <TataLetakDasbor>
       <Head>
         <title>Manajemen Bon - AFMS</title>
       </Head>
@@ -449,7 +449,7 @@ const BonPage: React.FC = () => {
                           {item.karyawan?.nama || 'N/A'}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {item.karyawan?.email || 'N/A'}
+                          {item.karyawan?.telepon || 'N/A'}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -697,7 +697,7 @@ const BonPage: React.FC = () => {
           </div>
         </div>
       )}
-    </DashboardLayout>
+    </TataLetakDasbor>
   );
 };
 

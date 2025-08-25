@@ -5,11 +5,11 @@ import { DashboardStats } from '../types';
 import { dashboardApi } from '../lib/api';
 import { useToast } from '../contexts/ToastContext';
 import { useAuth } from '../contexts/AuthContext';
-import ProtectedRoute from '../components/auth/ProtectedRoute';
-import DashboardLayout from '../components/layouts/DashboardLayout';
-import StatsCard from '../components/dashboard/StatsCard';
-import AttendanceChart from '../components/dashboard/AttendanceChart';
-import RecentActivities from '../components/dashboard/RecentActivities';
+import ProtectedRoute from '../components/auth/RuteTerlindungi';
+import DashboardLayout from '../components/layouts/TataLetakDasbor';
+import StatsCard from '../components/dashboard/KartuStatistik';
+import AttendanceChart from '../components/dashboard/GrafikKehadiran';
+import RecentActivities from '../components/dashboard/AktivitasTerbaru';
 import {
   UsersIcon,
   BuildingOfficeIcon,

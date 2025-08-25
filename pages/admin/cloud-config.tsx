@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
-import { Button } from '../../components/ui/Button';
+import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
+import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
 import { useToast } from '../../contexts/ToastContext';
@@ -137,11 +137,11 @@ const CloudConfigPage = () => {
 
   if (authLoading || isLoading) {
     return (
-      <DashboardLayout>
+      <TataLetakDasbor>
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
         </div>
-      </DashboardLayout>
+      </TataLetakDasbor>
     );
   }
 
@@ -152,7 +152,7 @@ const CloudConfigPage = () => {
         <meta name="description" content="Configure cloud server settings for fingerprint devices" />
       </Head>
       
-      <DashboardLayout>
+      <TataLetakDasbor>
         <div className="space-y-6">
           {/* Header */}
           <div className="flex justify-between items-center">
@@ -374,7 +374,7 @@ const CloudConfigPage = () => {
             </Card>
           </div>
         </div>
-      </DashboardLayout>
+      </TataLetakDasbor>
     </>
   );
 };

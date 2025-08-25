@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useToast } from '../contexts/ToastContext'
-import { Button } from '../components/ui/Button'
+import { Button } from '../components/ui/button'
 import Card from '../components/ui/Card'
 import Loading from '../components/ui/Loading'
 

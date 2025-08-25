@@ -5,8 +5,8 @@ import { useRouter } from 'next/router';
 import { MonitoringFingerprint } from '../../types';
 import { monitoringApi, deviceApi } from '../../lib/api';
 import { useToast } from '../../contexts/ToastContext';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
-import { Button } from '../../components/ui/Button';
+import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
+import { Button } from '../../components/ui/button';
 import RealtimeAttendance from '../../components/pemantauan/RealtimeAttendance';
 import {
   ComputerDesktopIcon,
@@ -452,7 +452,7 @@ const PemantauanPage: React.FC = () => {
         <meta name="description" content="Pemantauan perangkat sidik jari" />
       </Head>
       
-      <DashboardLayout>
+      <TataLetakDasbor>
         <div className="space-y-6">
           {/* Header */}
           <div className="bg-white shadow-sm rounded-lg p-6">
@@ -1039,7 +1039,7 @@ const PemantauanPage: React.FC = () => {
             </div>
           )}
         </div>
-      </DashboardLayout>
+      </TataLetakDasbor>
     </>
   );
 };
