@@ -9,7 +9,7 @@ const nextConfig = {
   },
   typescript: {
     ignoreBuildErrors: true,
-    tsconfigPath: false
+    tsconfigPath: './tsconfig.json'
   },
   eslint: {
     ignoreDuringBuilds: true,

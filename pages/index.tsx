@@ -10,7 +10,7 @@ const HomePage = () => {
     if (!isLoading) {
       if (user) {
         // Redirect authenticated users to dashboard
-        router.replace('/dashboard');
+        router.replace('/dasbor');
       } else {
         // Redirect unauthenticated users to login
         router.replace('/login');

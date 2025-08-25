@@ -1,0 +1,91 @@
+#! laravel-api-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: laravel-api
+    namespace: afmsnextj
+    labels:
+        com.docker.compose.project: afmsnextj
+        com.docker.compose.service: laravel-api
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: afmsnextj
+            com.docker.compose.service: laravel-api
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: afmsnextj
+                com.docker.compose.service: laravel-api
+                com.docker.compose.network.afms-network: "true"
+        spec:
+            restartPolicy: unless-stopped
+            containers:
+                - name: laravel-api
+                  image: afmsnextj-laravel-api
+                  imagePullPolicy: IfNotPresent
+                  env:
+                    - name: APP_DEBUG
+                      value: "false"
+                    - name: APP_ENV
+                      value: "production"
+                    - name: APP_KEY
+                      value: "base64:afms-laravel-app-key-production-2024-secure-base64-encoded-key"
+                    - name: APP_NAME
+                      value: "\"AFMS API\""
+                    - name: APP_URL
+                      value: "https://api.afms.my.id"
+                    - name: BROADCAST_DRIVER
+                      value: "redis"
+                    - name: CACHE_DRIVER
+                      value: "redis"
+                    - name: DB_CONNECTION
+                      value: "pgsql"
+                    - name: DB_DATABASE
+                      value: "afms_database"
+                    - name: DB_HOST
+                      value: "postgres"
+                    - name: DB_PASSWORD
+                      value: "afms_secure_password_2024"
+                    - name: DB_PORT
+                      value: "5432"
+                    - name: DB_USERNAME
+                      value: "afms_user"
+                    - name: QUEUE_CONNECTION
+                      value: "redis"
+                    - name: REDIS_HOST
+                      value: "redis"
+                    - name: REDIS_PASSWORD
+                      value: "null"
+                    - name: REDIS_PORT
+                      value: "6379"
+                    - name: SESSION_DRIVER
+                      value: "redis"
+                  livenessProbe:
+                    exec:
+                        command: ['curl -f http://localhost/health']
+                    periodSeconds: 30
+                    initialDelaySeconds: 30
+                    timeoutSeconds: 10
+                    failureThreshold: 3
+                  ports:
+                    - name: laravel-api-80
+                      containerPort: 80
+                    - name: laravel-ap-9000
+                      containerPort: 9000
+                  volumeMounts:
+                    - name: var-www-html-storage
+                      mountPath: /var/www/html/storage
+                    - name: var-www-html-storage-logs
+                      mountPath: /var/www/html/storage/logs
+            volumes:
+                - name: var-www-html-storage
+                  persistentVolumeClaim:
+                    claimName: laravel-api-laravel-storage
+                - name: var-www-html-storage-logs
+                  persistentVolumeClaim:
+                    claimName: laravel-api-laravel-logs

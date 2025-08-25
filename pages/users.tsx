@@ -73,7 +73,7 @@ const UsersPage = () => {
         actions.setError(result.message || 'Gagal memuat pengguna');
         addToast({
           type: 'error',
-          title: 'Gagal Memuat Data',
+          title: 'Kesalahan',
           message: result.message || 'Gagal memuat pengguna',
         });
       }
@@ -81,10 +81,10 @@ const UsersPage = () => {
       console.error('Error fetching users:', error);
       actions.setError('Gagal memuat pengguna');
       addToast({
-        type: 'error',
-        title: 'Kesalahan Jaringan',
-        message: 'Gagal terhubung ke server',
-      });
+          type: 'error',
+          title: 'Kesalahan',
+          message: 'Gagal terhubung ke server',
+        });
     } finally {
       actions.setLoading(false);
     }
@@ -115,10 +115,20 @@ const UsersPage = () => {
         setUserToDelete(null);
       } else {
         actions.setError('Gagal menghapus pengguna');
+        addToast({
+          type: 'error',
+          title: 'Kesalahan',
+          message: 'Gagal menghapus pengguna',
+        });
       }
     } catch (error) {
       console.error('Error deleting user:', error);
       actions.setError('Gagal menghapus pengguna');
+      addToast({
+        type: 'error',
+        title: 'Kesalahan',
+        message: 'Gagal menghapus pengguna',
+      });
     }
   };
 

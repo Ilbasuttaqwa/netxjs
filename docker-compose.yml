@@ -9,20 +9,20 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://afms_user:afms_secure_password_2024@postgres:5432/afms_database
-      - NEXT_PUBLIC_API_URL=https://api.afms.my.id/api
-      - NEXT_PUBLIC_APP_URL=https://afms.my.id
-      - NEXTAUTH_URL=https://afms.my.id
+      - NEXT_PUBLIC_API_URL=http://api.afms.my.id/api
+      - NEXT_PUBLIC_APP_URL=http://afms.my.id
+      - NEXTAUTH_URL=http://afms.my.id
       - NEXTAUTH_SECRET=afms-nextauth-production-secret-2024-secure-key-abc123
       - JWT_SECRET=afms-production-jwt-secret-key-2024-ultra-secure-random-string-xyz789
       - NEXT_PUBLIC_FINGERPRINT_ENABLED=true
       - NEXT_PUBLIC_FINGERPRINT_REALTIME=true
-      - NEXT_PUBLIC_LARAVEL_API_URL=https://api.afms.my.id
+      - NEXT_PUBLIC_LARAVEL_API_URL=http://api.afms.my.id
       - FINGERPRINT_DEVICE_TYPE=solution-type-100c
-      - FINGERPRINT_CLOUD_ADMS_SERVER=https://api.afms.my.id/api/fingerprint
+      - FINGERPRINT_CLOUD_ADMS_SERVER=http://api.afms.my.id/api/fingerprint
       - DEVICE_REGISTRATION_KEY=afms-device-key-production-2024
-      - SECURE_COOKIES=true
-      - SAME_SITE_COOKIES=strict
-      - HTTPS_ONLY=true
+      - SECURE_COOKIES=false
+      - SAME_SITE_COOKIES=lax
+      - HTTPS_ONLY=false
     depends_on:
       postgres:
         condition: service_healthy
@@ -34,7 +34,7 @@ services:
     volumes:
       - ./prisma:/app/prisma
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/kesehatan"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -50,7 +50,7 @@ services:
       - APP_ENV=production
       - APP_KEY=base64:afms-laravel-app-key-production-2024-secure-base64-encoded-key
       - APP_DEBUG=false
-      - APP_URL=https://api.afms.my.id
+      - APP_URL=http://api.afms.my.id
       - DB_CONNECTION=pgsql
       - DB_HOST=postgres
       - DB_PORT=5432

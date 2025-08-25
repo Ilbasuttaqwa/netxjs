@@ -124,7 +124,7 @@ export default function DeviceAnalyticsPage() {
     }
     
     if (user && user.role !== 'admin') {
-      router.push('/dashboard');
+      router.push('/dasbor');
       return;
     }
     

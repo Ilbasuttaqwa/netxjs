@@ -38,7 +38,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    // Apply theme to document
+    // Apply theme to document :get? wheere emai;?>\ gsi] /user
     const root = document.documentElement;
     if (theme === 'dark') {
       root.classList.add('dark');

@@ -54,7 +54,7 @@ const BonPage: React.FC = () => {
     }
 
     if (!isLoading && user?.role !== 'admin') {
-      router.push('/dashboard');
+      router.push('/dasbor');
       return;
     }
 

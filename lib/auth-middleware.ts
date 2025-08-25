@@ -32,7 +32,7 @@ export function withAuth(
       
       if (!decoded || !decoded.id) {
         return res.status(401).json({
-          message: 'Invalid token'
+          message: 'Token tidak valid'
         });
       }
 
@@ -61,7 +61,7 @@ export function withAuth(
     } catch (error) {
       console.error('Auth middleware error:', error);
       return res.status(401).json({
-        message: 'Invalid token'
+        message: 'Token tidak valid'
       });
     }
   };

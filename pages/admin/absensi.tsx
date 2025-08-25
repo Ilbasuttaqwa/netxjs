@@ -54,7 +54,7 @@ const AbsensiPage: React.FC = () => {
     if (!isLoading && !isAuthenticated) {
       router.push('/login');
     } else if (!isLoading && isAuthenticated && user?.role !== 'admin') {
-      router.push('/dashboard');
+      router.push('/dasbor');
     }
   }, [isAuthenticated, isLoading, user, router]);
 

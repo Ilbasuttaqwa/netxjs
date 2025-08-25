@@ -1,0 +1,21 @@
+#! laravel-api-expose.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: laravel-api
+    namespace: afmsnextj
+    labels:
+        com.docker.compose.project: afmsnextj
+        com.docker.compose.service: laravel-api
+spec:
+    selector:
+        com.docker.compose.project: afmsnextj
+        com.docker.compose.service: laravel-api
+    ports:
+        - name: laravel-api-80
+          port: 80
+          targetPort: laravel-api-80
+        - name: laravel-ap-9000
+          port: 9000
+          targetPort: laravel-ap-9000

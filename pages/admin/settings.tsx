@@ -58,7 +58,7 @@ const SettingsPage: React.FC = () => {
     }
 
     if (user && user.role !== 'admin') {
-      router.push('/dashboard');
+      router.push('/dasbor');
       return;
     }
 

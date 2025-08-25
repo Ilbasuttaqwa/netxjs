@@ -43,7 +43,7 @@ function ManagerDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await fetch('/api/dashboard/stats');
+      const response = await fetch('/api/dasbor/stats');
       if (response.ok) {
         const data = await response.json();
         setStats(data);
@@ -193,7 +193,7 @@ function ManagerDashboard() {
             </a>
             
             <a 
-              href="/admin/monitoring"
+              href="/admin/pemantauan"
               className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <ComputerDesktopIcon className="h-8 w-8 text-purple-600 mr-3" />

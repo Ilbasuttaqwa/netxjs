@@ -251,22 +251,22 @@ export const absensiApi = {
 // Monitoring API
 export const monitoringApi = {
   getDevices: async (): Promise<ApiResponse<MonitoringFingerprint[]>> => {
-    const response = await api.get('/monitoring/devices');
+    const response = await api.get('/pemantauan/devices');
     return handleResponse(response);
   },
 
   getDeviceStatus: async (deviceId: string): Promise<ApiResponse<MonitoringFingerprint>> => {
-    const response = await api.get(`/monitoring/devices/${deviceId}/status`);
+    const response = await api.get(`/pemantauan/devices/${deviceId}/status`);
     return handleResponse(response);
   },
 
   syncDevice: async (deviceId: string): Promise<ApiResponse> => {
-    const response = await api.post(`/monitoring/devices/${deviceId}/sync`);
+    const response = await api.post(`/pemantauan/devices/${deviceId}/sync`);
     return handleResponse(response);
   },
 
   testConnection: async (deviceId: string): Promise<ApiResponse> => {
-    const response = await api.post(`/monitoring/devices/${deviceId}/test`);
+    const response = await api.post(`/pemantauan/devices/${deviceId}/test`);
     return handleResponse(response);
   },
 };
@@ -429,17 +429,17 @@ export const payrollApi = {
 // Dashboard API
 export const dashboardApi = {
   getStats: async (): Promise<ApiResponse<DashboardStats>> => {
-    const response = await api.get('/dashboard/stats');
+    const response = await api.get('/dasbor/stats');
     return handleResponse(response);
   },
 
   getAttendanceChart: async (period: string = '7days'): Promise<ApiResponse<any>> => {
-    const response = await api.get('/dashboard/attendance-chart', { params: { period } });
+    const response = await api.get('/dasbor/attendance-chart', { params: { period } });
     return handleResponse(response);
   },
 
   getRecentActivities: async (limit: number = 10): Promise<ApiResponse<any[]>> => {
-    const response = await api.get('/dashboard/recent-activities', { params: { limit } });
+    const response = await api.get('/dasbor/recent-activities', { params: { limit } });
     return handleResponse(response);
   },
 };

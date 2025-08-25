@@ -111,7 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else if (user.role === 'manager') {
           router.push('/manager/dashboard');
         } else {
-          router.push('/dashboard');
+          router.push('/dasbor');
         }
       } else {
         throw new Error(response.message || 'Login gagal');

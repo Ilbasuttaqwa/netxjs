@@ -58,7 +58,7 @@ async function handler(
       if (!device_id || !nama || !tipe || !cabang_id) {
         return res.status(400).json({
           success: false,
-          message: 'Missing required fields: device_id, nama, tipe, cabang_id'
+          message: 'Field yang diperlukan tidak lengkap: device_id, nama, tipe, cabang_id'
         });
       }
 
@@ -82,7 +82,7 @@ async function handler(
       if (!cabang) {
         return res.status(404).json({
           success: false,
-          message: 'Cabang not found'
+          message: 'Cabang tidak ditemukan'
         });
       }
 
@@ -138,7 +138,7 @@ async function handler(
 
       return res.status(201).json({
         success: true,
-        message: 'Device registered successfully',
+        message: 'Perangkat berhasil didaftarkan',
         data: {
           device: newDevice,
           cloud_config: cloudConfig
@@ -153,7 +153,7 @@ async function handler(
       if (!device_id) {
         return res.status(400).json({
           success: false,
-          message: 'Device ID is required'
+          message: 'Device ID wajib diisi'
         });
       }
 
@@ -174,7 +174,7 @@ async function handler(
       if (!device) {
         return res.status(404).json({
           success: false,
-          message: 'Device not found'
+          message: 'Perangkat tidak ditemukan'
         });
       }
 
@@ -205,7 +205,7 @@ async function handler(
     console.error('Device registration error:', error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Terjadi kesalahan server'
     });
   } finally {
     await prisma.$disconnect();

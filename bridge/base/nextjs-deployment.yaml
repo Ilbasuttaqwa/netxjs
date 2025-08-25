@@ -1,0 +1,80 @@
+#! nextjs-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: nextjs
+    namespace: afmsnextj
+    labels:
+        com.docker.compose.project: afmsnextj
+        com.docker.compose.service: nextjs
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: afmsnextj
+            com.docker.compose.service: nextjs
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: afmsnextj
+                com.docker.compose.service: nextjs
+                com.docker.compose.network.afms-network: "true"
+        spec:
+            restartPolicy: unless-stopped
+            containers:
+                - name: nextjs
+                  image: afmsnextj-nextjs
+                  imagePullPolicy: IfNotPresent
+                  env:
+                    - name: DATABASE_URL
+                      value: "postgresql://afms_user:afms_secure_password_2024@postgres:5432/afms_database"
+                    - name: DEVICE_REGISTRATION_KEY
+                      value: "afms-device-key-production-2024"
+                    - name: FINGERPRINT_CLOUD_ADMS_SERVER
+                      value: "https://api.afms.my.id/api/fingerprint"
+                    - name: FINGERPRINT_DEVICE_TYPE
+                      value: "solution-type-100c"
+                    - name: HTTPS_ONLY
+                      value: "true"
+                    - name: JWT_SECRET
+                      value: "afms-production-jwt-secret-key-2024-ultra-secure-random-string-xyz789"
+                    - name: NEXTAUTH_SECRET
+                      value: "afms-nextauth-production-secret-2024-secure-key-abc123"
+                    - name: NEXTAUTH_URL
+                      value: "https://afms.my.id"
+                    - name: NEXT_PUBLIC_API_URL
+                      value: "https://api.afms.my.id/api"
+                    - name: NEXT_PUBLIC_APP_URL
+                      value: "https://afms.my.id"
+                    - name: NEXT_PUBLIC_FINGERPRINT_ENABLED
+                      value: "true"
+                    - name: NEXT_PUBLIC_FINGERPRINT_REALTIME
+                      value: "true"
+                    - name: NEXT_PUBLIC_LARAVEL_API_URL
+                      value: "https://api.afms.my.id"
+                    - name: NODE_ENV
+                      value: "production"
+                    - name: SAME_SITE_COOKIES
+                      value: "strict"
+                    - name: SECURE_COOKIES
+                      value: "true"
+                  livenessProbe:
+                    exec:
+                        command: ['curl -f http://localhost:3000/api/kesehatan']
+                    periodSeconds: 30
+                    initialDelaySeconds: 40
+                    timeoutSeconds: 10
+                    failureThreshold: 3
+                  ports:
+                    - name: nextjs-3000
+                      containerPort: 3000
+                  volumeMounts:
+                    - name: app-prisma
+                      mountPath: /app/prisma
+            volumes:
+                - name: app-prisma
+                  hostPath:
+                    path: C:\laragon\www\afmsnextj\prisma

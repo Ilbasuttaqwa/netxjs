@@ -67,7 +67,7 @@ const PayrollPage: React.FC = () => {
     if (!isLoading && !isAuthenticated) {
       router.push('/login');
     } else if (!isLoading && isAuthenticated && !['admin', 'manager'].includes(user?.role || '')) {
-      router.push('/dashboard');
+      router.push('/dasbor');
     }
   }, [isAuthenticated, isLoading, user, router]);
 
@@ -89,10 +89,10 @@ const PayrollPage: React.FC = () => {
       }
     } catch (error: any) {
       addToast({
-        type: 'error',
-        title: 'Error',
-        message: error.message || 'Gagal memuat data payroll',
-      });
+          type: 'error',
+          title: 'Kesalahan',
+          message: error.message || 'Gagal memuat data payroll',
+        });
     } finally {
       setLoading(false);
     }
@@ -115,10 +115,10 @@ const PayrollPage: React.FC = () => {
       }
     } catch (error: any) {
       addToast({
-        type: 'error',
-        title: 'Error',
-        message: error.message || 'Gagal memproses payroll',
-      });
+          type: 'error',
+          title: 'Kesalahan',
+          message: error.message || 'Gagal memproses payroll',
+        });
     } finally {
       setProcessing(false);
     }

@@ -17,7 +17,7 @@ export default async function handler(
     
     res.status(200).json({
       success: true,
-      message: 'Database connection successful',
+      message: 'Koneksi database berhasil',
       data: {
         users: userCount,
         cabang: cabangCount,
@@ -28,8 +28,8 @@ export default async function handler(
     console.error('Database connection error:', error)
     res.status(500).json({
       success: false,
-      message: 'Database connection failed',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      message: 'Koneksi database gagal',
+      error: error instanceof Error ? error.message : 'Kesalahan tidak diketahui'
     })
   }
 }

@@ -1,0 +1,9 @@
+#! nginx-C:\laragon\www\afmsnextj\nginx.conf-persistentVolumeClaim.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: nginx-c--laragon-www-afmsnextj-nginx-conf
+    namespace: afmsnextj
+spec:
+    storageClassName: "hostpath" # see docker/desktop-storage-provisioner

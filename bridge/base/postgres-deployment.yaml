@@ -1,0 +1,62 @@
+#! postgres-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: postgres
+    namespace: afmsnextj
+    labels:
+        com.docker.compose.project: afmsnextj
+        com.docker.compose.service: postgres
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: afmsnextj
+            com.docker.compose.service: postgres
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: afmsnextj
+                com.docker.compose.service: postgres
+                com.docker.compose.network.afms-network: "true"
+        spec:
+            restartPolicy: unless-stopped
+            containers:
+                - name: postgres
+                  image: postgres:15-alpine
+                  imagePullPolicy: IfNotPresent
+                  env:
+                    - name: POSTGRES_DB
+                      value: "afms_database"
+                    - name: POSTGRES_PASSWORD
+                      value: "afms_secure_password_2024"
+                    - name: POSTGRES_USER
+                      value: "afms_user"
+                  livenessProbe:
+                    exec:
+                        command:
+                            - /bin/sh
+                            - -c
+                            - pg_isready -U afms_user -d afms_database
+                    periodSeconds: 30
+                    initialDelaySeconds: 30
+                    timeoutSeconds: 10
+                    failureThreshold: 5
+                  ports:
+                    - name: postgres-5432
+                      containerPort: 5432
+                  volumeMounts:
+                    - name: var-lib-postgresql-data
+                      mountPath: /var/lib/postgresql/data
+                    - name: docker-entrypoint-initdb-d
+                      mountPath: /docker-entrypoint-initdb.d
+            volumes:
+                - name: var-lib-postgresql-data
+                  persistentVolumeClaim:
+                    claimName: postgres-postgres-data
+                - name: docker-entrypoint-initdb-d
+                  hostPath:
+                    path: C:\laragon\www\afmsnextj\database\init

@@ -45,7 +45,7 @@ async function handler(
     console.error('Health monitor API error:', error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Terjadi kesalahan server'
     });
   } finally {
     await prisma.$disconnect();
@@ -204,7 +204,7 @@ async function handleHealthUpdate(req: AuthenticatedRequest, res: NextApiRespons
   if (!device_id) {
     return res.status(400).json({
       success: false,
-      message: 'device_id is required'
+      message: 'device_id wajib diisi'
     });
   }
 
@@ -217,7 +217,7 @@ async function handleHealthUpdate(req: AuthenticatedRequest, res: NextApiRespons
     if (!device) {
       return res.status(404).json({
         success: false,
-        message: 'Device not found'
+        message: 'Perangkat tidak ditemukan'
       });
     }
 
@@ -246,7 +246,7 @@ async function handleHealthUpdate(req: AuthenticatedRequest, res: NextApiRespons
 
     return res.status(200).json({
       success: true,
-      message: 'Health status updated successfully',
+      message: 'Status kesehatan berhasil diperbarui',
       data: statusLog
     });
 
@@ -254,7 +254,7 @@ async function handleHealthUpdate(req: AuthenticatedRequest, res: NextApiRespons
     console.error('Health update error:', error);
     return res.status(500).json({
       success: false,
-      message: error.message || 'Failed to update health status'
+      message: error.message || 'Gagal memperbarui status kesehatan'
     });
   }
 }

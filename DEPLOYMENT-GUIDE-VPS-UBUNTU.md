@@ -679,7 +679,7 @@ server {
     }
     
     # Special rate limiting for login endpoint
-    location /api/auth/login {
+    location /api/otentikasi/login {
         limit_req zone=login burst=5 nodelay;
         
         proxy_pass http://localhost:8000;

@@ -59,7 +59,7 @@ async function handler(
     console.error('Analytics API error:', error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Terjadi kesalahan server'
     });
   } finally {
     await prisma.$disconnect();
@@ -230,7 +230,7 @@ async function handleGetAnalytics(req: AuthenticatedRequest, res: NextApiRespons
     console.error('Get analytics error:', error);
     return res.status(500).json({
       success: false,
-      message: error.message || 'Failed to get analytics'
+      message: error.message || 'Gagal mengambil analitik'
     });
   }
 }
@@ -284,7 +284,7 @@ async function handleGenerateReport(req: AuthenticatedRequest, res: NextApiRespo
 
     return res.status(200).json({
       success: true,
-      message: 'Report generated successfully',
+      message: 'Laporan berhasil dibuat',
       data: reportData
     });
 
@@ -292,7 +292,7 @@ async function handleGenerateReport(req: AuthenticatedRequest, res: NextApiRespo
     console.error('Generate report error:', error);
     return res.status(500).json({
       success: false,
-      message: error.message || 'Failed to generate report'
+      message: error.message || 'Gagal membuat laporan'
     });
   }
 }

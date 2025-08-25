@@ -17,7 +17,7 @@ export default function Login() {
     const checkSession = () => {
       const token = localStorage.getItem('auth_token')
       if (token) {
-        router.replace('/dashboard')
+        router.replace('/dasbor')
       } else {
         setCheckingSession(false)
       }
@@ -29,7 +29,7 @@ export default function Login() {
     e.preventDefault()
     setLoading(true)
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('/api/otentikasi/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,13 +51,13 @@ export default function Login() {
            } else if (user.role === 'manager') {
              router.replace('/manager/dashboard')
            } else {
-             router.replace('/dashboard')
+             router.replace('/dasbor')
            }
         } else {
          addToast({ title: 'Login Gagal', message: data.message || 'Email atau password salah.', type: 'error' })
        }
     } catch (error) {
-      addToast({ title: 'Error', message: 'Terjadi kesalahan saat login.', type: 'error' })
+      addToast({ title: 'Kesalahan', message: 'Terjadi kesalahan saat login.', type: 'error' })
     } finally {
       setLoading(false)
     }
@@ -101,7 +101,7 @@ export default function Login() {
               </div>
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
+                  Kata Sandi
                 </label>
                 <input
                   id="password"
@@ -109,7 +109,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Masukkan password Anda"
+                  placeholder="Masukkan kata sandi Anda"
                   required
                 />
               </div>

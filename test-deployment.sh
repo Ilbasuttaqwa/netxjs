@@ -361,8 +361,8 @@ test_application_endpoints() {
     test_http_response "https://$DOMAIN_BACKEND" "200" "Backend HTTPS access"
     
     # Test health endpoints
-    test_service_health "https://$DOMAIN_FRONTEND/health" "Frontend health endpoint"
-    test_service_health "https://$DOMAIN_BACKEND/health" "Backend health endpoint"
+    test_service_health "http://202.155.95.3" "Frontend health endpoint"
+    test_service_health "http://202.155.95.3/api/kesehatan" "Backend health endpoint"
     
     # Test API endpoints
     test_http_response "https://$DOMAIN_BACKEND/api" "200" "Backend API base endpoint" 10

@@ -1,0 +1,9 @@
+#! laravel-api-laravel-logs-persistentVolumeClaim.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: laravel-api-laravel-logs
+    namespace: afmsnextj
+spec:
+    storageClassName: "hostpath" # see docker/desktop-storage-provisioner

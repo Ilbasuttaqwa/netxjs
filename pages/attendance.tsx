@@ -75,11 +75,11 @@ const AttendancePage = () => {
         actions.setData(result.data);
         actions.setPagination(result.pagination);
       } else {
-        actions.setError(result.message || 'Failed to fetch attendance data');
+        actions.setError(result.message || 'Gagal memuat data kehadiran');
       }
     } catch (error) {
       console.error('Error fetching attendance:', error);
-      actions.setError('Failed to fetch attendance data');
+      actions.setError('Gagal memuat data kehadiran');
     } finally {
       actions.setLoading(false);
     }
@@ -276,7 +276,7 @@ const AttendancePage = () => {
               className="flex items-center space-x-2"
             >
               <FunnelIcon className="w-5 h-5" />
-              <span>Filter</span>
+              <span>Saring</span>
             </Button>
             <Button
               variant="outline"

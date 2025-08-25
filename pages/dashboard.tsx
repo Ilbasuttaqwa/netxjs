@@ -45,10 +45,10 @@ const DashboardContent: React.FC = () => {
       }
     } catch (error: any) {
       addToast({
-        type: 'error',
-        title: 'Error',
-        message: error.message || 'Gagal memuat statistik dashboard',
-      });
+          type: 'error',
+          title: 'Kesalahan',
+          message: error.message || 'Gagal memuat statistik dashboard',
+        });
     } finally {
       setLoadingStats(false);
     }

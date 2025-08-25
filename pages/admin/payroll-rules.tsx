@@ -78,7 +78,7 @@ const PayrollRulesPage: React.FC = () => {
     if (!isLoading && !isAuthenticated) {
       router.push('/login');
     } else if (!isLoading && isAuthenticated && user?.role !== 'admin') {
-      router.push('/dashboard');
+      router.push('/dasbor');
     }
   }, [isAuthenticated, isLoading, user, router]);
 
@@ -113,10 +113,10 @@ const PayrollRulesPage: React.FC = () => {
       }
     } catch (error: any) {
       addToast({
-        type: 'error',
-        title: 'Error',
-        message: error.message || 'Gagal memuat data',
-      });
+          type: 'error',
+          title: 'Kesalahan',
+          message: error.message || 'Gagal memuat data',
+        });
     } finally {
       setLoading(false);
     }
@@ -154,10 +154,10 @@ const PayrollRulesPage: React.FC = () => {
       }
     } catch (error: any) {
       addToast({
-        type: 'error',
-        title: 'Error',
-        message: error.message || 'Gagal menyimpan aturan',
-      });
+          type: 'error',
+          title: 'Kesalahan',
+          message: error.message || 'Gagal menyimpan aturan',
+        });
     }
   };
 
@@ -183,10 +183,10 @@ const PayrollRulesPage: React.FC = () => {
       }
     } catch (error: any) {
       addToast({
-        type: 'error',
-        title: 'Error',
-        message: error.message || 'Gagal menghapus aturan',
-      });
+          type: 'error',
+          title: 'Kesalahan',
+          message: error.message || 'Gagal menghapus aturan',
+        });
     }
   };
 
@@ -214,10 +214,10 @@ const PayrollRulesPage: React.FC = () => {
       }
     } catch (error: any) {
       addToast({
-        type: 'error',
-        title: 'Error',
-        message: error.message || 'Gagal menyimpan pengaturan',
-      });
+          type: 'error',
+          title: 'Kesalahan',
+          message: error.message || 'Gagal menyimpan pengaturan',
+        });
     }
   };
 

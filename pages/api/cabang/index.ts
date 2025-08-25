@@ -49,7 +49,7 @@ async function handler(
         
         if (!nama || !alamat || !kode_cabang) {
           return res.status(400).json({
-            message: 'Required fields: nama, alamat, kode_cabang'
+            message: 'Field yang diperlukan: nama, alamat, kode_cabang'
           });
         }
         
@@ -77,7 +77,7 @@ async function handler(
         
         return res.status(201).json({
           success: true,
-          message: 'Cabang created successfully',
+          message: 'Cabang berhasil dibuat',
           data: newCabang
         });
 
@@ -88,7 +88,7 @@ async function handler(
   } catch (error) {
     console.error('Cabang API error:', error);
     return res.status(500).json({
-      message: 'Internal server error'
+      message: 'Terjadi kesalahan server'
     });
   } finally {
     await prisma.$disconnect();

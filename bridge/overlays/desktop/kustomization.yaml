@@ -1,0 +1,18 @@
+#! kustomization.yaml
+# Generated code, do not edit
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+    - ../../base
+patches:
+    - path: laravel-api-laravel-logs-persistentVolumeClaim.yaml
+    - path: laravel-api-laravel-storage-persistentVolumeClaim.yaml
+    - path: nextjs-C:\laragon\www\afmsnextj\prisma-persistentVolumeClaim.yaml
+    - path: nginx-C:\laragon\www\afmsnextj\nginx.conf-persistentVolumeClaim.yaml
+    - path: nginx-C:\laragon\www\afmsnextj\nginx\ssl-persistentVolumeClaim.yaml
+    - path: nginx-nginx-logs-persistentVolumeClaim.yaml
+    - path: nginx-service.yaml
+    - path: postgres-C:\laragon\www\afmsnextj\database\init-persistentVolumeClaim.yaml
+    - path: postgres-postgres_data-persistentVolumeClaim.yaml
+    - path: redis-redis_data-persistentVolumeClaim.yaml
+    - path: redis-service.yaml

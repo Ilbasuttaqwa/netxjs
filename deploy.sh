@@ -16,7 +16,7 @@ PROJECT_DIR="/var/www/${APP_NAME}"
 DOMAIN_FRONTEND="afms.my.id"
 DOMAIN_BACKEND="api.afms.my.id"
 SSL_EMAIL="tbdream9@gmail.com"  # Ganti dengan email Anda
-GIT_REPO="https://github.com/Ilbasuttaqwa/afms-nextj.git"  # Ganti dengan repo Anda
+GIT_REPO="https://github.com/yourusername/afmsnextj.git"  # Update dengan repo yang benar
 BRANCH="main"
 
 # Colors for output

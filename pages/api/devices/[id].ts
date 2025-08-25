@@ -54,7 +54,7 @@ async function handler(
         if (!device) {
           return res.status(404).json({
             success: false,
-            message: 'Device not found'
+            message: 'Perangkat tidak ditemukan'
           });
         }
         
@@ -118,7 +118,7 @@ async function handler(
         
         return res.status(200).json({
           success: true,
-          message: 'Device updated successfully',
+          message: 'Perangkat berhasil diperbarui',
           data: updatedDevice
         });
 
@@ -149,7 +149,7 @@ async function handler(
           
           return res.status(200).json({
             success: true,
-            message: 'Device deactivated successfully (has attendance records)'
+            message: 'Perangkat berhasil dinonaktifkan (memiliki catatan kehadiran)'
           });
         } else {
           // Hard delete if no attendance records
@@ -159,7 +159,7 @@ async function handler(
           
           return res.status(200).json({
             success: true,
-            message: 'Device deleted successfully'
+            message: 'Perangkat berhasil dihapus'
           });
         }
 
@@ -174,7 +174,7 @@ async function handler(
     console.error('Device API error:', error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Terjadi kesalahan server'
     });
   } finally {
     await prisma.$disconnect();

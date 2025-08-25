@@ -161,7 +161,7 @@ async function handler(
           
           return res.status(201).json({
             success: true,
-            message: 'Clock in successful',
+            message: 'Clock in berhasil',
             data: newAbsensi
           });
           
@@ -196,7 +196,7 @@ async function handler(
           
           return res.status(200).json({
             success: true,
-            message: 'Clock out successful',
+            message: 'Clock out berhasil',
             data: mockAbsensi[absensiIndex]
           });
         }
@@ -212,7 +212,7 @@ async function handler(
     console.error('Absensi API error:', error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: 'Terjadi kesalahan server',
       error: process.env.NODE_ENV === 'development' ? (error as Error).message : undefined
     });
   }

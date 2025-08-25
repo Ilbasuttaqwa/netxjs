@@ -27,7 +27,7 @@ export function withManagerAuth<P extends object>(
           if (user.role === 'admin') {
             router.replace('/admin/dashboard');
           } else {
-            router.replace('/dashboard');
+            router.replace('/dasbor');
           }
           return;
         }
@@ -83,7 +83,7 @@ export function withAdminOrManagerAuth<P extends object>(
 
         if (user && !['admin', 'manager'].includes(user.role)) {
           // Redirect ke dashboard user biasa jika bukan admin/manager
-          router.replace('/dashboard');
+          router.replace('/dasbor');
           return;
         }
       }

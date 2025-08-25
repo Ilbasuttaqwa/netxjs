@@ -28,7 +28,7 @@ model User {
   id_cabang              BigInt?
   jam_istirahat_mulai    DateTime?               @db.Time(6)
   jam_istirahat_selesai  DateTime?               @db.Time(6)
-  device_user_id         String?                 @db.VarChar(50)
+  device_user_id         String?                 @db.VarChar(50)                 
   absensi                Absensi[]
   fingerprintAttendances FingerprintAttendance[]
   cabang                 Cabang?                 @relation(fields: [id_cabang], references: [id])
@@ -47,9 +47,9 @@ model Jabatan {
   jatah_libur_per_bulan Int       @default(2)
   denda_per_hari_libur  Decimal   @default(50000.00) @db.Decimal(10, 2)
   bonus_tidak_libur     Decimal   @default(25000.00) @db.Decimal(10, 2)
-  gaji_pokok            Decimal?  @db.Decimal(15, 2)
-  created_at            DateTime? @db.Timestamp(6)
-  updated_at            DateTime? @db.Timestamp(6)
+  gaji_pokok            Decimal?  @db.Decimal(15, 2)  
+  created_at            DateTime? 
+  updated_at            DateTime? 
   users                 User[]
 
   @@map("jabatans")
@@ -57,14 +57,14 @@ model Jabatan {
 
 model Cabang {
   id                     BigInt                  @id @default(autoincrement())
-  nama_cabang            String                  @db.VarChar(255)
+  nama_cabang            String                  
   alamat_cabang          String?
-  telepon_cabang         String?                 @db.VarChar(20)
-  email_cabang           String?                 @db.VarChar(255)
-  kode_cabang            String                  @unique @db.VarChar(10)
+  telepon_cabang         String?                 
+  email_cabang           String?                 
+  kode_cabang            String                  @unique 
   status                 Boolean                 @default(true)
-  created_at             DateTime?               @db.Timestamp(6)
-  updated_at             DateTime?               @db.Timestamp(6)
+  created_at             DateTime?               
+  updated_at             DateTime?               
   absensi                Absensi[]
   devices                Device[]
   fingerprintAttendances FingerprintAttendance[]
@@ -76,15 +76,15 @@ model Cabang {
 model Absensi {
   id                    BigInt    @id @default(autoincrement())
   id_user               BigInt
-  tanggal               DateTime  @db.Date
-  jam_masuk             DateTime? @db.Time(6)
-  jam_keluar            DateTime? @db.Time(6)
-  jam_istirahat_mulai   DateTime? @db.Time(6)
-  jam_istirahat_selesai DateTime? @db.Time(6)
-  status                String    @default("hadir") @db.VarChar(50)
+  tanggal               DateTime  
+  jam_masuk             DateTime? 
+  jam_keluar            DateTime? 
+  jam_istirahat_mulai   DateTime? 
+  jam_istirahat_selesai DateTime? 
+  status                String    @default("hadir") 
   keterangan            String?
-  created_at            DateTime? @db.Timestamp(6)
-  updated_at            DateTime? @db.Timestamp(6)
+  created_at            DateTime? 
+  updated_at            DateTime? 
   id_cabang             BigInt?
   cabang                Cabang?   @relation(fields: [id_cabang], references: [id])
   user                  User      @relation(fields: [id_user], references: [id], onDelete: Cascade)
@@ -98,21 +98,21 @@ model Absensi {
 model FingerprintAttendance {
   id                BigInt    @id @default(autoincrement())
   user_id           BigInt?
-  device_user_id    String?   @db.VarChar(50)
+  device_user_id    String?   
   cabang_id         BigInt?
-  device_id         String?   @db.VarChar(100)
-  attendance_time   DateTime  @db.Timestamp(6)
+  device_id         String?   
+  attendance_time   DateTime  
   attendance_type   Int       @default(1)
-  verification_type String?   @db.VarChar(50)
-  fingerprint_id    String?   @db.VarChar(50)
-  device_ip         String?   @db.VarChar(45)
-  device_name       String?   @db.VarChar(100)
+  verification_type String?   
+  fingerprint_id    String?   
+  device_ip         String?   
+  device_name       String?   
   is_processed      Boolean   @default(false)
-  processing_status String?   @default("pending") @db.VarChar(50)
-  sync_batch_id     String?   @db.VarChar(100)
+  processing_status String?   @default("pending") 
+  sync_batch_id     String?   
   is_realtime       Boolean   @default(false)
-  created_at        DateTime? @db.Timestamp(6)
-  updated_at        DateTime? @db.Timestamp(6)
+  created_at        DateTime? 
+  updated_at        DateTime? 
   cabang            Cabang?   @relation(fields: [cabang_id], references: [id])
   device            Device?   @relation("DeviceAttendance", fields: [device_id], references: [device_id])
   user              User?     @relation(fields: [user_id], references: [id])
@@ -133,8 +133,8 @@ model Event {
   eventData     Json
   metadata      Json?
   version       Int
-  timestamp     DateTime @default(now())
-  userId        String?  @db.VarChar(255)
+  timestamp     DateTime @default(now()) @db.Timestamp(6)
+  userId        String?  @db.VarChar(255)  
 
   @@index([aggregateId, version], map: "events_aggregate_id_version_index")
   @@index([eventType], map: "events_event_type_index")
@@ -147,7 +147,7 @@ model ReadModel {
   type        String   @db.VarChar(255)
   data        Json
   version     Int      @default(1)
-  lastUpdated DateTime @default(now()) @updatedAt
+  lastUpdated DateTime @default(now()) @updatedAt @db.Timestamp(6)
 
   @@unique([type, id], map: "read_models_type_id_unique")
   @@index([type], map: "read_models_type_index")
@@ -159,8 +159,8 @@ model IdempotencyKey {
   requestHash String   @db.VarChar(255)
   response    Json?
   status      String   @default("processing") @db.VarChar(50)
-  createdAt   DateTime @default(now())
-  expiresAt   DateTime
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  expiresAt   DateTime @db.Timestamp(6)
 
   @@index([status], map: "idempotency_keys_status_index")
   @@index([expiresAt], map: "idempotency_keys_expires_at_index")
@@ -169,9 +169,9 @@ model IdempotencyKey {
 
 model AttendanceDeduplication {
   id              String   @id @default(cuid())
-  deviceId        String   @db.VarChar(255)
-  employeeId      String   @db.VarChar(255)
-  fingerprintHash String   @db.VarChar(255)
+  deviceId        String   
+  employeeId      String   
+  fingerprintHash String   
   timestamp       DateTime
   createdAt       DateTime @default(now())
 
@@ -190,13 +190,13 @@ model BusinessRules {
   actions     Json
   priority    Int       @default(0)
   isActive    Boolean   @default(true)
-  validFrom   DateTime  @default(now())
-  validTo     DateTime?
+  validFrom   DateTime  @default(now()) @db.Timestamp(6)
+  validTo     DateTime? @db.Timestamp(6)
   createdBy   String    @db.VarChar(255)
   updatedBy   String    @db.VarChar(255)
   version     Int       @default(1)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime  @updatedAt @db.Timestamp(6)
 
   @@index([category, isActive], map: "business_rules_category_active_index")
   @@index([validFrom, validTo], map: "business_rules_validity_index")
@@ -206,13 +206,13 @@ model BusinessRules {
 
 model PayrollDeductions {
   id          String   @id @default(cuid())
-  employeeId  String   @db.VarChar(255)
-  amount      Decimal  @db.Decimal(10, 2)
-  reason      String   @db.VarChar(255)
-  type        String   @db.VarChar(100)
-  ruleId      String?  @db.VarChar(255)
+  employeeId  String   
+  amount      Decimal  
+  reason      String   
+  type        String   
+  ruleId      String?  
   appliedDate DateTime @default(now())
-  payrollId   String?  @db.VarChar(255)
+  payrollId   String?  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -224,17 +224,17 @@ model PayrollDeductions {
 
 model Device {
   id               BigInt                  @id @default(autoincrement())
-  device_id        String                  @unique @db.VarChar(100)
-  nama             String                  @db.VarChar(255)
-  tipe             String                  @db.VarChar(50)
+  device_id        String                  @unique 
+  nama             String                  
+  tipe             String                  
   cabang_id        BigInt
-  ip_address       String?                 @db.VarChar(45)
+  ip_address       String?                 
   port             Int?
-  status           String                  @default("aktif") @db.VarChar(50)
-  lokasi           String?                 @db.VarChar(255)
+  status           String                  @default("aktif") 
+  lokasi           String?                 
   keterangan       String?
   last_sync        DateTime?
-  firmware_version String?                 @db.VarChar(100)
+  firmware_version String?                 
   created_at       DateTime                @default(now())
   updated_at       DateTime                @updatedAt
   statusLogs       DeviceStatusLog[]
@@ -251,8 +251,8 @@ model Device {
 model DeviceStatusLog {
   id               BigInt   @id @default(autoincrement())
   device_id        BigInt
-  status           String   @db.VarChar(50)
-  firmware_version String?  @db.VarChar(100)
+  status           String   
+  firmware_version String?  
   error_message    String?
   employee_count   Int      @default(0)
   storage_usage    Int      @default(0)

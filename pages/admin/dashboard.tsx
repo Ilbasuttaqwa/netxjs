@@ -45,7 +45,7 @@ function AdminDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await fetch('/api/dashboard/stats');
+      const response = await fetch('/api/dasbor/stats');
       if (response.ok) {
         const data = await response.json();
         setStats(data);
@@ -160,11 +160,11 @@ function AdminDashboard() {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Aksi Cepat</h3>
             <div className="space-y-3">
               <button
-                onClick={() => router.push('/admin/monitoring')}
+                onClick={() => router.push('/admin/pemantauan')}
                 className="w-full text-left px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center gap-3"
               >
                 <ComputerDesktopIcon className="h-5 w-5 text-blue-600" />
-                <span className="text-blue-700 font-medium">Monitoring Fingerprint</span>
+                <span className="text-blue-700 font-medium">Pemantauan Sidik Jari</span>
               </button>
               <button
                 onClick={() => router.push('/admin/karyawan')}
