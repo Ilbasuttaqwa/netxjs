@@ -54,7 +54,7 @@ print_success() {
 DOMAINS=("afms.my.id" "api.afms.my.id")
 
 # Email untuk registrasi Let's Encrypt (GANTI DENGAN EMAIL ANDA)
-EMAIL="admin@afms.my.id"
+EMAIL="tbdream9@gmail.com"
 
 # Directory paths
 PROJECT_DIR="/var/www/afms"

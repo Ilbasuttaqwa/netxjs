@@ -15,7 +15,7 @@ APP_NAME="afms"
 PROJECT_DIR="/var/www/${APP_NAME}"
 DOMAIN_FRONTEND="afms.my.id"
 DOMAIN_BACKEND="api.afms.my.id"
-SSL_EMAIL="admin@afms.my.id"  # Ganti dengan email Anda
+SSL_EMAIL="tbdream9@gmail.com"  # Ganti dengan email Anda
 GIT_REPO="https://github.com/Ilbasuttaqwa/afms-nextj.git"  # Ganti dengan repo Anda
 BRANCH="main"
 
