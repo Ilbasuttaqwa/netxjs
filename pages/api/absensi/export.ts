@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { requireRole } from '../../../middleware/auth';
 import { ApiResponse } from '../../../types/index';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 
 interface FilterData {
   tanggal_mulai?: string;
@@ -123,37 +123,52 @@ async function handler(
       'Keterangan': item.keterangan || '-'
     }));
 
-    // Buat workbook Excel
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    // Buat workbook Excel dengan ExcelJS
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Laporan Absensi');
+
+    // Set header kolom
+    const headers = [
+      'No', 'Nama Karyawan', 'Cabang', 'Tanggal', 
+      'Jam Masuk', 'Jam Keluar', 'Status', 'Keterangan'
+    ];
+    worksheet.addRow(headers);
+
+    // Tambahkan data
+    excelData.forEach(row => {
+      worksheet.addRow([
+        row['No'],
+        row['Nama Karyawan'],
+        row['Cabang'],
+        row['Tanggal'],
+        row['Jam Masuk'],
+        row['Jam Keluar'],
+        row['Status'],
+        row['Keterangan']
+      ]);
+    });
 
     // Set lebar kolom
-    const columnWidths = [
-      { wch: 5 },  // No
-      { wch: 20 }, // Nama Karyawan
-      { wch: 15 }, // Cabang
-      { wch: 12 }, // Tanggal
-      { wch: 12 }, // Jam Masuk
-      { wch: 12 }, // Jam Keluar
-      { wch: 12 }, // Status
-      { wch: 30 }  // Keterangan
+    worksheet.columns = [
+      { width: 5 },  // No
+      { width: 20 }, // Nama Karyawan
+      { width: 15 }, // Cabang
+      { width: 12 }, // Tanggal
+      { width: 12 }, // Jam Masuk
+      { width: 12 }, // Jam Keluar
+      { width: 12 }, // Status
+      { width: 30 }  // Keterangan
     ];
-    worksheet['!cols'] = columnWidths;
-
-    // Tambahkan worksheet ke workbook
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Laporan Absensi');
 
     // Generate buffer Excel
-    const excelBuffer = XLSX.write(workbook, { 
-      type: 'buffer', 
-      bookType: 'xlsx' 
-    });
+    const buffer = await workbook.xlsx.writeBuffer();
+    const excelBuffer = Buffer.from(buffer);
 
     // Set headers untuk download
     const filename = `laporan-absensi-${new Date().toISOString().split('T')[0]}.xlsx`;
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.setHeader('Content-Length', excelBuffer.length);
+    res.setHeader('Content-Length', excelBuffer.length.toString());
 
     // Kirim file Excel
     res.status(200).send(excelBuffer);

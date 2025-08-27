@@ -67,9 +67,9 @@ jspm_packages/
 .cache
 .parcel-cache
 
-# Next.js build output
-.next
-out
+# Next.js build output (keep .next for production)
+# .next - KEEP for production build
+# out - can be ignored
 
 # Nuxt.js build / generate output
 .nuxt
@@ -183,11 +183,11 @@ Dockerfile*
 docker-compose*
 .dockerignore
 
-# Documentation
-README.md
-CHANGELOG.md
-LICENSE
-*.md
+# Documentation (keep essential docs)
+# README.md - can be ignored
+# CHANGELOG.md - can be ignored
+# LICENSE - can be ignored
+# *.md - can be ignored
 
 # Test files
 __tests__/
@@ -197,14 +197,14 @@ __tests__/
 *.spec.ts
 jest.config.js
 
-# Configuration files
+# Configuration files (keep essential ones)
 .eslintrc*
 .prettierrc*
 .babelrc*
-tsconfig.json
-next.config.js
-tailwind.config.js
-postcss.config.js
+# tsconfig.json - KEEP for TypeScript
+# next.config.js - KEEP for Next.js config
+# tailwind.config.js - KEEP for styling
+# postcss.config.js - KEEP for CSS processing
 
 # Monitoring and observability configs
 prometheus.yml
@@ -241,8 +241,9 @@ grafana/
 .env.test.local
 .env.production.local
 
-# Prisma
-prisma/migrations/
+# Prisma (keep schema and essential files)
+# prisma/migrations/ - KEEP for database migrations
+# prisma/schema.prisma - KEEP for database schema
 
 # Build artifacts
 build/

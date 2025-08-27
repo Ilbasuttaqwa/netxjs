@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\FingerprintController;
 use App\Http\Controllers\Api\DeviceController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\EmployeeController;
+use App\Http\Controllers\Api\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +21,16 @@ use App\Http\Controllers\Api\EmployeeController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+// Authentication routes
+Route::prefix('auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/profile', [AuthController::class, 'profile']);
+        Route::post('/refresh', [AuthController::class, 'refresh']);
+    });
 });
 
 // Public routes for fingerprint device callbacks

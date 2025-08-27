@@ -156,7 +156,7 @@ export interface PaginatedResponse<T = any> {
 
 // Auth types
 export interface LoginCredentials {
-  nama_pegawai: string;
+  email: string; // This will be used as nama_pegawai in the backend
   password: string;
   remember?: boolean;
 }

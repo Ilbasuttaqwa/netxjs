@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Next.js Frontend
   nextjs:
@@ -20,6 +18,12 @@ services:
       - FINGERPRINT_DEVICE_TYPE=solution-type-100c
       - FINGERPRINT_CLOUD_ADMS_SERVER=http://api.afms.my.id/api/fingerprint
       - DEVICE_REGISTRATION_KEY=afms-device-key-production-2024
+      - CLOUD_SERVER_URL=https://api.afms.my.id
+      - CLOUD_API_KEY=afms-cloud-api-key-production
+      - SYNC_INTERVAL=300
+      - RETRY_ATTEMPTS=3
+      - TIMEOUT=30000
+      - LOG_LEVEL=info
       - SECURE_COOKIES=false
       - SAME_SITE_COOKIES=lax
       - HTTPS_ONLY=false
@@ -33,12 +37,12 @@ services:
     restart: unless-stopped
     volumes:
       - ./prisma:/app/prisma
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/fingerprint/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+    # healthcheck:
+    #   test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 40s
 
   # Laravel API Backend
   laravel-api:
@@ -60,10 +64,27 @@ services:
       - REDIS_HOST=redis
       - REDIS_PASSWORD=null
       - REDIS_PORT=6379
-      - CACHE_DRIVER=redis
-      - SESSION_DRIVER=redis
-      - QUEUE_CONNECTION=redis
+      - CACHE_DRIVER=file
+      - SESSION_DRIVER=file
+      - QUEUE_CONNECTION=database
       - BROADCAST_DRIVER=redis
+      - FINGERPRINT_DEVICE_IP=192.168.1.100
+      - FINGERPRINT_DEVICE_PORT=4370
+      - FINGERPRINT_DEVICE_USERNAME=admin
+      - FINGERPRINT_DEVICE_PASSWORD=123456
+      - FINGERPRINT_DEVICE_TIMEOUT=30
+      - NEXTJS_API_URL=http://nextjs:3000/api
+      - NEXTJS_API_TOKEN=afms-nextjs-api-token-production
+      - API_RATE_LIMIT=100
+      - API_THROTTLE_MINUTES=1
+      - API_TOKEN=afms-secure-api-token-production
+      - WEBHOOK_ENABLED=true
+      - AUTO_SYNC_ENABLED=true
+      - SYNC_INTERVAL_MINUTES=5
+      - SYNC_BATCH_SIZE=100
+      - FINGERPRINT_LOGGING_ENABLED=true
+      - FINGERPRINT_LOG_LEVEL=info
+      - FINGERPRINT_LOG_CHANNEL=daily
     depends_on:
       postgres:
         condition: service_healthy
@@ -137,7 +158,7 @@ services:
       - afms-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
       interval: 30s
       timeout: 10s
       retries: 3

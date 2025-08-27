@@ -1,0 +1,22 @@
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+
+[req_distinguished_name]
+C = ID
+ST = Jakarta
+L = Jakarta
+O = AFMS
+OU = IT Department
+CN = afms.my.id
+
+[v3_req]
+keyUsage = keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = afms.my.id
+DNS.2 = www.afms.my.id
+DNS.3 = localhost

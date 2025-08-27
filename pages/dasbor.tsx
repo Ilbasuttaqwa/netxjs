@@ -66,31 +66,42 @@ const DashboardContent: React.FC = () => {
       <DashboardLayout>
         <div className="space-y-6">
           {/* Header */}
-          <div className="bg-white shadow-sm rounded-lg p-6">
+          <div className="bg-gradient-to-r from-blue-600 to-cyan-600 shadow-lg rounded-2xl p-8 text-white">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Selamat datang, {user?.nama_pegawai}!
-                </h1>
-                <p className="text-gray-600 mt-1">
-                  {user?.role === 'admin' ? 'Administrator' : user?.jabatan?.nama_jabatan} - {user?.cabang?.nama_cabang}
-                </p>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="h-12 w-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h1 className="text-3xl font-bold">
+                      Selamat datang, {user?.nama_pegawai}!
+                    </h1>
+                    <p className="text-blue-100 mt-1">
+                      {user?.role === 'admin' ? 'Administrator' : user?.jabatan?.nama_jabatan} - {user?.cabang?.nama_cabang}
+                    </p>
+                  </div>
+                </div>
               </div>
               <div className="text-right">
-                <p className="text-sm text-gray-500">
-                  {new Date().toLocaleDateString('id-ID', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </p>
-                <p className="text-lg font-semibold text-gray-900">
-                  {new Date().toLocaleTimeString('id-ID', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </p>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <p className="text-blue-100 text-sm">
+                    {new Date().toLocaleDateString('id-ID', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </p>
+                  <p className="text-2xl font-bold text-white">
+                    {new Date().toLocaleTimeString('id-ID', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -144,31 +155,53 @@ const DashboardContent: React.FC = () => {
                 color="info"
                 loading={loadingStats}
               />
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Aksi Cepat
-                </h3>
-                <div className="space-y-2">
+              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="h-8 w-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                    <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Aksi Cepat
+                  </h3>
+                </div>
+                <div className="space-y-3">
                   <button
                     onClick={() => router.push('/admin/pemantauan')}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors flex items-center gap-2"
+                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 hover:text-blue-700 rounded-xl transition-all duration-200 flex items-center gap-3 group border border-transparent hover:border-blue-200"
                   >
-                    <ComputerDesktopIcon className="h-4 w-4 text-gray-600" />
-                    Monitoring Fingerprint
+                    <div className="h-8 w-8 bg-blue-100 group-hover:bg-blue-200 rounded-lg flex items-center justify-center transition-colors">
+                      <ComputerDesktopIcon className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium">Monitoring Fingerprint</p>
+                      <p className="text-xs text-gray-500">Pantau status perangkat</p>
+                    </div>
                   </button>
                   <button
                     onClick={() => router.push('/admin/karyawan')}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors flex items-center gap-2"
+                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 hover:text-green-700 rounded-xl transition-all duration-200 flex items-center gap-3 group border border-transparent hover:border-green-200"
                   >
-                    <UsersIcon className="h-4 w-4 text-gray-600" />
-                    Kelola Karyawan
+                    <div className="h-8 w-8 bg-green-100 group-hover:bg-green-200 rounded-lg flex items-center justify-center transition-colors">
+                      <UsersIcon className="h-4 w-4 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium">Kelola Karyawan</p>
+                      <p className="text-xs text-gray-500">Tambah & edit data karyawan</p>
+                    </div>
                   </button>
                   <button
                     onClick={() => router.push('/admin/absensi')}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors flex items-center gap-2"
+                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:text-purple-700 rounded-xl transition-all duration-200 flex items-center gap-3 group border border-transparent hover:border-purple-200"
                   >
-                    <CalendarDaysIcon className="h-4 w-4 text-gray-600" />
-                    Laporan Absensi
+                    <div className="h-8 w-8 bg-purple-100 group-hover:bg-purple-200 rounded-lg flex items-center justify-center transition-colors">
+                      <CalendarDaysIcon className="h-4 w-4 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium">Laporan Absensi</p>
+                      <p className="text-xs text-gray-500">Lihat laporan kehadiran</p>
+                    </div>
                   </button>
                 </div>
               </div>
