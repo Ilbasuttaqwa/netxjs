@@ -56,14 +56,18 @@ RUN chmod -R 775 bootstrap/cache storage
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+# Create SSL directory
+RUN mkdir -p /var/www/html/ssl
+
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+    && chmod -R 755 /var/www/html/bootstrap/cache \
+    && chmod -R 755 /var/www/html/ssl
 
 # Copy nginx configuration
 COPY docker/nginx.conf /etc/nginx/nginx.conf
-COPY docker/default.conf /etc/nginx/conf.d/default.conf
+COPY docker/default-ssl.conf /etc/nginx/conf.d/default.conf
 
 # Copy supervisor configuration
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -85,12 +89,13 @@ RUN echo '#!/bin/sh' > /start.sh && \
     echo 'exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf' >> /start.sh && \
     chmod +x /start.sh
 
-# Expose port
+# Expose ports
 EXPOSE 80
+EXPOSE 443
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost/health || exit 1
+    CMD curl -k -f https://localhost/health || exit 1
 
 # Start services
 CMD ["/start.sh"]

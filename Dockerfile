@@ -27,19 +27,32 @@ RUN npm run build
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Set the correct permission for prerender cache
+# Copy HTTPS server configuration
+COPY server-https.js ./server-https.js
+
+# Create SSL directory
+RUN mkdir -p /app/ssl
+
+# Set proper permissions
+RUN chown -R nextjs:nodejs /app/ssl
+
+# Set proper permissions
+>>>>>>> Stashed changes
 RUN chown -R nextjs:nodejs /app
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost:3000/api/fingerprint/health || exit 1
+  CMD curl -k -f https://localhost:3443/api/health || exit 1
 
 USER nextjs
 
+# Expose ports
 EXPOSE 3000
+EXPOSE 3443
 
 ENV PORT=3000
+ENV HTTPS_PORT=3443
 ENV HOSTNAME="0.0.0.0"
 
-# Start the application
-CMD ["npm", "start"]
+# Start the application with HTTPS server
+CMD ["node", "server-https.js"]

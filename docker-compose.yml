@@ -9,20 +9,26 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://afms_user:afms_secure_password_2024@postgres:5432/afms_database
-      - NEXT_PUBLIC_API_URL=http://api.afms.my.id/api
-      - NEXT_PUBLIC_APP_URL=http://afms.my.id
-      - NEXTAUTH_URL=http://afms.my.id
+      - NEXT_PUBLIC_API_URL=https://api.afms.my.id/api
+      - NEXT_PUBLIC_APP_URL=https://afms.my.id
+      - NEXTAUTH_URL=https://afms.my.id
       - NEXTAUTH_SECRET=afms-nextauth-production-secret-2024-secure-key-abc123
       - JWT_SECRET=afms-production-jwt-secret-key-2024-ultra-secure-random-string-xyz789
       - NEXT_PUBLIC_FINGERPRINT_ENABLED=true
       - NEXT_PUBLIC_FINGERPRINT_REALTIME=true
-      - NEXT_PUBLIC_LARAVEL_API_URL=http://api.afms.my.id
+      - NEXT_PUBLIC_LARAVEL_API_URL=https://api.afms.my.id
       - FINGERPRINT_DEVICE_TYPE=solution-type-100c
-      - FINGERPRINT_CLOUD_ADMS_SERVER=http://api.afms.my.id/api/fingerprint
+      - FINGERPRINT_CLOUD_ADMS_SERVER=https://api.afms.my.id/api/fingerprint
       - DEVICE_REGISTRATION_KEY=afms-device-key-production-2024
-      - SECURE_COOKIES=false
+      - CLOUD_SERVER_URL=https://api.afms.my.id
+      - CLOUD_API_KEY=afms-cloud-api-key-production
+      - SYNC_INTERVAL=300
+      - RETRY_ATTEMPTS=3
+      - TIMEOUT=30000
+      - LOG_LEVEL=info
+      - SECURE_COOKIES=true
       - SAME_SITE_COOKIES=lax
-      - HTTPS_ONLY=false
+      - HTTPS_ONLY=true
     depends_on:
       postgres:
         condition: service_healthy
@@ -33,8 +39,9 @@ services:
     restart: unless-stopped
     volumes:
       - ./prisma:/app/prisma
+      - ./ssl/nextjs:/app/ssl
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/fingerprint/health"]
+      test: ["CMD", "curl", "-k", "-f", "https://localhost:3443/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -50,7 +57,7 @@ services:
       - APP_ENV=production
       - APP_KEY=base64:afms-laravel-app-key-production-2024-secure-base64-encoded-key
       - APP_DEBUG=false
-      - APP_URL=http://api.afms.my.id
+      - APP_URL=https://api.afms.my.id
       - DB_CONNECTION=pgsql
       - DB_HOST=postgres
       - DB_PORT=5432
@@ -64,6 +71,23 @@ services:
       - SESSION_DRIVER=redis
       - QUEUE_CONNECTION=redis
       - BROADCAST_DRIVER=redis
+      - FINGERPRINT_DEVICE_IP=192.168.1.100
+      - FINGERPRINT_DEVICE_PORT=4370
+      - FINGERPRINT_DEVICE_USERNAME=admin
+      - FINGERPRINT_DEVICE_PASSWORD=123456
+      - FINGERPRINT_DEVICE_TIMEOUT=30
+      - NEXTJS_API_URL=https://nextjs:3443/api
+      - NEXTJS_API_TOKEN=afms-nextjs-api-token-production
+      - API_RATE_LIMIT=100
+      - API_THROTTLE_MINUTES=1
+      - API_TOKEN=afms-secure-api-token-production
+      - WEBHOOK_ENABLED=true
+      - AUTO_SYNC_ENABLED=true
+      - SYNC_INTERVAL_MINUTES=5
+      - SYNC_BATCH_SIZE=100
+      - FINGERPRINT_LOGGING_ENABLED=true
+      - FINGERPRINT_LOG_LEVEL=info
+      - FINGERPRINT_LOG_CHANNEL=daily
     depends_on:
       postgres:
         condition: service_healthy
@@ -75,6 +99,7 @@ services:
     volumes:
       - laravel-storage:/var/www/html/storage
       - laravel-logs:/var/www/html/storage/logs
+      - ./ssl/laravel:/var/www/html/ssl
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/health"]
       interval: 30s
@@ -137,7 +162,7 @@ services:
       - afms-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      test: ["CMD", "curl", "-k", "-f", "https://localhost/health"]
       interval: 30s
       timeout: 10s
       retries: 3
