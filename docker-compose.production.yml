@@ -139,9 +139,9 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./laravel-api/docker/cvtigaputraperkasa.id.temp.conf:/etc/nginx/conf.d/default.conf
-      # - ./ssl/certs:/etc/ssl/certs  # Disabled for initial deployment
-      # - ./ssl/private:/etc/ssl/private  # Disabled for initial deployment
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./ssl/certs:/etc/nginx/ssl
+      - ./ssl/www:/var/www/certbot
       - nginx_logs:/var/log/nginx
     depends_on:
       - laravel-api
