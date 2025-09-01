@@ -1,159 +1,201 @@
-# Dashboard Fingerprint X100-C
+# AFMS (Attendance & Financial Management System)
 
-Sistem manajemen absensi fingerprint terintegrasi dengan device X100-C menggunakan protokol SOAP.
+Sistem manajemen absensi dan keuangan terintegrasi dengan teknologi modern untuk CV Tiga Putra Perkasa.
 
 ## Fitur Utama
 
-- ✅ Integrasi real-time dengan device fingerprint X100-C
-- ✅ Dashboard monitoring dan statistik
-- ✅ Sistem sinkronisasi otomatis
-- ✅ Real-time updates menggunakan WebSocket
-- ✅ Manajemen pengguna dan cabang
-- ✅ Laporan absensi komprehensif
-- ✅ API callback untuk device
-- ✅ Integrasi fingerprint device
+- ✅ Sistem absensi digital dengan fingerprint
+- ✅ Dashboard monitoring real-time
+- ✅ Manajemen karyawan dan cabang
+- ✅ Sistem BON (Bon Karyawan)
+- ✅ Laporan payroll dan absensi
+- ✅ Multi-role access (Admin, Manager, Karyawan)
+- ✅ API RESTful untuk integrasi
+- ✅ Responsive web design
 
 ## Teknologi
 
-- **Backend**: Laravel 10
-- **Frontend**: Bootstrap 5, jQuery
-- **Database**: MySQL
-- **Real-time**: Laravel Echo + Pusher
-- **Protocol**: SOAP untuk komunikasi device
+- **Frontend**: Next.js 13, TypeScript, Tailwind CSS
+- **Backend**: Laravel 10 API
+- **Database**: PostgreSQL
+- **Cache**: Redis
+- **Containerization**: Docker & Docker Compose
+- **Web Server**: Nginx
+- **SSL**: Let's Encrypt / Certbot
 
 ## Instalasi
+
+### Prerequisites
+- Docker & Docker Compose
+- Git
+- Node.js 18+ (untuk development)
+
+### Quick Start
 
 1. Clone repository
 ```bash
 git clone <repository-url>
-cd dashboard-fingerprint
+cd afms-nextjs
 ```
 
-2. Install dependencies
+2. Setup environment files
 ```bash
-composer install
-npm install
+# Copy environment templates
+cp .env.example .env.local
+cp laravel-api/.env.example laravel-api/.env
 ```
 
-3. Setup environment
+3. Configure environment variables
 ```bash
-cp .env.example .env
-php artisan key:generate
+# Edit .env.local for Next.js
+# Edit laravel-api/.env for Laravel API
 ```
 
-4. Konfigurasi database di `.env`
+4. Start with Docker
+```bash
+# Development
+docker-compose -f docker-compose.backend.yml up -d
+
+# Production
+docker-compose -f docker-compose.production.yml up -d
+```
+
+5. Setup database dan aplikasi
+```bash
+# Laravel setup (akan otomatis dijalankan oleh Docker)
+docker-compose exec laravel-api php artisan key:generate
+docker-compose exec laravel-api php artisan migrate
+docker-compose exec laravel-api php artisan db:seed
+```
+
+6. Akses aplikasi
+```
+# Development
+Frontend: http://localhost:3000
+API: http://localhost:8000
+
+# Production
+Frontend: https://cvtigaputraperkasa.id
+API: https://api.cvtigaputraperkasa.id
+```
+
+## Environment Variables
+
+### Next.js (.env.local)
 ```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=dashboard_fingerprint
-DB_USERNAME=root
-DB_PASSWORD=
+NEXT_PUBLIC_API_URL=https://api.cvtigaputraperkasa.id
+NEXTAUTH_URL=https://cvtigaputraperkasa.id
+JWT_SECRET=your-secure-jwt-secret
+NEXTAUTH_SECRET=your-secure-nextauth-secret
 ```
 
-5. Konfigurasi fingerprint device di `.env`
+### Laravel API (.env)
 ```env
-FINGERPRINT_DEVICE_IP=192.168.1.100
-FINGERPRINT_DEVICE_PORT=80
-FINGERPRINT_DEVICE_USERNAME=admin
-FINGERPRINT_DEVICE_PASSWORD=123456
+APP_URL=https://api.cvtigaputraperkasa.id
+DB_CONNECTION=pgsql
+DB_HOST=postgres
+DB_DATABASE=afms_database
+DB_USERNAME=afms_user
+DB_PASSWORD=your-secure-password
+REDIS_HOST=redis
 ```
 
-6. Jalankan migrasi dan seeder
+## Docker Commands
+
+### Development
 ```bash
-php artisan migrate
-php artisan db:seed
+# Start services
+docker-compose -f docker-compose.backend.yml up -d
+
+# View logs
+docker-compose logs -f laravel-api
+docker-compose logs -f postgres
+
+# Stop services
+docker-compose -f docker-compose.backend.yml down
 ```
 
-7. Build assets
+### Production
 ```bash
-npm run build
+# Deploy
+docker-compose -f docker-compose.production.yml up -d
+
+# Update application
+docker-compose -f docker-compose.production.yml pull
+docker-compose -f docker-compose.production.yml up -d --force-recreate
 ```
 
-8. Jalankan aplikasi
+## Deployment
+
+Lihat [DEPLOYMENT.md](DEPLOYMENT.md) untuk panduan lengkap deployment ke VPS.
+
+### Quick Deploy ke VPS
 ```bash
-php artisan serve
+# 1. Clone repository
+git clone <repository-url>
+cd afms-nextjs
+
+# 2. Setup environment
+cp .env.example .env.local
+cp laravel-api/.env.example laravel-api/.env
+
+# 3. Configure domain and SSL
+# Edit environment files with production values
+
+# 4. Deploy with Docker
+docker-compose -f docker-compose.production.yml up -d
 ```
-
-## Konfigurasi Device
-
-Pastikan device X100-C sudah dikonfigurasi dengan:
-- IP address yang dapat diakses
-- SOAP service aktif
-- Username dan password sesuai dengan `.env`
-
-## Command Artisan
-
-### Sinkronisasi Fingerprint
-```bash
-# Sinkronisasi manual
-php artisan fingerprint:sync
-
-# Sinkronisasi paksa (reset semua data)
-php artisan fingerprint:sync --force
-
-# Sinkronisasi device tertentu
-php artisan fingerprint:sync --device=1
-```
-
-### Monitoring
-```bash
-# Cek status device
-php artisan fingerprint:status
-
-# Reset monitoring data
-php artisan fingerprint:reset-monitoring
-```
-
-## Scheduler
-
-Tambahkan ke crontab untuk auto-sync:
-```bash
-* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
-```
-
-Scheduled tasks:
-- Real-time sync setiap 5 menit
-- Full sync setiap 30 menit
-- Cleanup monitoring data harian
-- Reset device failure count harian
 
 ## API Endpoints
 
-### Monitoring
-- `GET /api/monitoring/statistics` - Statistik sistem
-- `GET /api/fingerprint/health` - Status fingerprint service
+### Authentication
+- `POST /api/auth/login` - Login
+- `POST /api/auth/logout` - Logout
+- `GET /api/auth/me` - User profile
 
-### Callback
-- `POST /api/fingerprint/callback` - Endpoint untuk device callback
+### Absensi
+- `GET /api/absensi` - List absensi
+- `POST /api/absensi` - Create absensi
+- `GET /api/absensi/statistics` - Statistik absensi
 
-## Real-time Features
+### BON
+- `GET /api/bon` - List BON
+- `POST /api/bon` - Create BON
+- `PUT /api/bon/{id}/approve` - Approve BON
 
-Sistem menggunakan Laravel Echo dengan Pusher untuk:
-- Update attendance real-time
-- Notifikasi status device
-- Monitoring dashboard live
+### Health Check
+- `GET /api/health` - Application health status
 
 ## Struktur Database
 
-- `users` - Data pengguna
+- `users` - Data pengguna/karyawan
 - `cabangs` - Data cabang
-- `attendances` - Data absensi
-- `fingerprint_devices` - Konfigurasi device
-- `monitoring_logs` - Log monitoring sistem
+- `jabatans` - Data jabatan
+- `absensis` - Data absensi
+- `bons` - Data BON karyawan
+- `payrolls` - Data payroll
 
 ## Troubleshooting
 
-### Device tidak terdeteksi
-1. Pastikan IP device dapat di-ping
-2. Cek konfigurasi SOAP di device
-3. Verifikasi username/password
-4. Cek firewall dan port
+### Container tidak bisa start
+```bash
+# Check logs
+docker-compose logs laravel-api
+docker-compose logs postgres
 
-### Sinkronisasi gagal
-1. Jalankan `php artisan fingerprint:status`
-2. Cek log di `storage/logs/fingerprint-*.log`
-3. Reset dengan `php artisan fingerprint:sync --force`
+# Restart services
+docker-compose restart
+```
+
+### Database connection error
+1. Pastikan PostgreSQL container running
+2. Cek environment variables
+3. Verify database credentials
+
+### SSL Certificate issues
+1. Cek DNS pointing ke VPS
+2. Verify domain ownership
+3. Restart nginx container
 
 ## Kontribusi
 

@@ -51,3 +51,28 @@ Thumbs.db
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Docker & Production files
+/ssl/certs/*
+!/ssl/certs/.gitkeep
+/ssl/private/*
+!/ssl/private/.gitkeep
+/logs/*
+!/logs/.gitkeep
+/database/data/*
+!/database/data/.gitkeep
+
+# Next.js
+/.next/
+/out/
+
+# Prisma
+/prisma/dev.db
+/prisma/dev.db-journal
+
+# Laravel specific
+/laravel-api/.env
+/laravel-api/.env.local
+/laravel-api/.env.production
+/laravel-api/storage/logs/*
+/laravel-api/bootstrap/cache/*

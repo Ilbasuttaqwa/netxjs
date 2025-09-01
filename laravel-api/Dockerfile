@@ -32,6 +32,9 @@ RUN docker-php-ext-configure gd \
     --with-webp \
     --with-xpm
 
+# Install Redis extension
+RUN pecl install redis && docker-php-ext-enable redis
+
 # Install PHP extensions
 RUN docker-php-ext-install \
     pdo_pgsql \
