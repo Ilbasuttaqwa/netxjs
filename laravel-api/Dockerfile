@@ -8,6 +8,7 @@ WORKDIR /var/www/html
 RUN apk add --no-cache \
     git \
     curl \
+    curl-dev \
     libpng-dev \
     libxml2-dev \
     libpq-dev \

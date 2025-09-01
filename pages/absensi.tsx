@@ -6,7 +6,7 @@ import { Absensi } from '../types/index';
 import { absensiApi } from '../lib/api';
 import { useToast } from '../contexts/ToastContext';
 import TataLetakDasbor from '../components/layouts/TataLetakDasbor';
-import { Button } from '../components/ui/button';
+import { Button } from '../components/ui/Button';
 import {
   CalendarDaysIcon,
   ClockIcon,

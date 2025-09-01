@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
 import { deviceApi } from '../../lib/api';
-import { Button } from '../../components/ui/button';
+import { Button } from '../../components/ui/Button';
 import Modal from '../../components/ui/JendelaModal';
 import { cn } from '../../utils/cn';
 import {

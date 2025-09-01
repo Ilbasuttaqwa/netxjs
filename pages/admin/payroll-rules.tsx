@@ -4,9 +4,9 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
 import { useToast } from '../../contexts/ToastContext';
 import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
-import { Button } from '../../components/ui/button';
+import { Button } from '../../components/ui/Button';
 import Modal from '../../components/ui/modal';
-import { Input } from '../../components/ui/input';
+import { Input } from '../../components/ui/Input';
 import {
   CogIcon,
   PlusIcon,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
-import Card from '../ui/card';
+import Card from '../ui/Card';
 import Loading from '../ui/Loading';
 
 interface StatsCardProps {

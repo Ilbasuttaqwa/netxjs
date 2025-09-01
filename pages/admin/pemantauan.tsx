@@ -6,7 +6,7 @@ import { MonitoringFingerprint } from '../../types/index';
 import { monitoringApi, deviceApi } from '../../lib/api';
 import { useToast } from '../../contexts/ToastContext';
 import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
-import { Button } from '../../components/ui/button';
+import { Button } from '../../components/ui/Button';
 import RealtimeAttendance from '../../components/pemantauan/RealtimeAttendance';
 import {
   ComputerDesktopIcon,

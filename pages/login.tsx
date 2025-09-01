@@ -2,8 +2,8 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useToast } from '../contexts/ToastContext'
 import { useAuth } from '../contexts/AuthContext'
-import { Button } from '../components/ui/button'
-import Card from '../components/ui/card'
+import { Button } from '../components/ui/Button'
+import Card from '../components/ui/Card'
 import Loading from '../components/ui/Loading'
 
 export default function Login() {

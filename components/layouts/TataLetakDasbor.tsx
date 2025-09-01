@@ -26,7 +26,7 @@ import {
   CloudIcon,
   CircleStackIcon,
 } from '@heroicons/react/24/outline';
-import { Button } from '../ui/button';
+import { Button } from '../ui/Button';
 import DarkModeToggle from '../DarkModeToggle';
 import UserRoleBadge from '../ui/UserRoleBadge';
 

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import Card from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
+import Card from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/modal';
 import {
   CircleStackIcon as Database,

@@ -6,8 +6,8 @@ import { Karyawan, Cabang, Jabatan, PaginatedResponse } from '../../types/index'
 import { karyawanApi, cabangApi, jabatanApi } from '../../lib/api';
 import { useToast } from '../../contexts/ToastContext';
 import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
 import {
   PlusIcon,
   PencilIcon,

@@ -54,7 +54,7 @@ services:
       - APP_ENV=production
       - APP_KEY=base64:afms-laravel-app-key-production-2024-secure-base64-encoded-key
       - APP_DEBUG=false
-      - APP_URL=http://api.afms.my.id
+      - APP_URL=https://api.cvtigaputraperkasa.id
       - DB_CONNECTION=pgsql
       - DB_HOST=postgres
       - DB_PORT=5432
@@ -73,7 +73,7 @@ services:
       - FINGERPRINT_DEVICE_USERNAME=admin
       - FINGERPRINT_DEVICE_PASSWORD=123456
       - FINGERPRINT_DEVICE_TIMEOUT=30
-      - NEXTJS_API_URL=http://nextjs:3000/api
+      - NEXTJS_API_URL=https://cvtigaputraperkasa.id/api
       - NEXTJS_API_TOKEN=afms-nextjs-api-token-production
       - API_RATE_LIMIT=100
       - API_THROTTLE_MINUTES=1
