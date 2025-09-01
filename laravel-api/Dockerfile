@@ -4,8 +4,8 @@ FROM php:8.2-fpm-alpine
 # Set working directory
 WORKDIR /var/www/html
 
-# Install system dependencies
-RUN apk add --no-cache \
+# Security: Update system and install dependencies
+RUN apk update && apk upgrade && apk add --no-cache \
     git \
     curl \
     curl-dev \
@@ -24,7 +24,8 @@ RUN apk add --no-cache \
     libxpm-dev \
     autoconf \
     g++ \
-    make
+    make && \
+    rm -rf /var/cache/apk/*
 
 # Configure and install GD extension
 RUN docker-php-ext-configure gd \
@@ -57,13 +58,15 @@ COPY . .
 RUN mkdir -p bootstrap/cache storage/logs storage/framework/cache storage/framework/sessions storage/framework/views
 RUN chmod -R 775 bootstrap/cache storage
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Install PHP dependencies with security audit
+RUN composer install --no-dev --optimize-autoloader --no-interaction --audit
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+# Security: Set proper permissions and create non-root user
+RUN addgroup -g 1000 laravel && \
+    adduser -D -s /bin/sh -u 1000 -G laravel laravel && \
+    chown -R laravel:laravel /var/www/html && \
+    chmod -R 755 /var/www/html/storage && \
+    chmod -R 755 /var/www/html/bootstrap/cache
 
 # Copy nginx configuration
 COPY docker/nginx.conf /etc/nginx/nginx.conf

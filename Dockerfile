@@ -1,8 +1,9 @@
 # Multi-stage build for production optimization
 FROM node:18-alpine AS deps
 
-# Update package index and install dependencies including OpenSSL for Prisma
-RUN apk update && apk add --no-cache libc6-compat curl openssl openssl-dev
+# Security: Update package index and install minimal dependencies
+RUN apk update && apk upgrade && apk add --no-cache libc6-compat curl openssl openssl-dev && \
+    rm -rf /var/cache/apk/*
 
 WORKDIR /app
 
@@ -10,8 +11,9 @@ WORKDIR /app
 COPY package.json ./
 COPY package-lock.json* ./
 
-# Install dependencies
-RUN if [ -f package-lock.json ]; then npm ci --only=production; else npm install --only=production; fi && npm cache clean --force
+# Install dependencies with security audit
+RUN if [ -f package-lock.json ]; then npm ci --only=production --audit; else npm install --only=production --audit; fi && \
+    npm cache clean --force
 
 # Build stage
 FROM node:18-alpine AS builder
@@ -39,17 +41,20 @@ RUN npm run build
 # Production stage
 FROM node:18-alpine AS runner
 
-# Install runtime dependencies
-RUN apk update && apk add --no-cache curl openssl
+# Install minimal runtime dependencies
+RUN apk update && apk upgrade && apk add --no-cache curl openssl && \
+    rm -rf /var/cache/apk/* && \
+    addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Create non-root user for security
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Security: Disable unnecessary features
+ENV NEXT_SHARP=0
+ENV NEXT_PRIVATE_STANDALONE=true
 
 # Copy built application from builder stage
 COPY --from=builder /app/public ./public
@@ -64,16 +69,20 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 RUN chown -R nextjs:nodejs /app
 USER nextjs
 
-# Health check
+# Health check with security timeout
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:3000/api/health || exit 1
 
 # Expose port
 EXPOSE 3000
 
-# Set environment variables
+# Set secure environment variables
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+ENV NODE_OPTIONS="--max-old-space-size=1024"
+
+# Security: Run as non-root user
+USER nextjs
 
 # Start the application
 CMD ["node", "server.js"]
