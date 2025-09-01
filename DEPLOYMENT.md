@@ -83,24 +83,46 @@ Edit `docker-compose.production.yml` dan ubah URL berikut:
 
 ### 2.3 SSL Certificate Setup
 
-#### Option A: Let's Encrypt (Recommended)
+#### Option A: Automated SSL Setup (Recommended)
+Use the provided deployment script that handles SSL certificate generation automatically:
+
 ```bash
-# Install Certbot
-sudo apt install -y certbot
+# Make script executable
+chmod +x deploy-ssl.sh
 
-# Stop any running containers
-docker-compose -f docker-compose.production.yml down
-
-# Obtain certificate
-sudo certbot certonly --standalone -d cvtigaputraperkasa.id -d www.cvtigaputraperkasa.id -d api.cvtigaputraperkasa.id
-
-# Copy certificates to project
-sudo cp /etc/letsencrypt/live/cvtigaputraperkasa.id/fullchain.pem ./laravel-api/docker/cvtigaputraperkasa.id.crt
-sudo cp /etc/letsencrypt/live/cvtigaputraperkasa.id/privkey.pem ./laravel-api/docker/cvtigaputraperkasa.id.key
-sudo chown $USER:$USER ./laravel-api/docker/*
+# Run SSL deployment
+sudo ./deploy-ssl.sh
 ```
 
-#### Option B: Self-Signed Certificate (Development)
+#### Option B: Manual SSL Setup (Alternative)
+If you prefer manual setup:
+
+```bash
+# Create SSL directories
+mkdir -p ssl/certs ssl/www ssl/private
+
+# Start nginx for ACME challenge
+docker-compose -f docker-compose.production.yml up -d nginx
+
+# Generate SSL certificate using webroot method
+docker run --rm \
+    -v "$(pwd)/ssl/certs:/etc/letsencrypt" \
+    -v "$(pwd)/ssl/www:/var/www/certbot" \
+    certbot/certbot certonly \
+    --webroot \
+    --webroot-path=/var/www/certbot \
+    --email admin@cvtigaputraperkasa.id \
+    --agree-tos \
+    --no-eff-email \
+    -d cvtigaputraperkasa.id \
+    -d api.cvtigaputraperkasa.id
+
+# Copy certificates
+cp ssl/certs/live/cvtigaputraperkasa.id/fullchain.pem ssl/certs/cvtigaputraperkasa.id.crt
+cp ssl/certs/live/cvtigaputraperkasa.id/privkey.pem ssl/certs/cvtigaputraperkasa.id.key
+```
+
+#### Option C: Self-Signed Certificate (Development)
 ```bash
 # Generate self-signed certificate
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
