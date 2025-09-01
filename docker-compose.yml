@@ -7,18 +7,19 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://afms_user:afms_secure_password_2024@postgres:5432/afms_database
-      - NEXT_PUBLIC_API_URL=http://api.afms.my.id/api
-      - NEXT_PUBLIC_APP_URL=http://afms.my.id
-      - NEXTAUTH_URL=http://afms.my.id
+      - NEXT_PUBLIC_API_URL=https://api.cvtigaputraperkasa.id/api
+      - NEXT_PUBLIC_APP_URL=https://cvtigaputraperkasa.id
+      - NEXTAUTH_URL=https://cvtigaputraperkasa.id
       - NEXTAUTH_SECRET=afms-nextauth-production-secret-2024-secure-key-abc123
       - JWT_SECRET=afms-production-jwt-secret-key-2024-ultra-secure-random-string-xyz789
       - NEXT_PUBLIC_FINGERPRINT_ENABLED=true
       - NEXT_PUBLIC_FINGERPRINT_REALTIME=true
-      - NEXT_PUBLIC_LARAVEL_API_URL=http://api.afms.my.id
+      - NEXT_PUBLIC_LARAVEL_API_URL=https://api.cvtigaputraperkasa.id
       - FINGERPRINT_DEVICE_TYPE=solution-type-100c
-      - FINGERPRINT_CLOUD_ADMS_SERVER=http://api.afms.my.id/api/fingerprint
+      - FINGERPRINT_CLOUD_ADMS_SERVER=https://api.cvtigaputraperkasa.id/api/fingerprint
       - DEVICE_REGISTRATION_KEY=afms-device-key-production-2024
-      - CLOUD_SERVER_URL=https://api.afms.my.id
+      - CLOUD_SERVER_URL=https://api.cvtigaputraperkasa.id
+      - DEVICE_MANAGEMENT_URL=https://device.cvtigaputraperkasa.id
       - CLOUD_API_KEY=afms-cloud-api-key-production
       - SYNC_INTERVAL=300
       - RETRY_ATTEMPTS=3
@@ -85,6 +86,10 @@ services:
       - FINGERPRINT_LOGGING_ENABLED=true
       - FINGERPRINT_LOG_LEVEL=info
       - FINGERPRINT_LOG_CHANNEL=daily
+      - DEVICE_MANAGEMENT_URL=https://device.cvtigaputraperkasa.id
+      - FRONTEND_URL=https://cvtigaputraperkasa.id
+      - API_BASE_URL=https://api.cvtigaputraperkasa.id
+      - CORS_ALLOWED_ORIGINS=https://cvtigaputraperkasa.id,https://device.cvtigaputraperkasa.id
     depends_on:
       postgres:
         condition: service_healthy

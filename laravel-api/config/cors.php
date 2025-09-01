@@ -19,7 +19,12 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => [
+        'https://cvtigaputraperkasa.id',
+        'https://api.cvtigaputraperkasa.id',
+        'https://device.cvtigaputraperkasa.id',
+        'http://localhost:3000', // for development
+    ],
 
     'allowed_origins_patterns' => [],
 
