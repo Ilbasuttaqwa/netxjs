@@ -193,32 +193,16 @@ services:
 volumes:
   postgres_data:
     driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/postgres
-  redis_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/redis
   laravel_storage:
     driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/laravel/storage
   laravel_bootstrap_cache:
     driver: local
-    driver_opts:
-       type: none
-       o: bind
-       device: ./data/laravel/bootstrap
+  redis_data:
+    driver: local
 
 networks:
   app-network:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.20.0.0/16
+        - subnet: 172.22.0.0/16

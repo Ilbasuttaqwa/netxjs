@@ -8,7 +8,21 @@
   }
   
   body {
-    @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100;
+    @apply bg-gray-50 text-gray-900;
+  }
+  
+  /* Force light mode for login and critical forms */
+  .login-page,
+  .login-page * {
+    @apply text-gray-900 !important;
+  }
+  
+  .login-page input {
+    @apply bg-white text-gray-900 placeholder-gray-500 !important;
+  }
+  
+  .login-page label {
+    @apply text-gray-700 !important;
   }
 }
 
