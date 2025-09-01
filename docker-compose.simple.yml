@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  # MySQL Database (lebih ringan dari PostgreSQL)
+  mysql:
+    image: mysql:8.0
+    container_name: afms-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: afms_root_2024
+      MYSQL_DATABASE: afms_database
+      MYSQL_USER: afms_user
+      MYSQL_PASSWORD: afms_password_2024
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - afms-network
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Laravel API (simplified)
+  laravel-api:
+    build:
+      context: ./laravel-api
+      dockerfile: Dockerfile.simple
+    container_name: afms-laravel-api
+    environment:
+      - APP_NAME=AFMS
+      - APP_ENV=production
+      - APP_KEY=base64:afms-simple-key-2024
+      - APP_DEBUG=false
+      - APP_URL=http://localhost:8000
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=afms_database
+      - DB_USERNAME=afms_user
+      - DB_PASSWORD=afms_password_2024
+      - CACHE_DRIVER=file
+      - SESSION_DRIVER=file
+      - QUEUE_CONNECTION=sync
+    volumes:
+      - ./laravel-api:/var/www/html
+      - laravel_storage:/var/www/html/storage
+    depends_on:
+      - mysql
+    ports:
+      - "8000:80"
+    networks:
+      - afms-network
+    restart: unless-stopped
+
+  # Next.js Frontend (simplified)
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile.simple
+    container_name: afms-nextjs
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_APP_NAME=AFMS
+    depends_on:
+      - laravel-api
+    ports:
+      - "3000:3000"
+    networks:
+      - afms-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    driver: local
+  laravel_storage:
+    driver: local
+
+networks:
+  afms-network:
+    driver: bridge
