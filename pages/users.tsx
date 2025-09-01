@@ -333,7 +333,6 @@ const UsersPage = () => {
               size="sm"
               onClick={() => {
                 // Handle bulk delete
-                console.log('Bulk delete:', selectedUsers);
               }}
               className="text-red-600 border-red-300 hover:bg-red-50"
             >

@@ -210,20 +210,7 @@ export interface SSEMessage {
   timestamp: string;
 }
 
-// Testing Types
-export interface TestResult {
-  operation: string;
-  success: boolean;
-  data?: any;
-  error?: string;
-  timestamp: string;
-}
 
-export interface TestSummary {
-  total_tests: number;
-  passed: number;
-  failed: number;
-}
 
 export interface HealthCheck {
   status: 'healthy' | 'unhealthy' | 'degraded';

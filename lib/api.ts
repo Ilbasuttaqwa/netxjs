@@ -414,6 +414,39 @@ export const deviceApi = {
 };
 
 // Payroll API
+export const bonApi = {
+  getBon: async (filters?: FilterOptions): Promise<ApiResponse<PaginatedResponse<any>>> => {
+    const response = await api.get('/bon', { params: filters });
+    return handleResponse(response);
+  },
+
+  getBonById: async (id: number): Promise<ApiResponse<any>> => {
+    const response = await api.get(`/bon/${id}`);
+    return handleResponse(response);
+  },
+
+  createBon: async (data: any): Promise<ApiResponse<any>> => {
+    const response = await api.post('/bon', data);
+    return handleResponse(response);
+  },
+
+  updateBon: async (id: number, data: any): Promise<ApiResponse<any>> => {
+    const response = await api.put(`/bon/${id}`, data);
+    return handleResponse(response);
+  },
+
+  deleteBon: async (id: number): Promise<ApiResponse> => {
+    const response = await api.delete(`/bon/${id}`);
+    return handleResponse(response);
+  },
+
+  checkEligibility: async (karyawanId: number, amount?: number): Promise<ApiResponse<any>> => {
+    const params = amount ? { karyawan_id: karyawanId, amount } : { karyawan_id: karyawanId };
+    const response = await api.get('/bon/eligibility', { params });
+    return handleResponse(response);
+  },
+};
+
 export const payrollApi = {
   getDeductions: async (period: string): Promise<ApiResponse<any[]>> => {
     const response = await api.get(`/payroll/deductions?period=${period}`);
@@ -421,7 +454,7 @@ export const payrollApi = {
   },
 
   processDeductions: async (period: string): Promise<ApiResponse> => {
-    const response = await api.post('/payroll/deductions', { period });
+    const response = await api.post(`/payroll/deductions/process`, { period });
     return handleResponse(response);
   },
 };

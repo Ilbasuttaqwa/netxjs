@@ -11,64 +11,7 @@ interface FilterData {
   status?: string;
 }
 
-// Mock data untuk demo - dalam implementasi nyata, ambil dari database
-const mockAbsensi = [
-  {
-    id: 1,
-    karyawan_id: 1,
-    nama_karyawan: 'John Doe',
-    cabang: 'Kantor Pusat',
-    tanggal: '2024-01-15',
-    jam_masuk: '08:00:00',
-    jam_keluar: '17:00:00',
-    status: 'hadir',
-    keterangan: '',
-  },
-  {
-    id: 2,
-    karyawan_id: 2,
-    nama_karyawan: 'Jane Smith',
-    cabang: 'Kantor Pusat',
-    tanggal: '2024-01-15',
-    jam_masuk: '08:30:00',
-    jam_keluar: '17:00:00',
-    status: 'terlambat',
-    keterangan: 'Terlambat 30 menit',
-  },
-  {
-    id: 3,
-    karyawan_id: 3,
-    nama_karyawan: 'Bob Johnson',
-    cabang: 'Cabang A',
-    tanggal: '2024-01-15',
-    jam_masuk: undefined,
-    jam_keluar: undefined,
-    status: 'alpha',
-    keterangan: 'Tidak hadir tanpa keterangan',
-  },
-  {
-    id: 4,
-    karyawan_id: 1,
-    nama_karyawan: 'John Doe',
-    cabang: 'Kantor Pusat',
-    tanggal: '2024-01-14',
-    jam_masuk: '08:00:00',
-    jam_keluar: '17:00:00',
-    status: 'hadir',
-    keterangan: '',
-  },
-  {
-    id: 5,
-    karyawan_id: 4,
-    nama_karyawan: 'Alice Brown',
-    cabang: 'Cabang B',
-    tanggal: '2024-01-14',
-    jam_masuk: '08:00:00',
-    jam_keluar: '16:00:00',
-    status: 'izin',
-    keterangan: 'Izin pulang cepat',
-  },
-];
+import { prisma } from '../../../lib/prisma';
 
 async function handler(
   req: NextApiRequest,
@@ -90,26 +33,64 @@ async function handler(
       status
     } = req.query as FilterData;
 
-    // Filter data berdasarkan parameter
-    let filteredData = [...mockAbsensi];
+    // Query database dengan filter
+    const whereClause: {
+      tanggal?: {
+        gte?: Date;
+        lte?: Date;
+      };
+      karyawan_id?: number;
+      status?: string;
+      karyawan?: {
+        cabang_id: number;
+      };
+    } = {};
 
-    if (tanggal_mulai) {
-      filteredData = filteredData.filter(item => item.tanggal >= tanggal_mulai);
-    }
-
-    if (tanggal_selesai) {
-      filteredData = filteredData.filter(item => item.tanggal <= tanggal_selesai);
+    if (tanggal_mulai || tanggal_selesai) {
+      whereClause.tanggal = {};
+      if (tanggal_mulai) whereClause.tanggal.gte = new Date(tanggal_mulai);
+      if (tanggal_selesai) whereClause.tanggal.lte = new Date(tanggal_selesai);
     }
 
     if (karyawan_id) {
-      filteredData = filteredData.filter(item => 
-        item.karyawan_id === parseInt(karyawan_id)
-      );
+      whereClause.karyawan_id = parseInt(karyawan_id);
     }
 
     if (status) {
-      filteredData = filteredData.filter(item => item.status === status);
+      whereClause.status = status;
     }
+
+    if (cabang_id) {
+      whereClause.karyawan = {
+        cabang_id: parseInt(cabang_id)
+      };
+    }
+
+    const absensiData = await prisma.absensi.findMany({
+      where: whereClause,
+      include: {
+        karyawan: {
+          include: {
+            cabang: true
+          }
+        }
+      },
+      orderBy: {
+        tanggal: 'desc'
+      }
+    });
+
+    const filteredData = absensiData.map(item => ({
+      id: item.id,
+      karyawan_id: item.karyawan_id,
+      nama_karyawan: item.karyawan.nama,
+      cabang: item.karyawan.cabang.nama,
+      tanggal: item.tanggal.toISOString().split('T')[0],
+      jam_masuk: item.jam_masuk,
+      jam_keluar: item.jam_keluar,
+      status: item.status,
+      keterangan: item.keterangan || ''
+    }));
 
     // Siapkan data untuk Excel
     const excelData = filteredData.map((item, index) => ({

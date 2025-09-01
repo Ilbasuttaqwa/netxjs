@@ -7,6 +7,7 @@ import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
 import { Button } from '../../components/ui/Button';
 import Modal from '../../components/ui/modal';
 import { Input } from '../../components/ui/Input';
+import { CurrencyInput } from '../../components/ui/CurrencyInput';
 import {
   CogIcon,
   PlusIcon,
@@ -654,13 +655,26 @@ const RuleModal: React.FC<{
             </select>
           </div>
           
-          <Input
-            label="Jumlah"
-            type="number"
-            value={formData.amount}
-            onChange={(e) => setFormData({ ...formData, amount: Number(e.target.value) })}
-            required
-          />
+          {formData.calculation_method === 'percentage' ? (
+            <Input
+              label="Jumlah (%)"
+              type="number"
+              value={formData.amount}
+              onChange={(e) => setFormData({ ...formData, amount: Number(e.target.value) })}
+              min={0}
+              max={100}
+              step={0.1}
+              required
+            />
+          ) : (
+            <CurrencyInput
+              label="Jumlah"
+              value={formData.amount}
+              onChange={(value) => setFormData({ ...formData, amount: value })}
+              min={0}
+              required
+            />
+          )}
         </div>
         
         <div className="grid grid-cols-2 gap-4">
@@ -766,11 +780,11 @@ const ComponentModal: React.FC<{
             </select>
           </div>
           
-          <Input
+          <CurrencyInput
             label="Jumlah"
-            type="number"
             value={formData.amount}
-            onChange={(e) => setFormData({ ...formData, amount: Number(e.target.value) })}
+            onChange={(value) => setFormData({ ...formData, amount: value })}
+            min={0}
             required
           />
         </div>

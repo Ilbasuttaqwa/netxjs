@@ -27,11 +27,9 @@ async function handler(req: AuthenticatedRequest, res: NextApiResponse) {
     await prisma.$transaction(async (tx) => {
       // Hapus semua data attendance deduplication
       const deletedDedup = await tx.attendanceDeduplication.deleteMany({});
-      console.log(`Deleted ${deletedDedup.count} attendance deduplication records`);
 
       // Hapus semua data fingerprint attendance
       const deletedFingerprint = await tx.fingerprintAttendance.deleteMany({});
-      console.log(`Deleted ${deletedFingerprint.count} fingerprint attendance records`);
 
       // Reset device_user_id di tabel users (hapus mapping fingerprint)
       const updatedUsers = await tx.user.updateMany({
@@ -44,7 +42,7 @@ async function handler(req: AuthenticatedRequest, res: NextApiResponse) {
           device_user_id: null
         }
       });
-      console.log(`Reset device_user_id for ${updatedUsers.count} users`);
+
 
       // Reset last_sync untuk semua device
       const updatedDevices = await tx.device.updateMany({
@@ -52,7 +50,7 @@ async function handler(req: AuthenticatedRequest, res: NextApiResponse) {
           last_sync: null
         }
       });
-      console.log(`Reset last_sync for ${updatedDevices.count} devices`);
+
     });
 
     res.status(200).json({

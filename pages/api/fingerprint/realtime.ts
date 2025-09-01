@@ -46,7 +46,6 @@ const handler = async (req: AuthenticatedRequest, res: NextApiResponse<ApiRespon
     };
     
     connectedClients.push(client);
-    console.log(`Client ${clientId} connected. Total clients: ${connectedClients.length}`);
 
     // Send initial data
     res.write(`data: ${JSON.stringify({ type: 'connected', clientId })}\n\n`);
@@ -60,7 +59,6 @@ const handler = async (req: AuthenticatedRequest, res: NextApiResponse<ApiRespon
     req.on('close', () => {
       clearInterval(keepAlive);
       connectedClients = connectedClients.filter(c => c.id !== clientId);
-      console.log(`Client ${clientId} disconnected. Total clients: ${connectedClients.length}`);
     });
 
     return;
@@ -126,7 +124,7 @@ const handler = async (req: AuthenticatedRequest, res: NextApiResponse<ApiRespon
         data: savedRecord,
       });
 
-      console.log('New attendance record:', attendanceRecord);
+
 
       return res.status(200).json({
         success: true,

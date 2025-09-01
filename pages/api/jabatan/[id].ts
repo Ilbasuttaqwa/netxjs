@@ -5,7 +5,7 @@ import { withAuth, AuthenticatedRequest } from '../../../lib/auth-middleware';
 let mockJabatan = [
   {
     id: 1,
-    nama: 'Manager',
+    nama_jabatan: 'Manager',
     deskripsi: 'Mengelola operasional dan tim',
     gaji_pokok: 15000000,
     tunjangan: 2000000,
@@ -15,7 +15,7 @@ let mockJabatan = [
   },
   {
     id: 2,
-    nama: 'Staff',
+    nama_jabatan: 'Staff',
     deskripsi: 'Melaksanakan tugas operasional',
     gaji_pokok: 8000000,
     tunjangan: 1000000,
@@ -25,7 +25,7 @@ let mockJabatan = [
   },
   {
     id: 3,
-    nama: 'Supervisor',
+    nama_jabatan: 'Supervisor',
     deskripsi: 'Mengawasi dan membimbing staff',
     gaji_pokok: 12000000,
     tunjangan: 1500000,
@@ -35,7 +35,7 @@ let mockJabatan = [
   },
   {
     id: 4,
-    nama: 'Admin',
+    nama_jabatan: 'Admin',
     deskripsi: 'Mengelola administrasi dan sistem',
     gaji_pokok: 10000000,
     tunjangan: 1200000,
@@ -85,12 +85,12 @@ async function handler(
           });
         }
         
-        const { nama, deskripsi, gaji_pokok, tunjangan } = req.body;
+        const { nama_jabatan, deskripsi, gaji_pokok, tunjangan } = req.body;
         
-        if (!nama || !deskripsi || gaji_pokok === undefined) {
+        if (!nama_jabatan || !deskripsi || gaji_pokok === undefined) {
           return res.status(400).json({
             success: false,
-            message: 'Required fields: nama, deskripsi, gaji_pokok'
+            message: 'Required fields: nama_jabatan, deskripsi, gaji_pokok'
           });
         }
         
@@ -104,7 +104,7 @@ async function handler(
         }
         
         // Check if nama already exists (excluding current jabatan)
-        const existingJabatan = mockJabatan.find(j => j.nama === nama && j.id !== jabatanId);
+        const existingJabatan = mockJabatan.find(j => j.nama_jabatan === nama_jabatan && j.id !== jabatanId);
         if (existingJabatan) {
           return res.status(400).json({
             success: false,
@@ -114,7 +114,7 @@ async function handler(
         
         const updatedJabatan = {
           ...mockJabatan[jabatanIndex],
-          nama,
+          nama_jabatan,
           deskripsi,
           gaji_pokok: parseInt(gaji_pokok),
           tunjangan: tunjangan ? parseInt(tunjangan) : 0,

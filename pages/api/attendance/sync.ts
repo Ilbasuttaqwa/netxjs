@@ -96,7 +96,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         if (existingAttendance) {
-          console.log(`Duplicate attendance detected for user ${user.id} at ${attendanceTime}`);
           continue;
         }
 
@@ -236,7 +235,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     });
 
-    console.log(`Processed ${processedLogs.length} attendance logs from device ${syncData.device_id}`);
+
 
     res.status(200).json({
       success: true,

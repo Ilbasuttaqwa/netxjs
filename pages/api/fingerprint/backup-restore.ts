@@ -235,8 +235,6 @@ async function handleRestoreTemplates(req: AuthenticatedRequest, res: NextApiRes
     }
 
     // In a real implementation, you would send these templates to the actual device
-    // For now, we'll just log the restore operation
-    console.log(`Restoring ${validTemplates.length} templates to device ${target_device_id}`);
 
     // Create restore log
     await prisma.fingerprintRestore.create({

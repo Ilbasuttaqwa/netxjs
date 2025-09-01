@@ -75,8 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     });
 
-    // Log the status update for debugging
-    console.log(`Device ${updateData.device_id} status updated to ${updateData.status}`);
+
 
     res.status(200).json({
       success: true,

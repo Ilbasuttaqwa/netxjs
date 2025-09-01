@@ -140,6 +140,7 @@ async function handleGetMonitorData(req: AuthenticatedRequest, res: NextApiRespo
       online_devices: deviceStats.filter(d => d.status === 'online').length,
       offline_devices: deviceStats.filter(d => d.status === 'offline').length,
       error_devices: deviceStats.filter(d => d.status === 'error').length,
+      maintenance_devices: deviceStats.filter(d => d.status === 'maintenance').length,
       total_attendance_today: deviceStats.reduce((sum, d) => sum + d.today_attendance_count, 0),
       last_updated: new Date().toISOString()
     };
@@ -154,11 +155,29 @@ async function handleGetMonitorData(req: AuthenticatedRequest, res: NextApiRespo
 
   } catch (error) {
     console.error('Error fetching device monitor data:', error);
+    
+    // Provide fallback data in case of database errors
+    const fallbackData = {
+      devices: [],
+      summary: {
+        total_devices: 0,
+        online_devices: 0,
+        offline_devices: 0,
+        error_devices: 0,
+        maintenance_devices: 0,
+        total_attendance_today: 0,
+        last_updated: new Date().toISOString()
+      }
+    };
+    
     res.status(500).json({
       success: false,
       message: 'Gagal mengambil data monitoring device',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'Unknown error',
+      data: fallbackData // Provide fallback data
     });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 

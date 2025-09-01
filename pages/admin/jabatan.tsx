@@ -8,6 +8,7 @@ import { useToast } from '../../contexts/ToastContext';
 import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { CurrencyInput } from '../../components/ui/CurrencyInput';
 import {
   PlusIcon,
   PencilIcon,
@@ -19,7 +20,7 @@ import {
 import { cn } from '../../utils/cn';
 
 interface JabatanFormData {
-  nama: string;
+  nama_jabatan: string;
   deskripsi: string;
   gaji_pokok: number;
 }
@@ -37,7 +38,7 @@ const JabatanPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState<JabatanFormData>({
-    nama: '',
+    nama_jabatan: '',
     deskripsi: '',
     gaji_pokok: 0,
   });
@@ -122,10 +123,9 @@ const JabatanPage: React.FC = () => {
   const handleEdit = (item: Jabatan) => {
     setEditingId(item.id);
     setFormData({
-      nama: item.nama_jabatan,
+      nama_jabatan: item.nama_jabatan,
       deskripsi: item.deskripsi || '',
       gaji_pokok: item.gaji_pokok || 0,
-
     });
     setShowModal(true);
   };
@@ -153,7 +153,7 @@ const JabatanPage: React.FC = () => {
 
   const resetForm = () => {
     setFormData({
-      nama: '',
+      nama_jabatan: '',
       deskripsi: '',
       gaji_pokok: 0,
     });
@@ -374,8 +374,8 @@ const JabatanPage: React.FC = () => {
                 </label>
                 <Input
                   type="text"
-                  value={formData.nama}
-                  onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                  value={formData.nama_jabatan}
+                  onChange={(e) => setFormData({ ...formData, nama_jabatan: e.target.value })}
                   required
                   placeholder="Masukkan nama jabatan"
                 />
@@ -394,18 +394,13 @@ const JabatanPage: React.FC = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Gaji Pokok
-                </label>
-                <Input
-                  type="number"
-                  value={formData.gaji_pokok}
-                  onChange={(e) => setFormData({ ...formData, gaji_pokok: Number(e.target.value) })}
-                  placeholder="Masukkan gaji pokok"
-                  min="0"
-                />
-              </div>
+              <CurrencyInput
+                label="Gaji Pokok"
+                value={formData.gaji_pokok}
+                onChange={(value) => setFormData({ ...formData, gaji_pokok: value })}
+                placeholder="Masukkan gaji pokok"
+                min={0}
+              />
 
               <div className="flex justify-end space-x-3 pt-4">
                 <Button

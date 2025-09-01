@@ -282,7 +282,6 @@ const AttendancePage = () => {
               variant="outline"
               onClick={() => {
                 // Handle export functionality
-                console.log('Export attendance data');
               }}
               className="flex items-center space-x-2"
             >

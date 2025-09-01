@@ -112,11 +112,127 @@ async function main() {
     },
   })
 
+  // Create Devices
+  const device1 = await prisma.device.upsert({
+    where: { device_id: 'FP001' },
+    update: {
+      last_sync: new Date(),
+    },
+    create: {
+      device_id: 'FP001',
+      nama: 'Fingerprint Scanner - Kantor Pusat',
+      tipe: 'Fingerprint',
+      cabang_id: cabang1.id,
+      ip_address: '192.168.1.100',
+      port: 4370,
+      status: 'aktif',
+      lokasi: 'Lantai 1 - Lobby',
+      last_sync: new Date(),
+      firmware_version: 'v2.1.5',
+    },
+  })
+
+  const device2 = await prisma.device.upsert({
+    where: { device_id: 'FP002' },
+    update: {
+      last_sync: new Date(Date.now() - 3600000),
+    },
+    create: {
+      device_id: 'FP002',
+      nama: 'Fingerprint Scanner - Cabang Bandung',
+      tipe: 'Fingerprint',
+      cabang_id: cabang2.id,
+      ip_address: '192.168.1.101',
+      port: 4370,
+      status: 'aktif',
+      lokasi: 'Lantai 2 - HR Department',
+      last_sync: new Date(Date.now() - 3600000), // 1 hour ago
+      firmware_version: 'v2.1.3',
+    },
+  })
+
+  // Create Device Status Logs
+  await prisma.deviceStatusLog.create({
+    data: {
+      device_id: device1.id,
+      status: 'online',
+      firmware_version: 'v2.1.5',
+      employee_count: 150,
+      storage_usage: 65,
+    },
+  })
+
+  await prisma.deviceStatusLog.create({
+    data: {
+      device_id: device2.id,
+      status: 'error',
+      firmware_version: 'v2.1.3',
+      employee_count: 75,
+      storage_usage: 85,
+      error_message: 'Network connection timeout. Device tidak dapat terhubung ke server.',
+    },
+  })
+
+  // Create Sample Attendance Data
+  const today = new Date()
+  today.setHours(8, 0, 0, 0) // Set to 8 AM today
+
+  await prisma.fingerprintAttendance.create({
+    data: {
+      device_user_id: adminUser.device_user_id!,
+      device_id: device1.device_id,
+      attendance_time: today,
+      attendance_type: 1,
+      verification_type: 'fingerprint',
+      user_id: adminUser.id,
+      cabang_id: cabang1.id,
+      is_processed: true,
+      processing_status: 'completed',
+      created_at: today,
+      updated_at: today,
+    },
+  })
+
+  await prisma.fingerprintAttendance.create({
+    data: {
+      device_user_id: managerUser.device_user_id!,
+      device_id: device1.device_id,
+      attendance_time: new Date(today.getTime() + 30 * 60000), // 30 minutes later
+      attendance_type: 1,
+      verification_type: 'fingerprint',
+      user_id: managerUser.id,
+      cabang_id: cabang1.id,
+      is_processed: true,
+      processing_status: 'completed',
+      created_at: new Date(today.getTime() + 30 * 60000),
+      updated_at: new Date(today.getTime() + 30 * 60000),
+    },
+  })
+
+  await prisma.fingerprintAttendance.create({
+    data: {
+      device_user_id: staffUser.device_user_id!,
+      device_id: device2.device_id,
+      attendance_time: new Date(today.getTime() + 45 * 60000), // 45 minutes later
+      attendance_type: 1,
+      verification_type: 'fingerprint',
+      user_id: staffUser.id,
+      cabang_id: cabang2.id,
+      is_processed: true,
+      processing_status: 'completed',
+      created_at: new Date(today.getTime() + 45 * 60000),
+      updated_at: new Date(today.getTime() + 45 * 60000),
+    },
+  })
+
   console.log('Seed data created successfully!')
   console.log('Users created:')
   console.log('- Admin:', adminUser.nama_pegawai, '(password: password)')
   console.log('- Manager:', managerUser.nama_pegawai, '(password: password)')
   console.log('- Staff:', staffUser.nama_pegawai, '(password: password)')
+  console.log('Devices created:')
+  console.log('- Device 1:', device1.nama, '(Status: Online)')
+  console.log('- Device 2:', device2.nama, '(Status: Error)')
 }
 
 main()

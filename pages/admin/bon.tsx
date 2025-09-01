@@ -3,11 +3,12 @@ import Head from 'next/head';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
 import { Bon, Karyawan, BonFormData, PaginatedResponse } from '../../types/index';
-import { karyawanApi } from '../../lib/api';
+import { karyawanApi, bonApi } from '../../lib/api';
 import { useToast } from '../../contexts/ToastContext';
 import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { CurrencyInput } from '../../components/ui/CurrencyInput';
 import {
   PlusIcon,
   CheckIcon,
@@ -67,17 +68,20 @@ const BonPage: React.FC = () => {
   const fetchBon = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/bon?page=${currentPage}&search=${searchTerm}&status=${statusFilter}`);
-      const data = await response.json();
+      const response = await bonApi.getBon({
+        page: currentPage,
+        search: searchTerm,
+        status: statusFilter
+      });
       
-      if (data.success) {
-        setBon(data.data);
-        setTotalPages(data.pagination?.last_page || 1);
+      if (response.success) {
+        setBon(response.data?.data || []);
+        setTotalPages(response.data?.pagination?.last_page || 1);
       } else {
         addToast({
           type: 'error',
           title: 'Error',
-          message: data.message || 'Gagal mengambil data bon'
+          message: response.message || 'Gagal mengambil data bon'
         });
       }
     } catch (error) {
@@ -104,13 +108,14 @@ const BonPage: React.FC = () => {
 
   const checkEligibility = async (karyawanId: string, amount?: string) => {
     try {
-      const url = `/api/bon/eligibility?karyawan_id=${karyawanId}${amount ? `&amount=${amount}` : ''}`;
-      const response = await fetch(url);
-      const result = await response.json();
+      const response = await bonApi.checkEligibility(
+        parseInt(karyawanId),
+        amount ? parseFloat(amount) : undefined
+      );
       
-      if (result.success) {
-        setEligibilityData(result.data);
-        return result.data;
+      if (response.success) {
+        setEligibilityData(response.data);
+        return response.data;
       }
     } catch (error) {
       console.error('Error checking eligibility:', error);
@@ -132,17 +137,9 @@ const BonPage: React.FC = () => {
         keterangan: formData.keterangan
       };
 
-      const response = await fetch('/api/bon', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submitData),
-      });
+      const response = await bonApi.createBon(submitData);
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (response.success) {
         addToast({
           type: 'success',
           title: 'Berhasil',
@@ -152,19 +149,19 @@ const BonPage: React.FC = () => {
         resetForm();
         fetchBon();
       } else {
-        if (data.errors) {
-          setFormErrors(data.errors);
+        if (response.errors) {
+          setFormErrors(response.errors);
         }
-        if (data.validationErrors) {
-          setValidationErrors(data.validationErrors);
+        if (response.validationErrors) {
+          setValidationErrors(response.validationErrors);
         }
-        if (data.validationWarnings) {
-          setValidationWarnings(data.validationWarnings);
+        if (response.validationWarnings) {
+          setValidationWarnings(response.validationWarnings);
         }
         addToast({
           type: 'error',
           title: 'Error',
-          message: data.message || 'Gagal mengajukan bon'
+          message: response.message || 'Gagal mengajukan bon'
         });
       }
     } catch (error) {
@@ -194,17 +191,9 @@ const BonPage: React.FC = () => {
 
   const handleApprove = async (id: number) => {
     try {
-      const response = await fetch(`/api/bon/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ action: 'approve' }),
-      });
+      const response = await bonApi.updateBon(id, { action: 'approve' });
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (response.success) {
         addToast({
           type: 'success',
           title: 'Berhasil',
@@ -215,7 +204,7 @@ const BonPage: React.FC = () => {
         addToast({
           type: 'error',
           title: 'Error',
-          message: data.message || 'Gagal menyetujui bon'
+          message: response.message || 'Gagal menyetujui bon'
         });
       }
     } catch (error) {
@@ -229,17 +218,9 @@ const BonPage: React.FC = () => {
 
   const handleReject = async (id: number) => {
     try {
-      const response = await fetch(`/api/bon/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ action: 'reject' }),
-      });
+      const response = await bonApi.updateBon(id, { action: 'reject' });
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (response.success) {
         addToast({
           type: 'success',
           title: 'Berhasil',
@@ -250,7 +231,7 @@ const BonPage: React.FC = () => {
         addToast({
           type: 'error',
           title: 'Error',
-          message: data.message || 'Gagal menolak bon'
+          message: response.message || 'Gagal menolak bon'
         });
       }
     } catch (error) {
@@ -442,7 +423,7 @@ const BonPage: React.FC = () => {
                     </td>
                   </tr>
                 ) : (
-                  bon.map((item) => (
+                  (bon || []).map((item) => (
                     <tr key={item.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
@@ -550,150 +531,161 @@ const BonPage: React.FC = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900">
-                  Ajukan Bon Baru
-                </h3>
-                <button
-                  onClick={closeModal}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <XMarkIcon className="h-6 w-6" />
-                </button>
-              </div>
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 dark:bg-gray-900 dark:bg-opacity-75 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-6 border w-full max-w-md shadow-xl rounded-lg bg-white dark:bg-gray-800 dark:border-gray-600">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Ajukan Bon Baru
+              </h3>
+              <button
+                onClick={closeModal}
+                className="text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100 transition-colors"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
               
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Karyawan *
-                  </label>
-                  <select
-                    value={formData.karyawan_id}
-                    onChange={(e) => handleKaryawanChange(e.target.value)}
-                    className={cn(
-                      'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-                      formErrors.karyawan_id ? 'border-red-500' : 'border-gray-300'
-                    )}
-                    required
-                  >
-                    <option value="">Pilih Karyawan</option>
-                    {karyawan.map((k) => (
-                      <option key={k.id} value={k.id}>
-                        {k.nama} - {k.jabatan?.nama_jabatan}
-                      </option>
-                    ))}
-                  </select>
-                  {formErrors.karyawan_id && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.karyawan_id}</p>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Karyawan *
+                </label>
+                <select
+                  value={formData.karyawan_id}
+                  onChange={(e) => handleKaryawanChange(e.target.value)}
+                  className={cn(
+                    'w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
+                    formErrors.karyawan_id ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'
                   )}
-                </div>
+                  required
+                >
+                  <option value="">Pilih Karyawan</option>
+                  {(karyawan || []).map((k) => (
+                    <option key={k.id} value={k.id}>
+                      {k.nama} - {k.jabatan?.nama_jabatan}
+                    </option>
+                  ))}
+                </select>
+                {formErrors.karyawan_id && (
+                  <p className="mt-2 text-sm text-red-600 dark:text-red-400">{formErrors.karyawan_id}</p>
+                )}
+              </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Jumlah Bon *
-                  </label>
-                  <Input
-                    type="number"
+                  <CurrencyInput
+                    label="Jumlah Bon *"
                     value={formData.jumlah_bon}
-                    onChange={(e) => handleAmountChange(e.target.value)}
-                    className={formErrors.jumlah_bon ? 'border-red-500' : ''}
+                    onChange={(value) => handleAmountChange(value.toString())}
+                    error={formErrors.jumlah_bon}
                     placeholder="Masukkan jumlah bon"
                     required
                   />
-                  {formErrors.jumlah_bon && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.jumlah_bon}</p>
-                  )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Cicilan per Bulan *
-                  </label>
-                  <Input
-                    type="number"
+                  <CurrencyInput
+                    label="Cicilan per Bulan *"
                     value={formData.cicilan_per_bulan}
-                    onChange={(e) => setFormData({ ...formData, cicilan_per_bulan: parseFloat(e.target.value) || 0 })}
-                    className={formErrors.cicilan_per_bulan ? 'border-red-500' : ''}
+                    onChange={(value) => setFormData({ ...formData, cicilan_per_bulan: value })}
+                    error={formErrors.cicilan_per_bulan}
                     placeholder="Masukkan cicilan per bulan"
                     required
                   />
-                  {formErrors.cicilan_per_bulan && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.cicilan_per_bulan}</p>
-                  )}
                 </div>
 
-                {/* Eligibility Information */}
-                {eligibilityData && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-                    <h4 className="text-sm font-medium text-blue-900 mb-2">Informasi Kelayakan</h4>
-                    <div className="text-sm text-blue-800 space-y-1">
-                      <p>Gaji Pokok: {formatCurrency(eligibilityData.gaji_pokok)}</p>
-                      <p>Maksimal Bon: {formatCurrency(eligibilityData.max_bon_amount)}</p>
-                      <p>Bon Aktif: {formatCurrency(eligibilityData.current_bon_amount)}</p>
-                      <p>Sisa Limit: {formatCurrency(eligibilityData.remaining_limit)}</p>
-                      <p className={`font-medium ${
-                        eligibilityData.is_eligible ? 'text-green-600' : 'text-red-600'
+              {/* Eligibility Information */}
+              {eligibilityData && (
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-3">Informasi Kelayakan</h4>
+                  <div className="text-sm text-blue-800 dark:text-blue-200 space-y-2">
+                    <div className="flex justify-between">
+                      <span>Gaji Pokok:</span>
+                      <span className="font-medium">{formatCurrency(eligibilityData.gaji_pokok)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Maksimal Bon:</span>
+                      <span className="font-medium">{formatCurrency(eligibilityData.max_bon_amount)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Bon Aktif:</span>
+                      <span className="font-medium">{formatCurrency(eligibilityData.current_bon_amount)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Sisa Limit:</span>
+                      <span className="font-medium">{formatCurrency(eligibilityData.remaining_limit)}</span>
+                    </div>
+                    <div className="flex justify-between pt-2 border-t border-blue-200 dark:border-blue-700">
+                      <span>Status:</span>
+                      <span className={`font-semibold ${
+                        eligibilityData.is_eligible ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                       }`}>
-                        Status: {eligibilityData.is_eligible ? 'Layak' : 'Tidak Layak'}
-                      </p>
+                        {eligibilityData.is_eligible ? 'Layak' : 'Tidak Layak'}
+                      </span>
                     </div>
                   </div>
-                )}
-
-                {/* Validation Errors */}
-                {validationErrors.length > 0 && (
-                  <div className="bg-red-50 border border-red-200 rounded-md p-4">
-                    <h4 className="text-sm font-medium text-red-900 mb-2">Error Validasi</h4>
-                    <ul className="text-sm text-red-800 space-y-1">
-                      {validationErrors.map((error, index) => (
-                        <li key={index}>• {error}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Validation Warnings */}
-                {validationWarnings.length > 0 && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
-                    <h4 className="text-sm font-medium text-yellow-900 mb-2">Peringatan</h4>
-                    <ul className="text-sm text-yellow-800 space-y-1">
-                      {validationWarnings.map((warning, index) => (
-                        <li key={index}>• {warning}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Keterangan
-                  </label>
-                  <textarea
-                    value={formData.keterangan}
-                    onChange={(e) => setFormData({ ...formData, keterangan: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    rows={3}
-                    placeholder="Masukkan keterangan (opsional)"
-                  />
                 </div>
+              )}
 
-                <div className="flex justify-end space-x-3 pt-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={closeModal}
-                  >
-                    Batal
-                  </Button>
-                  <Button type="submit">
-                    Ajukan Bon
-                  </Button>
+              {/* Validation Errors */}
+              {validationErrors.length > 0 && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                  <h4 className="text-sm font-semibold text-red-900 dark:text-red-100 mb-3">Error Validasi</h4>
+                  <ul className="text-sm text-red-800 dark:text-red-200 space-y-1">
+                    {(validationErrors || []).map((error, index) => (
+                      <li key={index} className="flex items-start">
+                        <span className="text-red-500 mr-2">•</span>
+                        <span>{error}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </form>
-            </div>
+              )}
+
+              {/* Validation Warnings */}
+              {validationWarnings.length > 0 && (
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                  <h4 className="text-sm font-semibold text-yellow-900 dark:text-yellow-100 mb-3">Peringatan</h4>
+                  <ul className="text-sm text-yellow-800 dark:text-yellow-200 space-y-1">
+                    {(validationWarnings || []).map((warning, index) => (
+                      <li key={index} className="flex items-start">
+                        <span className="text-yellow-500 mr-2">•</span>
+                        <span>{warning}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Keterangan
+                </label>
+                <textarea
+                  value={formData.keterangan}
+                  onChange={(e) => setFormData({ ...formData, keterangan: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                  rows={3}
+                  placeholder="Masukkan keterangan (opsional)"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-600">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={closeModal}
+                  className="px-6 py-2"
+                >
+                  Batal
+                </Button>
+                <Button 
+                  type="submit"
+                  className="px-6 py-2"
+                >
+                  Ajukan Bon
+                </Button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -53,14 +53,13 @@ ehthumbs.db
 Thumbs.db
 
 # Docker & Production files
-/ssl/certs/*
-!/ssl/certs/.gitkeep
-/ssl/private/*
-!/ssl/private/.gitkeep
-/logs/*
-!/logs/.gitkeep
-/database/data/*
-!/database/data/.gitkeep
+/data/
+/logs/
+/ssl/
+/certbot/
+/scripts/
+docker-compose.backend.yml
+docker-compose.production.yml
 
 # Next.js
 /.next/

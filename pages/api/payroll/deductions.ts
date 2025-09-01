@@ -422,12 +422,10 @@ async function processPayrollDeductions(period: string) {
       // 1. Create bon_cicilan record
       // 2. Update bon sisa_bon amount
       // 3. Mark bon as completed if fully paid
-      console.log(`Processing bon installment for employee ${employee.karyawan_id}: ${employee.bon_deduction}`);
     }
   }
   
   // In real implementation, save to database
-  console.log(`Processing payroll deductions for period ${period}:`);
   
   const summary = {
     period,

@@ -54,7 +54,6 @@ const RealtimeAttendance: React.FC = () => {
       eventSourceRef.current = eventSource;
 
       eventSource.onopen = () => {
-        console.log('SSE connection opened');
         setConnectionStatus('connected');
       };
 
@@ -64,7 +63,6 @@ const RealtimeAttendance: React.FC = () => {
           
           switch (message.type) {
             case 'connected':
-              console.log('Connected to realtime stream, client ID:', message.clientId);
               break;
               
             case 'ping':

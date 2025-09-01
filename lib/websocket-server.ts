@@ -8,12 +8,12 @@ export interface WebSocketUser {
   userId: string;
   role: string;
   cabangId?: number;
-  socket: any;
+  socket: WebSocket;
 }
 
 export interface RealtimeMessage {
   type: string;
-  data: any;
+  data: unknown;
   timestamp: Date;
   userId?: string;
 }
@@ -22,7 +22,7 @@ export interface NotificationPayload {
   type: 'attendance' | 'payroll' | 'system' | 'alert';
   title: string;
   message: string;
-  data?: any;
+  data?: unknown;
   targetUsers?: number[];
   targetRoles?: string[];
   targetCabang?: number[];
@@ -113,7 +113,7 @@ export class WebSocketServer implements EventHandler {
   }
 
   // Send message to specific user (placeholder)
-  sendToUser(userId: string, type: string, data: any): void {
+  sendToUser(userId: string, type: string, data: unknown): void {
     const message: RealtimeMessage = {
       type,
       data,
@@ -125,7 +125,7 @@ export class WebSocketServer implements EventHandler {
   }
 
   // Send message to role (placeholder)
-  sendToRole(role: string, type: string, data: any): void {
+  sendToRole(role: string, type: string, data: unknown): void {
     const message: RealtimeMessage = {
       type,
       data,
@@ -136,7 +136,7 @@ export class WebSocketServer implements EventHandler {
   }
 
   // Send message to branch (placeholder)
-  sendToBranch(branchId: string, type: string, data: any): void {
+  sendToBranch(branchId: string, type: string, data: unknown): void {
     const message: RealtimeMessage = {
       type,
       data,

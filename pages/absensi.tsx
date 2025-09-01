@@ -14,11 +14,9 @@ import {
   XCircleIcon,
   ExclamationTriangleIcon,
   MapPinIcon,
-  CameraIcon,
   ArrowRightOnRectangleIcon,
   ArrowLeftOnRectangleIcon,
 } from '@heroicons/react/24/outline';
-import { cn } from '../utils/cn';
 
 const AbsensiUserPage: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -66,7 +64,7 @@ const AbsensiUserPage: React.FC = () => {
           });
           setLocationError('');
         },
-        (error) => {
+        () => {
           setLocationError('Gagal mendapatkan lokasi. Pastikan GPS aktif.');
         }
       );
@@ -84,7 +82,7 @@ const AbsensiUserPage: React.FC = () => {
       } else {
         setTodayAttendance(null);
       }
-    } catch (error: any) {
+    } catch {
       // Use dummy data if API fails
       const today = new Date().toISOString().split('T')[0];
       if (today === '2024-01-15') {
@@ -149,11 +147,11 @@ const AbsensiUserPage: React.FC = () => {
           },
         ]);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       addToast({
         type: 'error',
         title: 'Error',
-        message: error.message || 'Gagal memuat riwayat absensi',
+        message: error instanceof Error ? error.message : 'Gagal memuat riwayat absensi',
       });
     } finally {
       setLoading(false);
@@ -188,11 +186,11 @@ const AbsensiUserPage: React.FC = () => {
       } else {
         throw new Error(response.message);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       addToast({
         type: 'error',
         title: 'Error',
-        message: error.message || 'Gagal melakukan absen masuk',
+        message: error instanceof Error ? error.message : 'Gagal melakukan absen masuk',
       });
     } finally {
       setClockingin(false);
@@ -227,11 +225,11 @@ const AbsensiUserPage: React.FC = () => {
       } else {
         throw new Error(response.message);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       addToast({
         type: 'error',
         title: 'Error',
-        message: error.message || 'Gagal melakukan absen keluar',
+        message: error instanceof Error ? error.message : 'Gagal melakukan absen keluar',
       });
     } finally {
       setClockingOut(false);

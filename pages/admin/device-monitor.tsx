@@ -5,6 +5,7 @@ import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/modal';
 import { cn } from '../../utils/cn';
+import { useToast } from '../../contexts/ToastContext';
 
 interface Device {
   id: number;
@@ -50,8 +51,10 @@ interface MonitorData {
 
 const DeviceMonitorPage: React.FC = () => {
   const router = useRouter();
+  const { addToast } = useToast();
   const [monitorData, setMonitorData] = useState<MonitorData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
   const [showDeviceDetail, setShowDeviceDetail] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
@@ -60,17 +63,84 @@ const DeviceMonitorPage: React.FC = () => {
 
   // Check authentication
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('auth_token');
     if (!token) {
       router.push('/login');
       return;
     }
+    fetchMonitorData();
   }, [router]);
+
+  // Fallback data untuk demo
+  const getFallbackData = (): MonitorData => ({
+    devices: [
+      {
+        id: 1,
+        device_id: 'FP001',
+        nama: 'Fingerprint Scanner - Kantor Pusat',
+        tipe: 'Fingerprint',
+        status: 'online' as const,
+        cabang: { id: 1, nama_cabang: 'Kantor Pusat', kode_cabang: 'KP001' },
+        ip_address: '192.168.1.100',
+        port: 4370,
+        lokasi: 'Lantai 1 - Lobby',
+        last_sync: new Date().toISOString(),
+        firmware_version: 'v2.1.5',
+        employee_count: 150,
+        storage_usage: 65,
+        temperature: 32,
+        memory_usage: 45,
+        error_message: null,
+        today_attendance_count: 25,
+        total_attendance_count: 2500,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      },
+      {
+        id: 2,
+        device_id: 'FP002',
+        nama: 'Fingerprint Scanner - Cabang Jakarta',
+        tipe: 'Fingerprint',
+        status: 'error' as const,
+        cabang: { id: 2, nama_cabang: 'Cabang Jakarta', kode_cabang: 'CJ001' },
+        ip_address: '192.168.1.101',
+        port: 4370,
+        lokasi: 'Lantai 2 - HR Department',
+        last_sync: new Date(Date.now() - 3600000).toISOString(),
+        firmware_version: 'v2.1.3',
+        employee_count: 75,
+        storage_usage: 85,
+        temperature: 45,
+        memory_usage: 78,
+        error_message: 'Network connection timeout. Device tidak dapat terhubung ke server.',
+        today_attendance_count: 12,
+        total_attendance_count: 1200,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+    ],
+    summary: {
+      total_devices: 2,
+      online_devices: 1,
+      offline_devices: 0,
+      error_devices: 1,
+      maintenance_devices: 0,
+      total_attendance_today: 37,
+      last_updated: new Date().toISOString()
+    }
+  });
 
   // Fetch monitor data
   const fetchMonitorData = useCallback(async () => {
     try {
-      const token = localStorage.getItem('token');
+      setError(null);
+      const token = localStorage.getItem('auth_token');
+      
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
       const response = await fetch('/api/devices/monitor', {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -80,19 +150,39 @@ const DeviceMonitorPage: React.FC = () => {
 
       if (response.ok) {
         const result = await response.json();
-        if (result.success) {
+        if (result.success && result.data) {
           setMonitorData(result.data);
           setLastRefresh(new Date());
+        } else {
+          throw new Error(result.message || 'Data monitoring tidak valid');
         }
+      } else if (response.status === 401) {
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user');
+        router.push('/login');
+        return;
       } else {
-        console.error('Failed to fetch monitor data');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP ${response.status}: Gagal mengambil data monitoring`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching monitor data:', error);
+      const errorMessage = error.message || 'Gagal mengambil data monitoring device';
+      setError(errorMessage);
+      
+      addToast({
+        type: 'error',
+        title: 'Error Monitoring',
+        message: errorMessage + '. Menggunakan data demo.'
+      });
+      
+      // Gunakan fallback data
+      setMonitorData(getFallbackData());
+      setLastRefresh(new Date());
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [router, addToast]);
 
   // Initial data fetch
   useEffect(() => {
@@ -161,8 +251,12 @@ const DeviceMonitorPage: React.FC = () => {
   if (loading) {
     return (
       <TataLetakDasbor>
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        <div className="flex flex-col items-center justify-center min-h-screen space-y-4">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+          <div className="text-center">
+            <h3 className="text-lg font-medium text-gray-900">Memuat Data Monitoring</h3>
+            <p className="text-gray-600">Mengambil status device terbaru...</p>
+          </div>
         </div>
       </TataLetakDasbor>
     );
@@ -181,6 +275,14 @@ const DeviceMonitorPage: React.FC = () => {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Device Monitor</h1>
             <p className="text-gray-600 mt-1">Real-time monitoring sistem fingerprint</p>
+            {error && (
+              <div className="mt-2 flex items-center space-x-2">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  ⚠️ Mode Demo - API Error
+                </span>
+                <span className="text-xs text-gray-500">Last updated: {lastRefresh.toLocaleTimeString()}</span>
+              </div>
+            )}
           </div>
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">

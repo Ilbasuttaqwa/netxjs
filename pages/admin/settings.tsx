@@ -6,6 +6,7 @@ import { useToast } from '../../contexts/ToastContext';
 import TataLetakDasbor from '../../components/layouts/TataLetakDasbor';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { CurrencyInput } from '../../components/ui/CurrencyInput';
 import {
   CogIcon,
   ClockIcon,
@@ -214,18 +215,13 @@ const SettingsPage: React.FC = () => {
                   />
                 </div>
                 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Potongan per Menit (Rp)
-                  </label>
-                  <Input
-                    type="number"
-                    value={settings.potongan_per_menit}
-                    onChange={(e) => setSettings({ ...settings, potongan_per_menit: Number(e.target.value) })}
-                    min="0"
-                    required
-                  />
-                </div>
+                <CurrencyInput
+                  label="Potongan per Menit"
+                  value={settings.potongan_per_menit}
+                  onChange={(value) => setSettings({ ...settings, potongan_per_menit: value })}
+                  min={0}
+                  required
+                />
               </div>
             </div>
 

@@ -5,7 +5,7 @@ import { withAuth, AuthenticatedRequest } from '../../../lib/auth-middleware';
 const mockJabatan = [
   {
     id: 1,
-    nama: 'Manager',
+    nama_jabatan: 'Manager',
     deskripsi: 'Mengelola operasional dan tim',
     gaji_pokok: 15000000,
     tunjangan: 2000000,
@@ -15,7 +15,7 @@ const mockJabatan = [
   },
   {
     id: 2,
-    nama: 'Staff',
+    nama_jabatan: 'Staff',
     deskripsi: 'Melaksanakan tugas operasional',
     gaji_pokok: 8000000,
     tunjangan: 1000000,
@@ -25,7 +25,7 @@ const mockJabatan = [
   },
   {
     id: 3,
-    nama: 'Supervisor',
+    nama_jabatan: 'Supervisor',
     deskripsi: 'Mengawasi dan membimbing staff',
     gaji_pokok: 12000000,
     tunjangan: 1500000,
@@ -35,7 +35,7 @@ const mockJabatan = [
   },
   {
     id: 4,
-    nama: 'Admin',
+    nama_jabatan: 'Admin',
     deskripsi: 'Mengelola administrasi dan sistem',
     gaji_pokok: 10000000,
     tunjangan: 1200000,
@@ -59,7 +59,7 @@ async function handler(
         // Apply filters
         if (search) {
           filteredJabatan = filteredJabatan.filter(j => 
-            j.nama.toLowerCase().includes(search.toString().toLowerCase()) ||
+            j.nama_jabatan.toLowerCase().includes(search.toString().toLowerCase()) ||
             j.deskripsi.toLowerCase().includes(search.toString().toLowerCase())
           );
         }
@@ -94,17 +94,17 @@ async function handler(
           });
         }
         
-        const { nama, deskripsi, gaji_pokok, tunjangan } = req.body;
+        const { nama_jabatan, deskripsi, gaji_pokok, tunjangan } = req.body;
         
-        if (!nama || !deskripsi || gaji_pokok === undefined) {
+        if (!nama_jabatan || !deskripsi || gaji_pokok === undefined) {
           return res.status(400).json({
             success: false,
-            message: 'Required fields: nama, deskripsi, gaji_pokok'
+            message: 'Required fields: nama_jabatan, deskripsi, gaji_pokok'
           });
         }
         
-        // Check if nama already exists
-        const existingJabatan = mockJabatan.find(j => j.nama === nama);
+        // Check if nama_jabatan already exists
+        const existingJabatan = mockJabatan.find(j => j.nama_jabatan === nama_jabatan);
         if (existingJabatan) {
           return res.status(400).json({
             success: false,
@@ -114,7 +114,7 @@ async function handler(
         
         const newJabatan = {
           id: Math.max(...mockJabatan.map(j => j.id)) + 1,
-          nama,
+          nama_jabatan,
           deskripsi,
           gaji_pokok: parseInt(gaji_pokok),
           tunjangan: tunjangan ? parseInt(tunjangan) : 0,
